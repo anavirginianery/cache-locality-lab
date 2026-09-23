@@ -1,0 +1,99 @@
+{
+  "fase": "f02",
+  "apelido": "500k",
+  "descricao": "Tamanho do experimento: os mesmos tres cenarios da f01 com 500 mil requisicoes",
+  "gerado_em": "2026-09-23T11:55:45",
+  "modo": "completo",
+  "codigo": {
+    "commit": "6e67f11",
+    "limpo": false,
+    "git_disponivel": true,
+    "hash_arquivos": "a826d57eadd6",
+    "arquivos": [
+      "lib/genwl.py",
+      "lib/mkps.py",
+      "geracao/pipeline.py"
+    ]
+  },
+  "comum": {
+    "dmax": 10000,
+    "inf": 0.05,
+    "requisicoes": 500000,
+    "semente": 7,
+    "caches": [
+      10,
+      100,
+      1000,
+      10000
+    ],
+    "tolerancia_sigmas": 5
+  },
+  "cenarios": [
+    {
+      "nome": "baixa",
+      "rotulo": "SD baixa",
+      "sufixo": "baixa-b150",
+      "beta": 1.5,
+      "arquivos": {
+        "dist": "dist/sd_f02_baixa-b150.txt",
+        "carga": "cargas/carga_f02_baixa-b150.txt"
+      },
+      "resultado": {
+        "sd_mediana": 1,
+        "sd_p90": 51,
+        "sd_p99": 1955,
+        "footprint_1000req": 139.9,
+        "objetos_distintos": 25596,
+        "p_inf_medido": 0.0492,
+        "erro_max_hrc_curva": 0.00077,
+        "erro_max_hrc_caches": 0.00075,
+        "limite": 0.00354,
+        "confere": true
+      }
+    },
+    {
+      "nome": "media",
+      "rotulo": "SD media",
+      "sufixo": "media-b100",
+      "beta": 1.0,
+      "arquivos": {
+        "dist": "dist/sd_f02_media-b100.txt",
+        "carga": "cargas/carga_f02_media-b100.txt"
+      },
+      "resultado": {
+        "sd_mediana": 74,
+        "sd_p90": 3782,
+        "sd_p99": 9091,
+        "footprint_1000req": 435.5,
+        "objetos_distintos": 29959,
+        "p_inf_medido": 0.0492,
+        "erro_max_hrc_curva": 0.00104,
+        "erro_max_hrc_caches": 0.00089,
+        "limite": 0.00354,
+        "confere": true
+      }
+    },
+    {
+      "nome": "alta",
+      "rotulo": "SD alta",
+      "sufixo": "alta-b050",
+      "beta": 0.5,
+      "arquivos": {
+        "dist": "dist/sd_f02_alta-b050.txt",
+        "carga": "cargas/carga_f02_alta-b050.txt"
+      },
+      "resultado": {
+        "sd_mediana": 2535,
+        "sd_p90": 8125,
+        "sd_p99": 9807,
+        "footprint_1000req": 818.4,
+        "objetos_distintos": 32371,
+        "p_inf_medido": 0.0492,
+        "erro_max_hrc_curva": 0.00091,
+        "erro_max_hrc_caches": 0.00089,
+        "limite": 0.00354,
+        "confere": true
+      }
+    }
+  ]
+}

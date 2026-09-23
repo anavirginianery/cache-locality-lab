@@ -11,7 +11,7 @@
     1000,
     10000
   ],
-  "tolerancia": 0.02,
+  "tolerancia_sigmas": 5,
   "cenarios": [
     {
       "nome": "baixa",

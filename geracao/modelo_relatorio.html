@@ -93,8 +93,9 @@ quem é reúso e cuja stack distance cabe no cache.</p>
   </tbody>
 </table>
 </div>
-<p class="hint">A conferência compara o hit rate medido com o teórico em cada tamanho de cache; o erro mostrado é o maior deles.
-Tolerância configurada: {{tol}}.</p>
+<p class="hint">A conferência compara o hit rate medido com o teórico ao longo de <strong>toda a curva</strong>, não só
+nos tamanhos de cache da tabela; o erro mostrado é o maior deles. O limite aceito é relativo ao tamanho da carga
+(o desvio esperado de uma proporção é 0,5/√n), então ele aperta conforme a carga cresce: {{tol}}.</p>
 
 <h2>Curva de hit rate</h2>
 <div class="legendas">{{legenda}}</div>

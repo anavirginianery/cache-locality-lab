@@ -23,7 +23,7 @@ Construtores:
   trace        mede a P(d) de um trace existente
   transformar  estica, recombina ou troca o P(inf) de arquivos ja prontos
 """
-import argparse, math, os, sys
+import argparse, bisect, math, os, sys
 
 try:
     import numpy as np
@@ -122,31 +122,39 @@ def c_irm(a):
     do cache, e ponderando por p sai a hit rate h(T). Variando T tem-se a curva
     inteira; P(d = k) = h(k+1) - h(k)."""
     N = a.objetos
-    if np is not None:
+    GRADE = 4000                       # pontos de T, iguais nos dois caminhos
+    lo, hi = math.log(1e-4), math.log(1e7)
+    if np is not None:                 # numpy so acelera; a conta e a mesma
         p = np.arange(1, N + 1, dtype=float) ** (-a.alpha)
         p /= p.sum()
-        T = np.exp(np.linspace(math.log(1e-4), math.log(1e7), 4000))
-        x = np.clip(np.outer(T, p), 0, 700)
-        pres = 1.0 - np.exp(-x)
-        C = pres.sum(axis=1)
-        h = (pres * p).sum(axis=1)
-        alvo = np.arange(1, N + 1, dtype=float)
-        hC = np.interp(alvo, C, h)
+        T = np.exp(np.linspace(lo, hi, GRADE))
+        pres = 1.0 - np.exp(-np.clip(np.outer(T, p), 0, 700))
+        Cs, hs = list(pres.sum(axis=1)), list((pres * p).sum(axis=1))
     else:
         p = normaliza([(i + 1.0) ** (-a.alpha) for i in range(N)])
-        C, h = [], []
-        for k in range(4000):
-            T = math.exp(math.log(1e-4) + (math.log(1e7) - math.log(1e-4)) * k / 3999)
-            c = s = 0.0
+        Cs, hs = [], []
+        for k in range(GRADE):
+            T = math.exp(lo + (hi - lo) * k / (GRADE - 1))
+            c = s_ = 0.0
             for pi in p:
                 q = 1.0 - math.exp(-min(pi * T, 700))
                 c += q
-                s += q * pi
-            C.append(c); h.append(s)
-        hC = []
-        for c in range(1, N + 1):
-            j = min(range(len(C)), key=lambda i: abs(C[i] - c))
-            hC.append(h[j])
+                s_ += q * pi
+            Cs.append(c); hs.append(s_)
+
+    def interp(x):                     # interpolacao linear, identica nos dois caminhos
+        i = bisect.bisect_left(Cs, x)
+        if i <= 0:
+            return hs[0]
+        if i >= len(Cs):
+            return hs[-1]
+        c0, c1 = Cs[i - 1], Cs[i]
+        if c1 == c0:
+            return hs[i]
+        t = (x - c0) / (c1 - c0)
+        return hs[i - 1] + t * (hs[i] - hs[i - 1])
+
+    hC = [interp(c) for c in range(1, N + 1)]
     pmf, ant = [], 0.0
     for k in range(N):
         v = max(0.0, float(hC[k]) - ant)
@@ -154,7 +162,8 @@ def c_irm(a):
         ant = float(hC[k])
     return normaliza(pmf), a.inf, [
         "irm: alpha=%g objetos=%d inf=%g" % (a.alpha, N, a.inf),
-        "P(d) derivada de uma popularidade Zipf pela aproximacao de Che"]
+        "P(d) derivada de uma popularidade Zipf pela aproximacao de Che",
+        "motor: %s (numpy apenas acelera; o algoritmo e o mesmo)" % ("numpy" if np is not None else "python")]
 
 
 def _componente(spec, dmax):

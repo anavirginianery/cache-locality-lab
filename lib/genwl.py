@@ -12,8 +12,9 @@ Geradores
          Voce controla a STACK-DISTANCE (== IRR do LIRS); a popularidade emerge.
          Este e o mesmo principio usado por TRAGEN/JEDI (com pesos em bytes).
 
-Analise
-  --analyze  histograma de stack-distance + MRC exata de LRU (Mattson) + FIFO
+Analise (subcomando "analyze")
+  --sizes    tamanhos de cache a medir
+  --skip K   as K primeiras linhas so aquecem o cache
   --shards R amostragem espacial hash-based (SHARDS) antes da analise, para
              estudar o vies de amostragem sobre SD/MRC.
 
@@ -300,6 +301,7 @@ def hist_lines(sds, nbins=12):
         return lines
     mx = max(fin)
     edges = [0] + [int(2 ** (math.log2(max(mx, 1)) * (i + 1) / nbins)) for i in range(nbins)]
+    edges[-1] = mx                      # arredondamento nao pode deixar a maior SD fora de todas as faixas
     c = Counter()
     for d in fin:
         for i in range(nbins):
@@ -398,18 +400,26 @@ def main():
     fin = sorted(d for d in sds if d >= 0)
     if fin:
         if args.sizes:
-            sizes = sorted({max(1, int(round(int(x) / scale))) for x in args.sizes.split(",")})
+            pedidos = [int(x) for x in args.sizes.split(",")]
         else:
             top = max(fin[int(0.99 * len(fin))], 8)
-            sizes = sorted({max(1, int(top ** ((i + 1) / args.mrc_points)))
-                            for i in range(args.mrc_points)})
-        lru = mrc_lru_from_sd(sds, sizes)
-        fifo = None if args.no_fifo else mrc_fifo(trace, sizes, skip)
-        print("\nMRC (miss ratio)%s:" % ("  [tamanhos ja reescalados por 1/R]" if scale > 1 else ""))
+            pedidos = sorted({max(1, int(top ** ((i + 1) / args.mrc_points)))
+                              for i in range(args.mrc_points)})
+        # cada tamanho pedido vira um tamanho equivalente na amostra; sem deduplicar,
+        # para que cada linha impressa corresponda a um tamanho que o usuario pediu
+        efetivos = [max(1, int(round(c / scale))) for c in pedidos]
+        cegos = [c for c in pedidos if c / scale < 1]
+        if cegos:
+            print("aviso: com R=%g, os caches %s equivalem a menos de 1 objeto na amostra; "
+                  "a taxa impressa para eles nao tem resolucao"
+                  % (args.shards, ", ".join(str(c) for c in cegos)), file=sys.stderr)
+        lru = mrc_lru_from_sd(sds, efetivos)
+        fifo = None if args.no_fifo else mrc_fifo(trace, efetivos, skip)
+        print("\nMRC (miss ratio)%s:" % ("  [estimada da amostra]" if scale > 1 else ""))
         print("  %12s  %10s  %10s" % ("cache(objs)", "LRU", "FIFO"))
-        for i, c in enumerate(sizes):
+        for i, c in enumerate(pedidos):
             f = "%10.4f" % fifo[i] if fifo else "%10s" % "-"
-            print("  %12d  %10.4f  %s" % (int(c * scale), lru[i], f))
+            print("  %12d  %10.4f  %s" % (c, lru[i], f))
 
 
 if __name__ == "__main__":

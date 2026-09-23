@@ -30,7 +30,7 @@ Uso:
 
 O beta entra no nome como inteiro de tres digitos, multiplicado por 100: beta 1,5 -> b150.
 """
-import argparse, bisect, contextlib, csv, io, json, math, os, random, re, shutil, subprocess, sys
+import argparse, bisect, contextlib, csv, hashlib, io, json, math, os, random, re, shutil, subprocess, sys
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -39,11 +39,26 @@ sys.path.insert(0, os.path.join(os.path.dirname(AQUI), "lib"))   # genwl.py e mk
 import genwl
 import mkps
 
+RAIZ = os.path.dirname(AQUI)
 FASES = os.path.join(AQUI, "fases")
 MODELO = os.path.join(AQUI, "cenarios.json")
-COMUNS = ("dmax", "inf", "requisicoes", "semente", "caches", "tolerancia")
+CODIGO = ("lib/genwl.py", "lib/mkps.py", "geracao/pipeline.py")
+COMUNS = ("dmax", "inf", "requisicoes", "semente", "caches", "tolerancia_sigmas")
+GERACAO = ("dmax", "inf", "requisicoes", "semente")   # o que muda as cargas; o resto so muda a analise
 CORES = ["#63BDB5", "#2E9B95", "#08595C"]          # rampa ordinal: baixa -> alta
 CORES_ESC = ["#16706C", "#2FA8A2", "#7FD6CF"]      # a mesma rampa no tema escuro
+
+
+def rampa(n, cores):
+    """n cores da rampa. Ate 3 usa os passos validados; acima disso interpola os extremos."""
+    if n <= 1:
+        return [cores[-1]]
+    if n <= len(cores):
+        return [cores[0], cores[-1]] if n == 2 else list(cores[:n])
+    rgb = lambda c: tuple(int(c[i:i + 2], 16) for i in (1, 3, 5))
+    a, b = rgb(cores[0]), rgb(cores[-1])
+    return ["#%02X%02X%02X" % tuple(round(a[k] + (b[k] - a[k]) * i / (n - 1)) for k in range(3))
+            for i in range(n)]
 
 
 # --------------------------------------------------------------- fases
@@ -95,10 +110,48 @@ def acha_fase(arg):
 
 
 def assinatura(cfg):
-    """O que define a fase: os parametros comuns e a lista de cenarios."""
-    return {"comum": {k: cfg[k] for k in COMUNS},
+    """O que precisa bater para os traces da fase continuarem valendo.
+
+    So entram os parametros que mudam as cargas. Mexer em 'caches' ou na tolerancia
+    muda a analise, nao os traces, entao nao exige regerar nada."""
+    return {"geracao": {k: cfg[k] for k in GERACAO},
             "cenarios": [{"nome": c["nome"], "beta": c["beta"], "rotulo": c["rotulo"]}
                          for c in cfg["cenarios"]]}
+
+
+def valida(cfg, fid):
+    """Recusa configuracao invalida antes de gerar qualquer coisa, apontando o campo."""
+    e = []
+    faltando = [k for k in COMUNS + ("cenarios",) if k not in cfg]
+    if faltando:
+        e.append("faltam os campos: %s" % ", ".join(faltando))
+    else:
+        if not 0 <= cfg["inf"] < 1:
+            e.append("inf: precisa estar em [0, 1); veio %r" % cfg["inf"])
+        if cfg["dmax"] < 10:
+            e.append("dmax: precisa ser >= 10; veio %r" % cfg["dmax"])
+        if cfg["requisicoes"] < 1000:
+            e.append("requisicoes: precisa ser >= 1000; veio %r" % cfg["requisicoes"])
+        if not cfg["caches"] or min(cfg["caches"]) < 1:
+            e.append("caches: lista de tamanhos >= 1")
+        if cfg["tolerancia_sigmas"] <= 0:
+            e.append("tolerancia_sigmas: precisa ser > 0")
+        if not cfg["cenarios"]:
+            e.append("cenarios: precisa de ao menos um")
+        nomes = [c.get("nome") for c in cfg["cenarios"]]
+        if len(set(nomes)) != len(nomes):
+            e.append("cenarios[].nome: nomes repetidos sobrescreveriam os mesmos arquivos (%s)"
+                     % ", ".join(sorted(nomes)))
+        for c in cfg["cenarios"]:
+            if not re.match(r"^[a-z0-9_]+$", str(c.get("nome", ""))):
+                e.append("cenarios[].nome %r: use so minusculas, numeros e _" % c.get("nome"))
+            if "beta" not in c or "rotulo" not in c:
+                e.append("cenario %r: faltam beta ou rotulo" % c.get("nome"))
+            elif abs(round(c["beta"] * 100) - c["beta"] * 100) > 1e-9:
+                e.append("cenarios[].beta %r: no maximo duas casas decimais (vai para o nome do "
+                         "arquivo como inteiro x100)" % c["beta"])
+    if e:
+        raise SystemExit("cenarios.json da fase %s:\n  - %s" % (fid, "\n  - ".join(e)))
 
 
 def info_git():
@@ -110,17 +163,30 @@ def info_git():
             return ""
     commit = roda("git", "rev-parse", "--short", "HEAD")
     if not commit:
-        return {"commit": None, "limpo": None}
-    return {"commit": commit, "limpo": roda("git", "status", "--porcelain") == ""}
+        return {"commit": None, "limpo": None, "git_disponivel": False}
+    sujo = roda("git", "status", "--porcelain", "--", RAIZ)
+    return {"commit": commit, "limpo": sujo == "", "git_disponivel": True}
 
 
-def escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos):
+def hash_codigo():
+    """Identifica o codigo que rodou mesmo com a arvore suja ou fora do git.
+
+    O commit sozinho nao serve: o manifesto e escrito antes do commit que o inclui."""
+    h = hashlib.sha256()
+    for rel in CODIGO:
+        with open(os.path.join(RAIZ, rel), "rb") as fh:
+            h.update(fh.read())
+    return h.hexdigest()[:12]
+
+
+def escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos, modo="completo"):
     man = {
         "fase": fid, "apelido": apelido,
         "descricao": cfg.get("descricao", ""),
         "gerado_em": datetime.now().isoformat(timespec="seconds"),
-        "codigo": info_git(),
-        "comum": assinatura(cfg)["comum"],
+        "modo": modo,
+        "codigo": dict(info_git(), hash_arquivos=hash_codigo(), arquivos=list(CODIGO)),
+        "comum": {k: cfg[k] for k in COMUNS},
         "cenarios": [{
             "nome": r["nome"], "rotulo": r["rotulo"], "sufixo": sufixo(r), "beta": r["beta"],
             "arquivos": arquivos[r["nome"]],
@@ -128,7 +194,9 @@ def escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos):
                           "footprint_1000req": round(r["fp_1k"], 1) if r["fp_1k"] else None,
                           "objetos_distintos": r["distintos"],
                           "p_inf_medido": round(r["p_inf_medido"], 4),
-                          "erro_max_hrc": round(r["erro_max"], 4), "confere": r["confere"]},
+                          "erro_max_hrc_curva": round(r["erro_max"], 5),
+                          "erro_max_hrc_caches": round(r["erro_caches"], 5),
+                          "limite": round(r["limite"], 5), "confere": r["confere"]},
         } for r in res],
     }
     with open(os.path.join(pasta, "manifesto.json"), "w") as fh:
@@ -147,8 +215,8 @@ def escreve_index():
         m = json.load(open(cam))
         c = m["comum"]
         betas = " / ".join(str(x["beta"]).replace(".", ",") for x in m["cenarios"])
-        erro = max(x["resultado"]["erro_max_hrc"] for x in m["cenarios"])
-        ok = all(x["resultado"]["confere"] for x in m["cenarios"])
+        erro = max(x["resultado"].get("erro_max_hrc_curva", 0) for x in m["cenarios"])
+        ok = all(x["resultado"].get("confere", False) for x in m["cenarios"])
         linhas.append("| [%s](%s/) | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (
             m["fase"], d, m["apelido"], m["gerado_em"][:10],
             format(c["dmax"], ",").replace(",", "."), str(c["inf"]).replace(".", ","),
@@ -175,23 +243,27 @@ def etapa_distribuicao(cfg, cen, caminho, fid):
 
 # --------------------------------------------------------------- etapa 2
 def etapa_carga(cfg, cen, sd_path, caminho):
-    """Gera o trace a partir da lista de SD. Devolve as linhas de aquecimento."""
-    pmf, _ = genwl.load_sd_file(sd_path)
-    prefixo = len(pmf)                              # --emit-warmup escreve uma linha por objeto
+    """Gera o trace a partir da lista de SD, ja com o prefixo de aquecimento.
+
+    Com sd_file preenchido, gen_lrusm ignora os parametros da familia parametrica.
+    O tamanho do prefixo e len(pmf), que quem chama ja tem em maos."""
     args = SimpleNamespace(sd_file=sd_path, requests=cfg["requisicoes"], seed=cfg["semente"],
-                           emit_warmup=True, sd_dist="zipf", sd_max=cfg["dmax"],
-                           sd_beta=cen["beta"], sd_mu=6.0, sd_sigma=1.5, cold_prob=cfg["inf"])
+                           emit_warmup=True, sd_dist=None, sd_max=None, sd_beta=None,
+                           sd_mu=None, sd_sigma=None, cold_prob=None)
     buf = []
     with open(caminho, "w") as fh:
         def out(o):
             buf.append(str(o))
             if len(buf) >= 65536:
                 fh.write("\n".join(buf) + "\n"); buf.clear()
-        with contextlib.redirect_stderr(io.StringIO()):   # o aviso do --emit-warmup nao interessa aqui
+        capturado = io.StringIO()
+        with contextlib.redirect_stderr(capturado):
             genwl.gen_lrusm(args, out)
+        for linha in capturado.getvalue().splitlines():   # engole so o aviso de aquecimento
+            if "prefixo de aquecimento" not in linha:
+                print(linha, file=sys.stderr)
         if buf:
             fh.write("\n".join(buf) + "\n")
-    return prefixo
 
 
 # --------------------------------------------------------------- etapa 3
@@ -254,10 +326,18 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
     linhas_hrc = [(C, t_hit(C), m_hit(C)) for C in grade]
     linhas_cdf = [(x, t_cdf(x), m_cdf(x)) for x in grade]
     tabela = [(C, t_hit(C), m_hit(C), m_cdf(C)) for C in cfg["caches"]]
-    erro = max(abs(t - m) for _, t, m, _ in tabela)
+    # o erro e medido na CURVA INTEIRA, nao so nos caches escolhidos: um defeito no
+    # gerador pode passar longe deles. E o limite acompanha o tamanho da carga --
+    # 0,5/raiz(n) e o desvio de uma proporcao, entao a checagem aperta quando n cresce.
+    erro = max(abs(t - m) for _, t, m in linhas_hrc)
+    erro_caches = max(abs(t - m) for _, t, m, _ in tabela)
+    limite = cfg["tolerancia_sigmas"] * 0.5 / math.sqrt(n)
 
-    # histograma de SD em faixas de uma oitava (x2)
-    hist, lim = [], 1
+    # histograma de SD em faixas de uma oitava (x2). A primeira faixa e so o d = 0,
+    # que e a moda quando a localidade e forte e nao pode ficar de fora da soma.
+    zeros = bisect.bisect_left(fin, 1)
+    hist = [(0, 0, zeros, zeros / r)]
+    lim = 1
     while lim <= cfg["dmax"]:
         prox = lim * 2
         c = bisect.bisect_left(fin, prox) - bisect.bisect_left(fin, lim)
@@ -276,7 +356,8 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
         "p25": pct(.25), "p50": pct(.50), "p75": pct(.75), "p90": pct(.90), "p99": pct(.99),
         "distintos": len(set(ev)),
         "hrc": linhas_hrc, "cdf": linhas_cdf, "tabela": tabela, "hist": hist,
-        "erro_max": erro, "confere": erro <= cfg["tolerancia"],
+        "erro_max": erro, "erro_caches": erro_caches, "limite": limite,
+        "confere": erro <= limite,
     }
 
 
@@ -293,27 +374,28 @@ def grava_csvs(cfg, res, analise, fid):
     w("medidas",
       ["cenario", "rotulo", "beta", "dmax", "p_inf_alvo", "requisicoes", "aquecimento", "reusos",
        "p_inf_medido", "sd_p25", "sd_p50", "sd_p75", "sd_p90", "sd_p99", "objetos_distintos",
-       "footprint_1000req", "erro_max_hrc", "confere"],
+       "footprint_1000req", "erro_max_hrc_curva", "erro_max_hrc_caches", "limite", "confere"],
       [[r["nome"], r["rotulo"], r["beta"], cfg["dmax"], cfg["inf"], r["requisicoes"], r["prefixo"],
-        r["reusos"], round(r["p_inf_medido"], 4), r["p25"], r["p50"], r["p75"], r["p90"], r["p99"],
-        r["distintos"], round(r["fp_1k"], 1) if r["fp_1k"] else "", round(r["erro_max"], 4),
+        r["reusos"], "%.5f" % r["p_inf_medido"], r["p25"], r["p50"], r["p75"], r["p90"], r["p99"],
+        r["distintos"], round(r["fp_1k"], 1) if r["fp_1k"] else "", "%.5f" % r["erro_max"],
+        "%.5f" % r["erro_caches"], "%.5f" % r["limite"],
         "sim" if r["confere"] else "NAO"] for r in res])
 
     w("hrc", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro"],
-      [[r["nome"], C, round(t, 5), round(m, 5), round(m - t, 5)] for r in res for C, t, m in r["hrc"]])
+      [[r["nome"], C, "%.5f" % t, "%.5f" % m, "%.5f" % (m - t)] for r in res for C, t, m in r["hrc"]])
 
     w("sd_cdf", ["cenario", "d", "P(d<x)_teorico", "P(d<x)_medido"],
-      [[r["nome"], x, round(t, 5), round(m, 5)] for r in res for x, t, m in r["cdf"]])
+      [[r["nome"], x, "%.5f" % t, "%.5f" % m] for r in res for x, t, m in r["cdf"]])
 
     w("sd_histograma", ["cenario", "faixa_de", "faixa_ate", "reusos", "fracao"],
-      [[r["nome"], a, b, c, round(f, 5)] for r in res for a, b, c, f in r["hist"]])
+      [[r["nome"], a, b, c, "%.5f" % f] for r in res for a, b, c, f in r["hist"]])
 
     w("footprint", ["cenario", "janela_requisicoes", "objetos_distintos_media", "fracao_da_janela"],
-      [[r["nome"], j, round(m, 1), round(f, 4)] for r in res for j, m, f in r["fp"]])
+      [[r["nome"], j, "%.1f" % m, "%.4f" % f] for r in res for j, m, f in r["fp"]])
 
     w("conferencia", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro",
                       "fracao_reusos_que_cabem", "fracao_reusos_que_nao_cabem"],
-      [[r["nome"], C, round(t, 5), round(m, 5), round(m - t, 5), round(f, 5), round(1 - f, 5)]
+      [[r["nome"], C, "%.5f" % t, "%.5f" % m, "%.5f" % (m - t), "%.5f" % f, "%.5f" % (1 - f)]
        for r in res for C, t, m, f in r["tabela"]])
     return escritos
 
@@ -460,13 +542,15 @@ def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
                 % (r["rotulo"], n_br(C), n_br(t, 4), n_br(m, 4), n_br(m - t, 4), n_br(f * 100, 1) + "%"))
     legenda = " ".join("<span class='leg'><i style='background:var(--c%d)'></i>%s (β = %s)</span>"
                        % (i, r["rotulo"], n_br(r["beta"], 1)) for i, r in enumerate(res))
-    cores_claro = "".join("--c%d:%s;" % (i, CORES[i % 3]) for i in range(len(res)))
-    cores_escuro = "".join("--c%d:%s;" % (i, CORES_ESC[i % 3]) for i in range(len(res)))
+    cores_claro = "".join("--c%d:%s;" % (i, c) for i, c in enumerate(rampa(len(res), CORES)))
+    cores_escuro = "".join("--c%d:%s;" % (i, c) for i, c in enumerate(rampa(len(res), CORES_ESC)))
     ctx = dict(data=datetime.now().strftime("%d/%m/%Y %H:%M"), legenda=legenda,
                fase=fid, apelido=apelido, descricao=cfg.get("descricao", ""),
                cores_claro=cores_claro, cores_escuro=cores_escuro,
                dmax=n_br(cfg["dmax"]), inf=n_br(cfg["inf"] * 100, 1), req=n_br(cfg["requisicoes"]),
-               semente=cfg["semente"], tol=n_br(cfg["tolerancia"], 3),
+               semente=cfg["semente"],
+               tol="%s σ (%s nesta carga)" % (n_br(cfg["tolerancia_sigmas"], 0),
+                                              n_br(res[0]["limite"], 4)),
                linhas_res="\n".join(linhas_res), linhas_conf="\n".join(linhas_conf), **svgs)
     with open(os.path.join(AQUI, "modelo_relatorio.html")) as fh:
         modelo = fh.read()
@@ -486,17 +570,27 @@ def roda_fase(pasta, so_analise, refazer):
     for d in (dist, cargas, analise):
         os.makedirs(d, exist_ok=True)
 
+    valida(cfg, fid)
     man_path = os.path.join(pasta, "manifesto.json")
-    if os.path.exists(man_path) and not refazer and not so_analise:
-        antigo = json.load(open(man_path))
-        atual = assinatura(cfg)
-        if antigo.get("comum") != atual["comum"] or \
-           [{k: c[k] for k in ("nome", "beta", "rotulo")} for c in antigo.get("cenarios", [])] != atual["cenarios"]:
+    if os.path.exists(man_path) and not refazer:
+        # vale tambem para --so-analise: reanalisar traces antigos com parametros novos
+        # produziria um manifesto e um relatorio que descrevem uma carga que nao existe.
+        antigo, atual = json.load(open(man_path)), assinatura(cfg)
+        ger_antigo = {k: antigo.get("comum", {}).get(k) for k in GERACAO}
+        cen_antigo = [{k: c.get(k) for k in ("nome", "beta", "rotulo")}
+                      for c in antigo.get("cenarios", [])]
+        mudou = [k for k in GERACAO if ger_antigo[k] != atual["geracao"][k]]
+        if mudou or cen_antigo != atual["cenarios"]:
             raise SystemExit(
-                "o cenarios.json da fase %s mudou desde a ultima rodada.\n"
-                "Rode com --refazer para sobrescrever esta fase, ou crie outra com --nova-fase." % fid)
+                "o cenarios.json da fase %s mudou em %s desde a ultima rodada; os traces em cargas/ "
+                "foram gerados com os valores antigos.\n"
+                "Rode com --refazer para regerar esta fase, ou crie outra com --nova-fase.\n"
+                "(mexer so em caches ou tolerancia_sigmas nao exige regerar nada.)"
+                % (fid, ", ".join(mudou) if mudou else "cenarios"))
 
     print("== fase %s (%s) -- %s" % (fid, apelido, cfg.get("descricao", "sem descricao")))
+    if so_analise:
+        print("   (so analise: as cargas em cargas/ nao foram regeradas)")
     res, arquivos = [], {}
     for cen in cfg["cenarios"]:
         suf = sufixo(cen)
@@ -509,12 +603,13 @@ def roda_fase(pasta, so_analise, refazer):
         else:
             pmf, p_inf = etapa_distribuicao(cfg, cen, sd_path, fid)
             print("      1. distribuicao ->", os.path.relpath(sd_path, pasta))
-            prefixo = etapa_carga(cfg, cen, sd_path, carga_path)
+            etapa_carga(cfg, cen, sd_path, carga_path)
+            prefixo = len(pmf)                       # uma linha de aquecimento por objeto da pilha
             print("      2. carga        ->", os.path.relpath(carga_path, pasta))
         r = etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo)
         print("      3. conferencia  -> mediana da SD %d | footprint em 1.000 req %s | "
-              "erro max na HRC %.4f | %s"
-              % (r["p50"], ("%.0f" % r["fp_1k"]) if r["fp_1k"] else "-", r["erro_max"],
+              "erro max na curva %.5f (limite %.5f) | %s"
+              % (r["p50"], ("%.0f" % r["fp_1k"]) if r["fp_1k"] else "-", r["erro_max"], r["limite"],
                  "confere" if r["confere"] else "NAO CONFERE"))
         res.append(r)
         arquivos[cen["nome"]] = {"dist": os.path.relpath(sd_path, pasta),
@@ -530,12 +625,15 @@ def roda_fase(pasta, so_analise, refazer):
             "svg_hist": svg_barras(res)}
     for nome, conteudo in (("hrc", svgs["svg_hrc"]), ("sd_cdf", svgs["svg_cdf"]),
                            ("footprint", svgs["svg_fp"]), ("sd_histograma", svgs["svg_hist"])):
+        solto = (conteudo.replace("var(--rule-strong)", "#B4C3C1").replace("var(--rule)", "#D3DDDB")
+                 .replace("var(--muted)", "#5E7174").replace("var(--ink-2)", "#3A4A4C"))
+        for i, cor in enumerate(rampa(len(res), CORES)):   # o SVG solto precisa ser autocontido
+            solto = solto.replace("var(--c%d)" % i, cor)
         with open(os.path.join(analise, "%s_%s.svg" % (nome, fid)), "w") as fh:
-            fh.write(conteudo.replace("var(--rule-strong)", "#B4C3C1").replace("var(--rule)", "#D3DDDB")
-                     .replace("var(--muted)", "#5E7174").replace("var(--ink-2)", "#3A4A4C")
-                     .replace("var(--c0)", CORES[0]).replace("var(--c1)", CORES[1]).replace("var(--c2)", CORES[2]))
+            fh.write(solto)
     rel = grava_relatorio(cfg, res, svgs, analise, fid, apelido)
-    escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos)
+    escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos,
+                      "so-analise" if so_analise else "completo")
     escreve_index()
     print("\nanalise em %s | relatorio: %s" % (os.path.relpath(analise, AQUI),
                                                os.path.relpath(rel, AQUI)))
@@ -558,10 +656,12 @@ def main():
     if a.nova_fase:
         nova_fase(a.nova_fase)
         return
-    if a.fases:
-        escreve_index()
+    if a.fases:                                   # comando de leitura: nao escreve nada
         caminho = os.path.join(FASES, "INDEX.md")
-        print(open(caminho).read() if os.path.exists(caminho) else "nenhuma fase ainda")
+        if os.path.exists(caminho):
+            print(open(caminho).read())
+        else:
+            print("nenhuma fase rodada ainda; crie uma com --nova-fase <apelido>")
         return
     if not a.fase:
         fases = lista_fases()

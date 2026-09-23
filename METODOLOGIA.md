@@ -2,7 +2,8 @@
 
 *Documento de trabalho. Cresce conforme o experimento avança; cada seção descreve uma parte
 já construída e testada. Os números citados vêm das execuções reais registradas em
-`geracao/fases/f01-linha-de-base/analise/`.*
+`geracao/fases/f01-linha-de-base/analise/` (50 mil requisições por cenário) e, onde indicado, em
+`geracao/fases/f02-500k/analise/` (500 mil).*
 
 **Seções prontas:** 1 a 8.
 **Seções previstas:** amostragem de cache (SHARDS, simulação em miniatura); políticas de despejo
@@ -154,8 +155,10 @@ distance**, o que mantém o desenho experimental simples de descrever e de defen
 
 Além de β, dois parâmetros completam a distribuição:
 
-- **`d_max`** — a maior distância possível. Define a escala do experimento: nenhum reúso passa
-  disso, e o acervo de objetos disponíveis tem esse tamanho.
+- **`d_max`** — a maior stack distance possível. Define a escala do experimento: nenhum reúso
+  passa disso. Note que não é o tamanho do acervo: a pilha começa com `d_max` objetos, mas cada
+  sorteio de ∞ acrescenta um objeto novo em definitivo, então o número de objetos distintos
+  cresce ao longo da carga.
 - **`P(∞)`** — a fração de requisições a objetos novos. Mantida igual em todos os cenários, para
   que a taxa de novidade não se confunda com o efeito da localidade.
 
@@ -194,8 +197,10 @@ O trabalho é organizado em **fases**: cada fase é uma rodada de experimentaç�
 parâmetros comuns (`dmax`, `inf`, `requisicoes`, `semente`, `caches`), e o que varia entre os
 cenários daquela fase — hoje o β — entra no nome dos arquivos. Assim, `carga_f01_alta-b050.txt` é
 a carga do cenário de SD alta (β = 0,5) da fase `f01`. Cada fase registra num `manifesto.json` os
-parâmetros usados, o commit do código e o resumo dos resultados, de modo que uma rodada antiga
-continua identificável meses depois.
+parâmetros usados, o resumo dos resultados e a identificação do código: o commit, o aviso de
+árvore suja e um hash do conteúdo de `genwl.py`, `mkps.py` e `pipeline.py`. O hash é necessário
+porque o manifesto é escrito antes do commit que o inclui, então o commit sozinho não
+identificaria o código que de fato rodou.
 
 Os números desta seção e das seguintes vêm da fase `f01-linha-de-base`. Um comando roda tudo:
 
@@ -224,10 +229,25 @@ Resultados com 50.000 requisições por cenário:
 | SD alta | 100 | 0,0890 | 0,0901 | +0,0011 |
 | SD alta | 1.000 | 0,2957 | 0,2978 | +0,0021 |
 
-As curvas crescem com o tamanho do cache e saturam em 1 − P(∞) = 0,95. O erro máximo é de
-0,0057 com 50 mil requisições e cai para 0,0009 com 500 mil — é ruído
-amostral, e diminui como esperado ao aumentar a carga. A conferência não é um resultado do
-experimento: é a verificação de que o instrumento funciona.
+As curvas crescem com o tamanho do cache e saturam em 1 − P(∞) = 0,95.
+
+A conferência é feita sobre **toda a curva** — 40 tamanhos de cache, não só os quatro da tabela —,
+e o limite aceito acompanha o tamanho da carga: o desvio esperado de uma proporção é 0,5/√n, e o
+critério é cinco desses desvios. Na fase `f01`, o erro máximo é 0,0068 contra um limite de 0,0112;
+na `f02`, com dez vezes mais requisições, cai para 0,0010 contra um limite de 0,0035. É ruído
+amostral, e diminui como esperado ao aumentar a carga.
+
+Duas ressalvas sobre o que essa conferência prova e o que não prova. **Primeira:** os três
+cenários de uma fase compartilham a semente, e portanto o mesmo fluxo de números aleatórios. É um
+desenho pareado, bom para comparar cenários — a diferença entre eles não carrega ruído de
+amostragem diferente —, mas significa que as três concordâncias são três projeções de **uma
+amostra só**, não evidências independentes. **Segunda:** a conferência verifica que o trace
+reproduz a distribuição pedida; não verifica a distribuição em si. Para medir a sensibilidade do
+critério, injetamos um erro de uma unidade na distância sorteada e reexecutamos: os cenários de
+stack distance baixa e média acusaram erro de 0,37 e 0,10, muito acima do limite, e o pipeline
+falhou — mas o cenário de SD alta, cuja distribuição é larga o bastante para absorver o
+deslocamento, passou sozinho. A conferência é a verificação de que o instrumento funciona, não um
+resultado do experimento.
 
 ### "Alta" em relação a quê
 
@@ -271,8 +291,13 @@ Três consequências para o desenho experimental:
 
 1. **Não é possível fixar as duas separadamente.** Não existe "stack distance alta com footprint
    pequeno". Mexer em β move as duas juntas.
-2. **`d_max` é o teto do footprint.** A curva da carga de SD alta começa a achatar quando se
-   aproxima do acervo disponível.
+2. **`d_max` limita a parte de reúso do footprint, não o footprint.** O acervo não é fechado:
+   cada objeto novo entra em definitivo, a uma taxa de P(∞) por requisição, então o footprint
+   cresce sem teto — em janelas grandes, aproximadamente P(∞)·n. Na carga de SD alta da fase
+   `f02`, uma janela de 100 mil requisições toca cerca de 12,7 mil objetos distintos, acima do
+   `d_max` de 10.000; e a própria `f01` registra 10.170 objetos distintos com o mesmo `d_max`. O
+   que achata a curva na faixa medida é a janela ainda ser pequena diante do acervo de reúso, não
+   um teto.
 3. **O footprint deve ser reportado como medida, não como parâmetro.** Se for levantada a questão
    "a diferença observada veio da stack distance ou do footprint?", a resposta honesta é que se
    trata da mesma mudança descrita de dois modos.
@@ -379,9 +404,9 @@ admissão, ou para métricas de tempo.
 
 ```bash
 cd geracao
-python3 pipeline.py --fase f01           # a linha de base, 50.000 requisições por cenário
-python3 pipeline.py --nova-fase 500k     # cria a fase seguinte; edite o cenarios.json dela
-python3 pipeline.py --fase f02
+python3 pipeline.py --fase f01              # a linha de base, 50.000 requisições por cenário
+python3 pipeline.py --fase f02              # o tamanho do experimento, 500.000
+python3 pipeline.py --nova-fase <apelido>   # cria a fase seguinte; edite o cenarios.json dela
 ```
 
 A configuração de cada fase fica em `geracao/fases/<fase>/cenarios.json`; os detalhes de cada

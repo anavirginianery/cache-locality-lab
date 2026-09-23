@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Distribuicao da stack distance por faixa">
+<style>.gx{stroke:#D3DDDB;stroke-width:1}.ax{stroke:#B4C3C1;stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:#5E7174}.lb{font:12px system-ui,sans-serif;fill:#3A4A4C}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">0%</text>
+<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
+<text class="tk" x="54.0" y="221.0" text-anchor="end">10%</text>
+<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
+<text class="tk" x="54.0" y="154.0" text-anchor="end">20%</text>
+<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
+<text class="tk" x="54.0" y="87.0" text-anchor="end">30%</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">40%</text>
+<text class="tk" x="80.7" y="302.0" text-anchor="middle">0</text>
+<rect x="65.0" y="25.4" width="8.4" height="258.6" rx="2" fill="#63BDB5"/>
+<rect x="75.4" y="215.4" width="8.4" height="68.6" rx="2" fill="#2E9B95"/>
+<rect x="85.9" y="280.6" width="8.4" height="3.4" rx="2" fill="#08595C"/>
+<rect x="102.3" y="192.9" width="8.4" height="91.1" rx="2" fill="#63BDB5"/>
+<rect x="112.8" y="249.5" width="8.4" height="34.5" rx="2" fill="#2E9B95"/>
+<rect x="123.2" y="281.7" width="8.4" height="2.3" rx="2" fill="#08595C"/>
+<text class="tk" x="155.3" y="302.0" text-anchor="middle">2</text>
+<rect x="139.7" y="202.3" width="8.4" height="81.7" rx="2" fill="#63BDB5"/>
+<rect x="150.1" y="244.3" width="8.4" height="39.7" rx="2" fill="#2E9B95"/>
+<rect x="160.6" y="280.2" width="8.4" height="3.8" rx="2" fill="#08595C"/>
+<rect x="177.0" y="217.8" width="8.4" height="66.2" rx="2" fill="#63BDB5"/>
+<rect x="187.4" y="240.2" width="8.4" height="43.8" rx="2" fill="#2E9B95"/>
+<rect x="197.9" y="278.8" width="8.4" height="5.2" rx="2" fill="#08595C"/>
+<text class="tk" x="230.0" y="302.0" text-anchor="middle">8</text>
+<rect x="214.3" y="234.2" width="8.4" height="49.8" rx="2" fill="#63BDB5"/>
+<rect x="224.8" y="238.7" width="8.4" height="45.3" rx="2" fill="#2E9B95"/>
+<rect x="235.2" y="276.2" width="8.4" height="7.8" rx="2" fill="#08595C"/>
+<rect x="251.7" y="247.5" width="8.4" height="36.5" rx="2" fill="#63BDB5"/>
+<rect x="262.1" y="237.9" width="8.4" height="46.1" rx="2" fill="#2E9B95"/>
+<rect x="272.6" y="273.0" width="8.4" height="11.0" rx="2" fill="#08595C"/>
+<text class="tk" x="304.7" y="302.0" text-anchor="middle">32</text>
+<rect x="289.0" y="257.7" width="8.4" height="26.3" rx="2" fill="#63BDB5"/>
+<rect x="299.4" y="237.3" width="8.4" height="46.7" rx="2" fill="#2E9B95"/>
+<rect x="309.9" y="268.2" width="8.4" height="15.8" rx="2" fill="#08595C"/>
+<rect x="326.3" y="265.1" width="8.4" height="18.9" rx="2" fill="#63BDB5"/>
+<rect x="336.8" y="237.0" width="8.4" height="47.0" rx="2" fill="#2E9B95"/>
+<rect x="347.2" y="261.5" width="8.4" height="22.5" rx="2" fill="#08595C"/>
+<text class="tk" x="379.3" y="302.0" text-anchor="middle">128</text>
+<rect x="363.7" y="270.4" width="8.4" height="13.6" rx="2" fill="#63BDB5"/>
+<rect x="374.1" y="236.9" width="8.4" height="47.1" rx="2" fill="#2E9B95"/>
+<rect x="384.6" y="252.2" width="8.4" height="31.8" rx="2" fill="#08595C"/>
+<rect x="401.0" y="274.5" width="8.4" height="9.5" rx="2" fill="#63BDB5"/>
+<rect x="411.4" y="236.5" width="8.4" height="47.5" rx="2" fill="#2E9B95"/>
+<rect x="421.9" y="239.5" width="8.4" height="44.5" rx="2" fill="#08595C"/>
+<text class="tk" x="454.0" y="302.0" text-anchor="middle">512</text>
+<rect x="438.3" y="277.3" width="8.4" height="6.7" rx="2" fill="#63BDB5"/>
+<rect x="448.8" y="236.6" width="8.4" height="47.4" rx="2" fill="#2E9B95"/>
+<rect x="459.2" y="220.4" width="8.4" height="63.6" rx="2" fill="#08595C"/>
+<rect x="475.7" y="279.3" width="8.4" height="4.7" rx="2" fill="#63BDB5"/>
+<rect x="486.1" y="236.9" width="8.4" height="47.1" rx="2" fill="#2E9B95"/>
+<rect x="496.6" y="195.0" width="8.4" height="89.0" rx="2" fill="#08595C"/>
+<text class="tk" x="528.7" y="302.0" text-anchor="middle">2.048</text>
+<rect x="513.0" y="280.5" width="8.4" height="3.5" rx="2" fill="#63BDB5"/>
+<rect x="523.4" y="236.5" width="8.4" height="47.5" rx="2" fill="#2E9B95"/>
+<rect x="533.9" y="158.1" width="8.4" height="125.9" rx="2" fill="#08595C"/>
+<rect x="550.3" y="281.6" width="8.4" height="2.4" rx="2" fill="#63BDB5"/>
+<rect x="560.8" y="236.2" width="8.4" height="47.8" rx="2" fill="#2E9B95"/>
+<rect x="571.2" y="105.0" width="8.4" height="179.0" rx="2" fill="#08595C"/>
+<text class="tk" x="603.3" y="302.0" text-anchor="middle">8.192</text>
+<rect x="587.7" y="283.5" width="8.4" height="0.5" rx="2" fill="#63BDB5"/>
+<rect x="598.1" y="270.2" width="8.4" height="13.8" rx="2" fill="#2E9B95"/>
+<rect x="608.6" y="219.5" width="8.4" height="64.5" rx="2" fill="#08595C"/>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">stack distance (faixas dobrando)</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">% dos reusos</text>
+</svg>

@@ -2,10 +2,18 @@
   "fase": "f01",
   "apelido": "linha-de-base",
   "descricao": "Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil",
-  "gerado_em": "2026-09-23T11:02:45",
+  "gerado_em": "2026-09-23T11:54:08",
+  "modo": "so-analise",
   "codigo": {
-    "commit": "c9bc478",
-    "limpo": false
+    "commit": "6e67f11",
+    "limpo": false,
+    "git_disponivel": true,
+    "hash_arquivos": "a826d57eadd6",
+    "arquivos": [
+      "lib/genwl.py",
+      "lib/mkps.py",
+      "geracao/pipeline.py"
+    ]
   },
   "comum": {
     "dmax": 10000,
@@ -18,7 +26,7 @@
       1000,
       10000
     ],
-    "tolerancia": 0.02
+    "tolerancia_sigmas": 5
   },
   "cenarios": [
     {
@@ -37,7 +45,9 @@
         "footprint_1000req": 138.1,
         "objetos_distintos": 3118,
         "p_inf_medido": 0.0484,
-        "erro_max_hrc": 0.0052,
+        "erro_max_hrc_curva": 0.00675,
+        "erro_max_hrc_caches": 0.00523,
+        "limite": 0.01118,
         "confere": true
       }
     },
@@ -57,7 +67,9 @@
         "footprint_1000req": 430.9,
         "objetos_distintos": 7125,
         "p_inf_medido": 0.0484,
-        "erro_max_hrc": 0.0057,
+        "erro_max_hrc_curva": 0.00681,
+        "erro_max_hrc_caches": 0.00571,
+        "limite": 0.01118,
         "confere": true
       }
     },
@@ -77,7 +89,9 @@
         "footprint_1000req": 818.3,
         "objetos_distintos": 10170,
         "p_inf_medido": 0.0484,
-        "erro_max_hrc": 0.0021,
+        "erro_max_hrc_curva": 0.00635,
+        "erro_max_hrc_caches": 0.00205,
+        "limite": 0.01118,
         "confere": true
       }
     }

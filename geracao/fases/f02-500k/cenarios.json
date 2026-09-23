@@ -1,8 +1,8 @@
 {
-  "descricao": "Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil",
+  "descricao": "Tamanho do experimento: os mesmos tres cenarios da f01 com 500 mil requisicoes",
   "dmax": 10000,
   "inf": 0.05,
-  "requisicoes": 50000,
+  "requisicoes": 500000,
   "semente": 7,
   "caches": [
     10,

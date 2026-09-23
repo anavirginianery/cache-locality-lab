@@ -11,7 +11,7 @@ distribuição de SD   →   carga (trace)   →   conferência
 
 ```bash
 python3 pipeline.py --fase f01     # roda a fase f01
-python3 pipeline.py --fases        # lista as fases já rodadas
+python3 pipeline.py --fases        # lista as fases já rodadas (só lê, não escreve nada)
 ```
 
 O resultado principal é o `relatorio_<fase>.html` dentro de `analise/` — abra no navegador.
@@ -58,13 +58,19 @@ O apelido fica só no nome da pasta, então você pode renomeá-lo depois sem qu
 Se o `cenarios.json` de uma fase mudar depois de ela ter sido rodada, o pipeline recusa:
 
 ```
-o cenarios.json da fase f01 mudou desde a ultima rodada.
-Rode com --refazer para sobrescrever esta fase, ou crie outra com --nova-fase.
+o cenarios.json da fase f01 mudou em dmax desde a ultima rodada; os traces em cargas/ foram
+gerados com os valores antigos.
+Rode com --refazer para regerar esta fase, ou crie outra com --nova-fase.
 ```
+
+A verificação olha só o que muda as cargas (`dmax`, `inf`, `requisicoes`, `semente` e a lista de
+cenários) e vale inclusive para `--so-analise`, que reanalisa traces já gravados: reanalisá-los
+com parâmetros novos produziria um manifesto e um relatório descrevendo uma carga que não existe.
+Mexer em `caches` ou em `tolerancia_sigmas` muda só a análise e não exige regerar nada.
 
 Isso evita o caso de você ajustar um parâmetro, rodar de novo, e ficar com arquivos de duas
 configurações diferentes com o mesmo nome. Para uma rodada maior — 500 mil requisições em vez de
-50 mil — o certo é **criar outra fase**, não sobrescrever a existente.
+50 mil — o certo é **criar outra fase**, não sobrescrever a existente. É o que a `f02-500k` faz.
 
 ---
 
@@ -154,7 +160,7 @@ análises usam a curva de hit rate.)
 | `.../analise/medidas_*.csv` | Uma linha por cenário: percentis da SD, footprint, objetos distintos, erro. |
 | `.../analise/hrc_*.csv` | Curva de hit rate, teórica e medida, ponto a ponto. |
 | `.../analise/sd_cdf_*.csv` | Acumulada da SD, teórica e medida. |
-| `.../analise/sd_histograma_*.csv` | Quantos reúsos em cada faixa de SD (faixas dobrando: 1, 2, 4, 8, …). |
+| `.../analise/sd_histograma_*.csv` | Quantos reúsos em cada faixa de SD. A primeira faixa é só o d = 0, que costuma ser a moda; as seguintes dobram (1, 2, 4, 8, …). As frações somam 1. |
 | `.../analise/footprint_*.csv` | Footprint: objetos distintos por janela de N requisições, em média. |
 | `.../analise/conferencia_*.csv` | Hit teórico × medido em cada tamanho de cache, e a fração de reúsos que cabem (e que não cabem) nele. |
 | `.../analise/*.svg` | Os quatro gráficos soltos, prontos para entrar em um documento. |
@@ -168,9 +174,9 @@ análises usam a curva de hit rate.)
 | `dmax` | Maior stack distance possível. Define a escala: nenhum reúso passa disso. |
 | `inf` | Fração das requisições que são objetos novos. Igual em todos os cenários da fase, para não misturar novidade com localidade. |
 | `requisicoes` | Tamanho da carga, sem contar o aquecimento. |
-| `semente` | Fixa o sorteio: a mesma semente gera exatamente a mesma carga. |
+| `semente` | Fixa o sorteio: a mesma semente gera exatamente a mesma carga. Os cenários da fase compartilham a semente — desenho pareado, bom para comparar cenários, mas as conferências deles não são independentes entre si. |
 | `caches` | Tamanhos de cache usados na conferência e no relatório. Coloque aqui os tamanhos do seu experimento. |
-| `tolerancia` | Erro máximo aceito entre hit medido e teórico para o cenário ser marcado como "confere". |
+| `tolerancia_sigmas` | Quantos desvios de amostragem (0,5/√n) o erro pode ter para o cenário ser marcado como "confere". Com 5, o limite é 0,0112 numa carga de 50 mil e 0,0035 numa de 500 mil. |
 | `cenarios[]` | `nome` (entra no nome dos arquivos), `beta` e `rotulo` (o nome que aparece no relatório). |
 
 Para acrescentar um cenário, basta mais uma entrada na lista:
@@ -188,15 +194,18 @@ python3 pipeline.py --fase f01 --so-analise
 
 ## Como ler os resultados
 
-- **SD mediana** — metade dos reúsos teve distância menor que esse valor. É o resumo mais direto
-  do nível de stack distance da carga.
+- **SD mediana** — metade dos reúsos teve distância menor **ou igual a** esse valor. É o resumo
+  mais direto do nível de stack distance da carga. (O "ou igual" importa: no cenário de SD baixa a
+  mediana é 1, mas 38,8% dos reúsos têm distância 0.)
 - **SD p90** — 90% dos reúsos ficaram abaixo desse valor. Mostra o alcance da cauda.
 - **Reúsos que cabem** — a fração que aquele tamanho de cache consegue atender. A fração
   complementar, dos que não cabem, é o número para dizer "esta carga tem stack distance alta
   **para um cache de C objetos**".
-- **Erro** — hit medido menos hit teórico. Perto de zero significa que a carga reproduz a
-  distribuição pedida; é a conferência do gerador, não um resultado do experimento. Com 50 mil
-  requisições fica na casa de 0,005; com 500 mil, cai para 0,001.
+- **Erro** — hit medido menos hit teórico, tomado sobre **toda a curva** (40 tamanhos de cache),
+  não só sobre os da tabela. Perto de zero significa que a carga reproduz a distribuição pedida;
+  é a conferência do gerador, não um resultado do experimento. Com 50 mil requisições fica em
+  0,0068; com 500 mil, em 0,0010. O limite aceito é `tolerancia_sigmas × 0,5/√n`, então aperta
+  conforme a carga cresce.
 - **Objetos distintos** — quantos objetos diferentes apareceram. Não é um parâmetro: emerge do
   nível de stack distance (quanto maior a SD, mais objetos ficam ativos).
 - **Footprint** — quantos objetos distintos aparecem numa janela de N requisições. Também emerge

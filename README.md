@@ -41,8 +41,10 @@ python3 pipeline.py --fase f01          # roda a fase f01 (a linha de base)
 python3 pipeline.py --nova-fase 500k    # cria a fase seguinte para você configurar
 ```
 
-O resultado principal é o `relatorio_<fase>.html` dentro de `fases/<fase>/analise/`. Não há
-dependências além do Python 3 — nem numpy, nem pacote nenhum.
+O resultado principal é o `relatorio_<fase>.html` dentro de `fases/<fase>/analise/`. Tudo roda
+com a biblioteca padrão do Python 3. O numpy é opcional e serve apenas para acelerar um dos
+construtores de distribuição (`mkps irm`); com ou sem ele o resultado é o mesmo, e o arquivo
+gerado registra qual caminho foi usado.
 
 O pipeline roda três etapas encadeadas:
 
@@ -51,9 +53,9 @@ distribuição de SD   →   carga (trace)   →   conferência
   dist/sd_*.txt          cargas/carga_*.txt    analise/
 ```
 
-A conferência compara cada medida da carga gerada com o valor teórico calculado diretamente da
-distribuição. Na fase `f01`, o erro máximo entre hit rate medido e teórico é de 0,006 com 50 mil
-requisições; com 500 mil, cai para 0,001.
+A conferência compara a curva medida com a curva teórica calculada diretamente da distribuição,
+ponto a ponto, e o limite aceito acompanha o tamanho da carga. Na fase `f01` (50 mil requisições)
+o erro máximo é 0,0068 contra um limite de 0,0112; na `f02` (500 mil), 0,0010 contra 0,0035.
 
 ## Estrutura
 
@@ -68,7 +70,8 @@ requisições; com 500 mil, cai para 0,001.
 │   ├── pipeline.py
 │   └── fases/
 │       ├── INDEX.md      uma linha por fase
-│       └── f01-linha-de-base/
+│       ├── f01-linha-de-base/   50 mil requisições, para validar
+│       └── f02-500k/
 │           ├── cenarios.json   a configuração desta fase
 │           ├── manifesto.json  parâmetros, commit e resumo dos resultados
 │           ├── dist/     as distribuições de SD (versionadas)
