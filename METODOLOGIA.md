@@ -9,6 +9,9 @@ já construída e testada. Os números citados vêm das execuções reais regist
 **Seções previstas:** amostragem de cache (SHARDS, simulação em miniatura); políticas de despejo
 além de LRU.
 
+O desenho do estudo — variáveis, valores e hipóteses — está em [`EXPERIMENTO.md`](EXPERIMENTO.md).
+Este documento trata do instrumento; aquele, do que se faz com ele.
+
 ---
 
 ## 1. Por que gerar a carga

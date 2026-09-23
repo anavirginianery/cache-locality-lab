@@ -15,8 +15,10 @@ hit(C) = (1 − P(∞)) · P(d < C)
 Isso torna a distribuição de stack distance uma variável de experimento: fixando-a, a curva de
 hit rate é conhecida antes de qualquer simulação, e serve de gabarito para conferir tudo o mais.
 
-A fundamentação, as decisões de modelagem e os resultados estão em **[`METODOLOGIA.md`](METODOLOGIA.md)**,
-que é um documento vivo e cresce junto com o experimento.
+Dois documentos acompanham o código e crescem junto com ele:
+**[`METODOLOGIA.md`](METODOLOGIA.md)**, com a fundamentação, as decisões de modelagem e os
+resultados do instrumento; e **[`EXPERIMENTO.md`](EXPERIMENTO.md)**, com o desenho do estudo —
+variáveis, valores escolhidos e o que se espera de cada parte.
 
 ## As três partes
 
