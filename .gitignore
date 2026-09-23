@@ -1,0 +1,8 @@
+# traces gerados: grandes e reprodutiveis pela semente do cenario
+geracao/cargas/*.txt
+simulacao/cargas/*.txt
+amostragem/cargas/*.txt
+
+__pycache__/
+*.pyc
+.DS_Store

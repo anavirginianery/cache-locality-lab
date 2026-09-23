@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conferência das cargas geradas</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#F3F6F5; --surface:#FFFFFF; --surface-2:#EAEFEE;
+  --ink:#111819; --ink-2:#3A4A4C; --muted:#5E7174;
+  --rule:#D3DDDB; --rule-strong:#B4C3C1;
+  --accent:#0D6B6D; --accent-soft:#DCEAE9;
+  --ok:#1F7A45; --ruim:#A33A20; --code:#EDF2F1;
+  --c0:#63BDB5;--c1:#2E9B95;--c2:#08595C;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1315; --surface:#141D1F; --surface-2:#192427;
+    --ink:#E3EBE9; --ink-2:#B7C6C5; --muted:#8CA2A2;
+    --rule:#263336; --rule-strong:#39494C;
+    --accent:#57C2BF; --accent-soft:#14312F;
+    --ok:#5CC48A; --ruim:#E08163; --code:#101A1C;
+    --c0:#16706C;--c1:#2FA8A2;--c2:#7FD6CF;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);
+  font:16px/1.6 "Source Serif 4",Georgia,serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:44px 24px 80px}
+h1{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:clamp(26px,4vw,38px);
+  line-height:1.05;letter-spacing:-.02em;margin:0 0 10px}
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:20px;letter-spacing:-.01em;margin:40px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.meta{font-family:ui-monospace,"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 24px}
+.hint{font-size:13.5px;color:var(--muted);max-width:68ch}
+.legendas{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 10px;font-size:13.5px;color:var(--ink-2);
+  font-family:Archivo,sans-serif}
+.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:7px;vertical-align:middle}
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px 8px;margin:0 0 10px}
+.fig svg{display:block;width:100%;height:auto}
+.scroller{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface);margin:0 0 12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:Archivo,sans-serif;font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.n,th.n{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.ok{color:var(--ok);font-weight:600;font-size:13px}
+td.ruim{color:var(--ruim);font-weight:600;font-size:13px}
+.pt{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:baseline}
+code{font-family:ui-monospace,monospace;font-size:.86em;background:var(--code);padding:.1em .34em;border-radius:3px}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;padding:12px 16px}
+.card b{font-family:Archivo,sans-serif;font-size:13px;display:block;color:var(--muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Conferência das cargas geradas</h1>
+<div class="meta">
+  <span>gerado em 23/09/2026 10:31</span>
+  <span>50.000 requisições por cenário</span>
+  <span>d<sub>max</sub> = 10.000</span>
+  <span>objetos novos = 5,0%</span>
+  <span>semente = 7</span>
+</div>
+
+<p>Cada cenário foi gerado a partir de uma distribuição de stack distance conhecida. Como a distribuição é conhecida,
+todo valor medido na carga tem um valor teórico correspondente, calculado sem simular nada. As linhas dos gráficos são
+o <strong>medido</strong>; os círculos vazados são o <strong>teórico</strong>. Se os dois coincidem, a carga saiu como foi pedida.</p>
+<p>As curvas são de <strong>hit rate</strong>: a fração das requisições atendidas por um cache LRU de cada tamanho.
+O valor teórico vem direto da distribuição de stack distance, por <code>hit(C) = (1 − P(∞)) · P(d &lt; C)</code> — acerta
+quem é reúso e cuja stack distance cabe no cache.</p>
+
+<h2>Resumo por cenário</h2>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">β</th><th class="n">SD mediana</th><th class="n">SD p90</th>
+  <th class="n">SD p99</th><th class="n">footprint em 1.000 req</th><th class="n">objetos novos</th>
+  <th class="n">objetos distintos</th><th>conferência</th></tr></thead>
+  <tbody>
+<tr><td><span class='pt' style='background:var(--c0)'></span>SD baixa</td><td class='n'>1,5</td><td class='n'>1</td><td class='n'>49</td><td class='n'>1.749</td><td class='n'>138</td><td class='n'>4,8%</td><td class='n'>3.118</td><td class='ok'>confere (erro 0,0052)</td></tr>
+<tr><td><span class='pt' style='background:var(--c1)'></span>SD media</td><td class='n'>1,0</td><td class='n'>72</td><td class='n'>3.713</td><td class='n'>9.003</td><td class='n'>431</td><td class='n'>4,8%</td><td class='n'>7.125</td><td class='ok'>confere (erro 0,0057)</td></tr>
+<tr><td><span class='pt' style='background:var(--c2)'></span>SD alta</td><td class='n'>0,5</td><td class='n'>2.510</td><td class='n'>8.091</td><td class='n'>9.788</td><td class='n'>818</td><td class='n'>4,8%</td><td class='n'>10.170</td><td class='ok'>confere (erro 0,0021)</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="hint">A conferência compara o hit rate medido com o teórico em cada tamanho de cache; o erro mostrado é o maior deles.
+Tolerância configurada: 0,020.</p>
+
+<h2>Curva de hit rate</h2>
+<div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Curva de hit rate">
+<style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">0%</text>
+<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
+<text class="tk" x="54.0" y="221.0" text-anchor="end">25%</text>
+<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
+<text class="tk" x="54.0" y="154.0" text-anchor="end">50%</text>
+<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
+<text class="tk" x="54.0" y="87.0" text-anchor="end">75%</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">100%</text>
+<text class="tk" x="62.0" y="302.0" text-anchor="start">1</text>
+<text class="tk" x="202.0" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="342.0" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="482.0" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">tamanho do cache (objetos)</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">hit rate</text>
+<path d="M62.0,185.0L104.1,149.7L128.8,130.8L146.3,118.4L170.9,102.8L180.3,97.3L195.6,89.6L207.8,83.9L218.0,79.6L230.6,74.6L244.1,69.8L257.7,65.5L270.8,61.8L283.2,58.5L296.1,55.2L309.9,52.3L322.9,49.8L335.6,47.5L348.3,45.5L361.6,43.5L374.6,41.7L387.7,40.2L400.6,38.8L413.7,37.5L426.6,36.4L439.7,35.4L452.7,34.6L465.7,33.9L478.8,33.2L491.8,32.5L504.8,32.0L517.8,31.5L530.8,31.0L543.9,30.7L556.9,30.3L569.9,29.9L582.9,29.6L596.0,29.4L609.0,29.2L622.0,29.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="185.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="170.9" cy="104.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="218.0" cy="80.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="270.8" cy="62.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="322.9" cy="50.3" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="374.6" cy="42.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="426.6" cy="37.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="478.8" cy="33.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="530.8" cy="31.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="582.9" cy="30.1" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<path d="M62.0,257.7L104.1,244.4L128.8,235.8L146.3,229.4L170.9,219.8L180.3,216.0L195.6,210.0L207.8,204.9L218.0,200.5L230.6,195.4L244.1,189.4L257.7,183.9L270.8,178.1L283.2,173.2L296.1,167.5L309.9,161.6L322.9,156.3L335.6,150.4L348.3,144.9L361.6,139.3L374.6,133.8L387.7,128.2L400.6,122.6L413.7,117.1L426.6,111.6L439.7,105.7L452.7,100.1L465.7,94.4L478.8,89.3L491.8,83.7L504.8,78.2L517.8,72.8L530.8,67.5L543.9,62.2L556.9,56.5L569.9,51.0L582.9,45.6L596.0,39.9L609.0,34.3L622.0,29.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="258.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="170.9" cy="220.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="218.0" cy="201.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="270.8" cy="179.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="322.9" cy="157.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="374.6" cy="135.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="426.6" cy="113.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="478.8" cy="90.7" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="530.8" cy="68.4" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="582.9" cy="46.1" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<path d="M62.0,282.6L104.1,281.7L128.8,281.0L146.3,280.3L170.9,279.2L180.3,278.8L195.6,277.9L207.8,277.0L218.0,276.3L230.6,275.3L244.1,274.0L257.7,272.7L270.8,271.4L283.2,269.9L296.1,268.1L309.9,265.9L322.9,263.7L335.6,261.3L348.3,258.5L361.6,255.4L374.6,251.9L387.7,248.0L400.6,243.7L413.7,238.8L426.6,234.1L439.7,228.3L452.7,221.6L465.7,214.4L478.8,206.4L491.8,197.3L504.8,187.2L517.8,175.8L530.8,163.7L543.9,149.6L556.9,134.5L569.9,117.4L582.9,98.2L596.0,77.6L609.0,54.7L622.0,29.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="282.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="170.9" cy="279.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="218.0" cy="276.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="270.8" cy="271.5" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="322.9" cy="263.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="374.6" cy="252.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="426.6" cy="234.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="478.8" cy="206.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="530.8" cy="164.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="582.9" cy="99.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+</svg></div>
+<p class="hint">Quanto mais alta a curva, melhor o cache se sai. A carga de SD alta precisa de um cache muito maior para
+chegar ao mesmo hit rate das outras. O teto de todas é 1 − P(∞): objeto novo nunca pode ser acerto.</p>
+
+<h2>Acumulada da stack distance</h2>
+<div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Acumulada da stack distance">
+<style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">0%</text>
+<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
+<text class="tk" x="54.0" y="221.0" text-anchor="end">25%</text>
+<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
+<text class="tk" x="54.0" y="154.0" text-anchor="end">50%</text>
+<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
+<text class="tk" x="54.0" y="87.0" text-anchor="end">75%</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">100%</text>
+<text class="tk" x="62.0" y="302.0" text-anchor="start">1</text>
+<text class="tk" x="202.0" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="342.0" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="482.0" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">stack distance x</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">% dos reúsos com SD menor que x</text>
+<path d="M62.0,179.9L104.1,142.8L128.8,123.0L146.3,109.9L170.9,93.5L180.3,87.8L195.6,79.7L207.8,73.7L218.0,69.2L230.6,64.0L244.1,58.9L257.7,54.3L270.8,50.5L283.2,47.0L296.1,43.6L309.9,40.5L322.9,37.9L335.6,35.5L348.3,33.4L361.6,31.2L374.6,29.4L387.7,27.8L400.6,26.3L413.7,25.0L426.6,23.8L439.7,22.7L452.7,21.9L465.7,21.1L478.8,20.4L491.8,19.7L504.8,19.2L517.8,18.6L530.8,18.1L543.9,17.8L556.9,17.4L569.9,17.0L582.9,16.7L596.0,16.4L609.0,16.2L622.0,16.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="180.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="170.9" cy="95.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="218.0" cy="70.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="270.8" cy="50.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="322.9" cy="38.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="374.6" cy="29.7" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="426.6" cy="24.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="478.8" cy="20.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="530.8" cy="18.3" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="582.9" cy="16.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<path d="M62.0,256.4L104.1,242.4L128.8,233.4L146.3,226.7L170.9,216.6L180.3,212.6L195.6,206.3L207.8,200.9L218.0,196.3L230.6,190.9L244.1,184.6L257.7,178.8L270.8,172.7L283.2,167.5L296.1,161.6L309.9,155.4L322.9,149.8L335.6,143.6L348.3,137.8L361.6,131.9L374.6,126.2L387.7,120.3L400.6,114.4L413.7,108.6L426.6,102.8L439.7,96.6L452.7,90.8L465.7,84.8L478.8,79.4L491.8,73.5L504.8,67.7L517.8,62.1L530.8,56.4L543.9,50.9L556.9,45.0L569.9,39.2L582.9,33.5L596.0,27.5L609.0,21.5L622.0,16.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="256.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="170.9" cy="216.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="218.0" cy="196.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="270.8" cy="173.7" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="322.9" cy="150.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="374.6" cy="127.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="426.6" cy="104.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="478.8" cy="80.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="530.8" cy="57.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="582.9" cy="33.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<path d="M62.0,282.6L104.1,281.6L128.8,280.9L146.3,280.1L170.9,279.0L180.3,278.5L195.6,277.6L207.8,276.6L218.0,275.9L230.6,274.8L244.1,273.5L257.7,272.2L270.8,270.7L283.2,269.2L296.1,267.3L309.9,265.0L322.9,262.6L335.6,260.1L348.3,257.2L361.6,253.9L374.6,250.3L387.7,246.2L400.6,241.6L413.7,236.5L426.6,231.5L439.7,225.4L452.7,218.4L465.7,210.9L478.8,202.4L491.8,192.9L504.8,182.2L517.8,170.3L530.8,157.5L543.9,142.7L556.9,126.9L569.9,108.9L582.9,88.7L596.0,67.1L609.0,43.1L622.0,16.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="282.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="170.9" cy="279.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="218.0" cy="276.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="270.8" cy="270.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="322.9" cy="262.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="374.6" cy="250.6" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="426.6" cy="231.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="478.8" cy="202.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="530.8" cy="158.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="582.9" cy="90.2" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+</svg></div>
+<p class="hint">Lê-se assim: no ponto x, a curva diz qual porcentagem dos reúsos tem stack distance menor que x — ou seja,
+quantos reúsos caberiam num cache de x objetos.</p>
+
+<h2>Distribuição da stack distance</h2>
+<div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Distribuicao da stack distance por faixa">
+<style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">0%</text>
+<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
+<text class="tk" x="54.0" y="221.0" text-anchor="end">8%</text>
+<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
+<text class="tk" x="54.0" y="154.0" text-anchor="end">15%</text>
+<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
+<text class="tk" x="54.0" y="87.0" text-anchor="end">22%</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">30%</text>
+<text class="tk" x="82.0" y="302.0" text-anchor="middle">1</text>
+<rect x="65.0" y="160.2" width="9.3" height="123.8" rx="2" fill="var(--c0)"/>
+<rect x="76.3" y="237.2" width="9.3" height="46.8" rx="2" fill="var(--c1)"/>
+<rect x="87.7" y="280.8" width="9.3" height="3.2" rx="2" fill="var(--c2)"/>
+<rect x="105.0" y="174.4" width="9.3" height="109.6" rx="2" fill="var(--c0)"/>
+<rect x="116.3" y="231.7" width="9.3" height="52.3" rx="2" fill="var(--c1)"/>
+<rect x="127.7" y="278.9" width="9.3" height="5.1" rx="2" fill="var(--c2)"/>
+<text class="tk" x="162.0" y="302.0" text-anchor="middle">4</text>
+<rect x="145.0" y="195.2" width="9.3" height="88.8" rx="2" fill="var(--c0)"/>
+<rect x="156.3" y="225.8" width="9.3" height="58.2" rx="2" fill="var(--c1)"/>
+<rect x="167.7" y="277.2" width="9.3" height="6.8" rx="2" fill="var(--c2)"/>
+<rect x="185.0" y="219.7" width="9.3" height="64.3" rx="2" fill="var(--c0)"/>
+<rect x="196.3" y="222.8" width="9.3" height="61.2" rx="2" fill="var(--c1)"/>
+<rect x="207.7" y="273.3" width="9.3" height="10.7" rx="2" fill="var(--c2)"/>
+<text class="tk" x="242.0" y="302.0" text-anchor="middle">16</text>
+<rect x="225.0" y="237.2" width="9.3" height="46.8" rx="2" fill="var(--c0)"/>
+<rect x="236.3" y="220.6" width="9.3" height="63.4" rx="2" fill="var(--c1)"/>
+<rect x="247.7" y="269.4" width="9.3" height="14.6" rx="2" fill="var(--c2)"/>
+<rect x="265.0" y="248.7" width="9.3" height="35.3" rx="2" fill="var(--c0)"/>
+<rect x="276.3" y="222.1" width="9.3" height="61.9" rx="2" fill="var(--c1)"/>
+<rect x="287.7" y="263.3" width="9.3" height="20.7" rx="2" fill="var(--c2)"/>
+<text class="tk" x="322.0" y="302.0" text-anchor="middle">64</text>
+<rect x="305.0" y="259.4" width="9.3" height="24.6" rx="2" fill="var(--c0)"/>
+<rect x="316.3" y="219.3" width="9.3" height="64.7" rx="2" fill="var(--c1)"/>
+<rect x="327.7" y="253.7" width="9.3" height="30.3" rx="2" fill="var(--c2)"/>
+<rect x="345.0" y="265.6" width="9.3" height="18.4" rx="2" fill="var(--c0)"/>
+<rect x="356.3" y="221.0" width="9.3" height="63.0" rx="2" fill="var(--c1)"/>
+<rect x="367.7" y="240.6" width="9.3" height="43.4" rx="2" fill="var(--c2)"/>
+<text class="tk" x="402.0" y="302.0" text-anchor="middle">256</text>
+<rect x="385.0" y="271.2" width="9.3" height="12.8" rx="2" fill="var(--c0)"/>
+<rect x="396.3" y="220.5" width="9.3" height="63.5" rx="2" fill="var(--c1)"/>
+<rect x="407.7" y="225.9" width="9.3" height="58.1" rx="2" fill="var(--c2)"/>
+<rect x="425.0" y="275.7" width="9.3" height="8.3" rx="2" fill="var(--c0)"/>
+<rect x="436.3" y="221.9" width="9.3" height="62.1" rx="2" fill="var(--c1)"/>
+<rect x="447.7" y="198.6" width="9.3" height="85.4" rx="2" fill="var(--c2)"/>
+<text class="tk" x="482.0" y="302.0" text-anchor="middle">1.024</text>
+<rect x="465.0" y="278.0" width="9.3" height="6.0" rx="2" fill="var(--c0)"/>
+<rect x="476.3" y="222.1" width="9.3" height="61.9" rx="2" fill="var(--c1)"/>
+<rect x="487.7" y="163.4" width="9.3" height="120.6" rx="2" fill="var(--c2)"/>
+<rect x="505.0" y="279.8" width="9.3" height="4.2" rx="2" fill="var(--c0)"/>
+<rect x="516.3" y="222.2" width="9.3" height="61.8" rx="2" fill="var(--c1)"/>
+<rect x="527.7" y="114.1" width="9.3" height="169.9" rx="2" fill="var(--c2)"/>
+<text class="tk" x="562.0" y="302.0" text-anchor="middle">4.096</text>
+<rect x="545.0" y="281.1" width="9.3" height="2.9" rx="2" fill="var(--c0)"/>
+<rect x="556.3" y="220.8" width="9.3" height="63.2" rx="2" fill="var(--c1)"/>
+<rect x="567.7" y="48.7" width="9.3" height="235.3" rx="2" fill="var(--c2)"/>
+<rect x="585.0" y="283.3" width="9.3" height="0.7" rx="2" fill="var(--c0)"/>
+<rect x="596.3" y="266.7" width="9.3" height="17.3" rx="2" fill="var(--c1)"/>
+<rect x="607.7" y="199.6" width="9.3" height="84.4" rx="2" fill="var(--c2)"/>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">stack distance (faixas dobrando)</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">% dos reusos</text>
+</svg></div>
+<p class="hint">As faixas dobram de tamanho a cada passo (1, 2, 4, 8, …), porque a stack distance varia por ordens de grandeza.</p>
+
+<h2>Footprint</h2>
+<div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Footprint">
+<style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">1</text>
+<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
+<text class="tk" x="54.0" y="221.0" text-anchor="end">10</text>
+<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
+<text class="tk" x="54.0" y="154.0" text-anchor="end">100</text>
+<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
+<text class="tk" x="54.0" y="87.0" text-anchor="end">1.000</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">10.000</text>
+<text class="tk" x="62.0" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="248.7" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="435.3" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">tamanho da janela (requisições)</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">objetos distintos</text>
+<path d="M62.0,235.8L151.1,213.9L248.7,189.4L337.7,166.3L435.3,140.6L524.4,116.6L622.0,89.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="235.8" r="3" fill="var(--c0)"/>
+<circle cx="151.1" cy="213.9" r="3" fill="var(--c0)"/>
+<circle cx="248.7" cy="189.4" r="3" fill="var(--c0)"/>
+<circle cx="337.7" cy="166.3" r="3" fill="var(--c0)"/>
+<circle cx="435.3" cy="140.6" r="3" fill="var(--c0)"/>
+<circle cx="524.4" cy="116.6" r="3" fill="var(--c0)"/>
+<circle cx="622.0" cy="89.0" r="3" fill="var(--c0)"/>
+<path d="M62.0,222.4L151.1,194.2L248.7,163.9L337.7,136.4L435.3,107.5L524.4,82.2L622.0,56.1" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="222.4" r="3" fill="var(--c1)"/>
+<circle cx="151.1" cy="194.2" r="3" fill="var(--c1)"/>
+<circle cx="248.7" cy="163.9" r="3" fill="var(--c1)"/>
+<circle cx="337.7" cy="136.4" r="3" fill="var(--c1)"/>
+<circle cx="435.3" cy="107.5" r="3" fill="var(--c1)"/>
+<circle cx="524.4" cy="82.2" r="3" fill="var(--c1)"/>
+<circle cx="622.0" cy="56.1" r="3" fill="var(--c1)"/>
+<path d="M62.0,217.4L151.1,185.9L248.7,151.6L337.7,121.1L435.3,88.8L524.4,61.5L622.0,35.8" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="217.4" r="3" fill="var(--c2)"/>
+<circle cx="151.1" cy="185.9" r="3" fill="var(--c2)"/>
+<circle cx="248.7" cy="151.6" r="3" fill="var(--c2)"/>
+<circle cx="337.7" cy="121.1" r="3" fill="var(--c2)"/>
+<circle cx="435.3" cy="88.8" r="3" fill="var(--c2)"/>
+<circle cx="524.4" cy="61.5" r="3" fill="var(--c2)"/>
+<circle cx="622.0" cy="35.8" r="3" fill="var(--c2)"/>
+</svg></div>
+<p class="hint">Quantos objetos distintos aparecem numa janela de N requisições — os dois eixos em escala log.
+O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance de um reúso é,
+por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos longos
+significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos diferentes.</p>
+
+<h2>Conferência em cada tamanho de cache</h2>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">Cache (objetos)</th><th class="n">Hit teórico</th>
+  <th class="n">Hit medido</th><th class="n">Erro</th><th class="n">Reúsos que cabem</th></tr></thead>
+  <tbody>
+<tr><td>SD baixa</td><td class='n'>10</td><td class='n'>0,7312</td><td class='n'>0,7364</td><td class='n'>0,0052</td><td class='n'>77,4%</td></tr>
+<tr><td>SD baixa</td><td class='n'>100</td><td class='n'>0,8842</td><td class='n'>0,8862</td><td class='n'>0,0020</td><td class='n'>93,1%</td></tr>
+<tr><td>SD baixa</td><td class='n'>1.000</td><td class='n'>0,9342</td><td class='n'>0,9366</td><td class='n'>0,0024</td><td class='n'>98,4%</td></tr>
+<tr><td>SD baixa</td><td class='n'>10.000</td><td class='n'>0,9500</td><td class='n'>0,9516</td><td class='n'>0,0016</td><td class='n'>100,0%</td></tr>
+<tr><td>SD media</td><td class='n'>10</td><td class='n'>0,2843</td><td class='n'>0,2859</td><td class='n'>0,0016</td><td class='n'>30,0%</td></tr>
+<tr><td>SD media</td><td class='n'>100</td><td class='n'>0,5035</td><td class='n'>0,5092</td><td class='n'>0,0057</td><td class='n'>53,5%</td></tr>
+<tr><td>SD media</td><td class='n'>1.000</td><td class='n'>0,7266</td><td class='n'>0,7314</td><td class='n'>0,0049</td><td class='n'>76,9%</td></tr>
+<tr><td>SD media</td><td class='n'>10.000</td><td class='n'>0,9500</td><td class='n'>0,9516</td><td class='n'>0,0016</td><td class='n'>100,0%</td></tr>
+<tr><td>SD alta</td><td class='n'>10</td><td class='n'>0,0240</td><td class='n'>0,0247</td><td class='n'>0,0007</td><td class='n'>2,6%</td></tr>
+<tr><td>SD alta</td><td class='n'>100</td><td class='n'>0,0889</td><td class='n'>0,0901</td><td class='n'>0,0011</td><td class='n'>9,5%</td></tr>
+<tr><td>SD alta</td><td class='n'>1.000</td><td class='n'>0,2957</td><td class='n'>0,2978</td><td class='n'>0,0021</td><td class='n'>31,3%</td></tr>
+<tr><td>SD alta</td><td class='n'>10.000</td><td class='n'>0,9500</td><td class='n'>0,9516</td><td class='n'>0,0016</td><td class='n'>100,0%</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="hint">A última coluna é a resposta para "esta carga tem stack distance alta?" no único jeito que faz sentido:
+em relação ao tamanho de cache que você vai usar — a fração dos reúsos com SD menor que o cache, isto é, os que cabem.
+O mesmo valor de stack distance é alto para um cache pequeno e baixo para um grande. A fração complementar, dos que não
+cabem, está em <code>conferencia.csv</code>.</p>
+
+<footer>
+<p>Gerado por <code>geracao/pipeline.py</code>. Os números deste relatório também estão em
+<code>analise/medidas.csv</code>, <code>analise/hrc.csv</code>, <code>analise/sd_cdf.csv</code>,
+<code>analise/sd_histograma.csv</code>, <code>analise/footprint.csv</code> e <code>analise/conferencia.csv</code>. Os gráficos estão soltos em
+<code>analise/*.svg</code>, prontos para entrar em um documento.</p>
+</footer>
+
+</div>
+</body>
+</html>

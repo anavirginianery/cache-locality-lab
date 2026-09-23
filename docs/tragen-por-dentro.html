@@ -1,0 +1,1832 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRAGEN por Dentro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#F3F6F5;
+  --surface:#FFFFFF;
+  --surface-2:#EAEFEE;
+  --ink:#111819;
+  --ink-2:#3A4A4C;
+  --muted:#5E7174;
+  --rule:#D3DDDB;
+  --rule-strong:#B4C3C1;
+  --accent:#0D6B6D;
+  --accent-soft:#DCEAE9;
+  --amber:#9E5514;
+  --amber-soft:#F4E6D6;
+  --code-bg:#EDF2F1;
+  --s1:#00918A;
+  --s2:#C0620F;
+  --o1:#63BDB5;
+  --o2:#2E9B95;
+  --o3:#08595C;
+  --ok:#1F7A45;
+  --shadow:0 1px 2px rgba(17,24,25,.06), 0 8px 24px -16px rgba(17,24,25,.35);
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1315; --surface:#141D1F; --surface-2:#192427;
+    --ink:#E3EBE9; --ink-2:#B7C6C5; --muted:#8CA2A2;
+    --rule:#263336; --rule-strong:#39494C;
+    --accent:#57C2BF; --accent-soft:#14312F;
+    --amber:#D9974B; --amber-soft:#33240F;
+    --code-bg:#101A1C; --s1:#1FA39E; --s2:#C9772A; --ok:#5CC48A;
+    --o1:#16706C; --o2:#2FA8A2; --o3:#7FD6CF;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1315; --surface:#141D1F; --surface-2:#192427;
+  --ink:#E3EBE9; --ink-2:#B7C6C5; --muted:#8CA2A2;
+  --rule:#263336; --rule-strong:#39494C;
+  --accent:#57C2BF; --accent-soft:#14312F;
+  --amber:#D9974B; --amber-soft:#33240F;
+  --code-bg:#101A1C; --s1:#1FA39E; --s2:#C9772A; --ok:#5CC48A;
+  --o1:#16706C; --o2:#2FA8A2; --o3:#7FD6CF;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -18px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+[hidden]{display:none!important}
+::selection{background:var(--accent-soft);color:var(--ink)}
+a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:.06em}
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.shell{max-width:1180px;margin:0 auto;padding:0 24px 96px;display:grid;grid-template-columns:1fr}
+@media (min-width:1040px){
+  .shell{grid-template-columns:216px minmax(0,1fr);column-gap:56px;padding-right:40px}
+  .masthead{grid-column:1 / -1}
+}
+.masthead{padding:56px 0 34px;border-bottom:1px solid var(--rule-strong)}
+.kicker{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 18px;display:flex;flex-wrap:wrap;gap:10px}
+.kicker span:nth-child(2n){color:var(--muted)}
+h1{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:clamp(34px,5.2vw,58px);line-height:1.02;letter-spacing:-.028em;margin:0 0 18px;text-wrap:balance;max-width:16ch}
+.standfirst{font-size:20px;line-height:1.5;color:var(--ink-2);max-width:62ch;margin:0}
+.stamp{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 26px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted)}
+
+nav.toc{display:none}
+@media (min-width:1040px){
+  nav.toc{display:block;position:sticky;top:0;align-self:start;padding-top:44px;max-height:100vh;overflow-y:auto}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  nav.toc a{display:block;padding:5px 0 5px 12px;border-left:2px solid var(--rule);font-family:Archivo,sans-serif;font-size:12.5px;line-height:1.35;color:var(--muted);text-decoration:none}
+  nav.toc a:hover{color:var(--accent);border-left-color:var(--accent)}
+}
+main{padding-top:44px;min-width:0}
+section{margin:0 0 60px;scroll-margin-top:28px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:clamp(23px,2.6vw,30px);letter-spacing:-.02em;line-height:1.15;margin:0 0 10px;text-wrap:balance}
+h3{font-family:Archivo,sans-serif;font-weight:600;font-size:17.5px;letter-spacing:-.008em;margin:34px 0 8px}
+p{margin:0 0 14px;max-width:var(--measure)}
+ul,ol{margin:0 0 14px;padding-left:22px;max-width:var(--measure)}
+li{margin-bottom:6px}
+li::marker{color:var(--muted)}
+strong{font-weight:600}
+code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.85em;background:var(--code-bg);padding:.1em .34em;border-radius:3px;color:var(--ink)}
+pre{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;overflow-x:auto;margin:0 0 18px}
+pre code{background:none;padding:0;font-size:12.5px;line-height:1.62;white-space:pre}
+.hint{font-size:13.5px;color:var(--muted);max-width:var(--measure)}
+.rule{border:none;border-top:1px solid var(--rule);margin:0 0 34px}
+math{font-family:"STIX Two Math","Cambria Math","Latin Modern Math",math;font-size:1.08em}
+
+/* callouts */
+.lede{background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--accent);border-radius:4px;padding:22px 24px;margin:0 0 26px;box-shadow:var(--shadow);max-width:var(--measure)}
+.lede p:last-child{margin-bottom:0}
+.note{border-left:3px solid var(--amber);background:var(--amber-soft);padding:14px 18px;border-radius:0 4px 4px 0;margin:0 0 22px;max-width:var(--measure)}
+.note p:last-child,.note ul:last-child{margin-bottom:0}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:5px}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:1fr;border-top:1px solid var(--rule);margin:0 0 8px;max-width:820px}
+.gloss > div{display:grid;grid-template-columns:1fr;gap:2px 22px;padding:12px 0;border-bottom:1px solid var(--rule)}
+@media (min-width:720px){.gloss > div{grid-template-columns:220px 1fr}}
+.gloss dt{font-family:Archivo,sans-serif;font-weight:600;font-size:14.5px;line-height:1.35}
+.gloss dt .sym{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:12px;color:var(--accent);margin-top:3px}
+.gloss dd{margin:0;color:var(--ink-2);font-size:16px}
+.gloss dd em.ex{font-style:normal;color:var(--muted);font-size:14.5px;display:block;margin-top:3px}
+.gloss-group{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:26px 0 6px}
+
+/* formula cards */
+.formula{background:var(--surface);border:1px solid var(--rule);border-radius:5px;margin:0 0 22px;max-width:820px;overflow:hidden}
+.formula header{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:14px 20px 0}
+.formula header b{font-family:Archivo,sans-serif;font-weight:600;font-size:15.5px}
+.formula header span{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.formula .eq{padding:16px 20px 18px;overflow-x:auto;border-bottom:1px solid var(--rule)}
+.formula .body{display:grid;grid-template-columns:1fr;gap:0}
+@media (min-width:760px){.formula .body{grid-template-columns:1fr 1fr}}
+.formula .body > div{padding:14px 20px 16px}
+@media (min-width:760px){.formula .body > div + div{border-left:1px solid var(--rule)}}
+.formula .body h4{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.formula .body p{font-size:15.5px;margin:0 0 8px}
+.formula .body p:last-child{margin-bottom:0}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:1fr;gap:26px;margin:6px 0 26px;max-width:900px}
+@media (min-width:900px){.pipe{grid-template-columns:repeat(3,1fr);gap:30px}}
+.stage{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:5px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px}
+.stage .n{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.stage h4{font-family:Archivo,sans-serif;font-size:16.5px;font-weight:600;margin:-4px 0 0}
+.stage .file{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted)}
+.stage dl{margin:0;display:grid;gap:7px}
+.stage dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stage dd{margin:0;font-size:14.5px;line-height:1.45;color:var(--ink-2)}
+.stage::after{content:"";position:absolute;background:var(--rule-strong)}
+@media (max-width:899px){.stage:not(:last-child)::after{left:50%;bottom:-20px;width:1.5px;height:14px}}
+@media (min-width:900px){.stage:not(:last-child)::after{top:50%;right:-24px;height:1.5px;width:18px}}
+.stage:last-child::after{display:none}
+
+/* tables */
+.scroller{overflow-x:auto;margin:0 0 12px;border:1px solid var(--rule);border-radius:5px;background:var(--surface);max-width:900px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+thead th{font-family:Archivo,sans-serif;font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.45}
+tbody tr:last-child td{border-bottom:none}
+td.k{font-family:"IBM Plex Mono",monospace;font-size:12.5px;white-space:nowrap;color:var(--ink)}
+td.num,th.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+tr.grp td{background:var(--surface-2);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding:8px 14px}
+caption{caption-side:bottom;text-align:left;font-size:12.5px;color:var(--muted);padding:10px 14px 12px}
+td.bad{color:var(--amber);font-weight:600}
+td.good{color:var(--ok);font-weight:600}
+
+/* walkthrough */
+.walk{--u:clamp(18px,3.4vw,30px);display:grid;gap:4px;margin:6px 0 16px;max-width:900px}
+.row{display:grid;grid-template-columns:1fr;gap:6px;padding:12px 14px;border-radius:5px}
+@media (min-width:760px){.row{grid-template-columns:170px minmax(0,1fr) 120px;gap:18px;align-items:center}}
+.row:nth-child(odd){background:var(--surface)}
+.row .what{font-family:Archivo,sans-serif;font-size:14px;line-height:1.3}
+.row .what small{display:block;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:2px}
+.lane{position:relative;display:flex;gap:2px;padding-top:28px;overflow-x:auto}
+.obj{flex:0 0 calc(var(--u) * var(--z));height:36px;border-radius:3px;background:var(--surface-2);border:1px solid var(--rule-strong);display:flex;align-items:center;justify-content:center;gap:3px;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:var(--ink);min-width:0}
+.obj sub{font-size:10px;font-weight:400;color:var(--muted)}
+.obj.moved{background:var(--accent-soft);border-color:var(--accent)}
+.obj.fresh{border-style:dashed}
+.brk{position:absolute;top:19px;left:0;height:7px;border:1.5px solid var(--accent);border-bottom:none;border-radius:2px 2px 0 0}
+.brk span{position:absolute;top:-17px;left:0;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--accent);white-space:nowrap}
+.row .tr{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;color:var(--muted)}
+.row .tr b{color:var(--ink);font-weight:600}
+.check{grid-column:1 / -1;font-size:14.5px;color:var(--ink-2);display:flex;gap:8px;align-items:baseline}
+@media (min-width:760px){.check{grid-column:2 / 4}}
+.check::before{content:"✓";font-family:"IBM Plex Mono",monospace;color:var(--ok);font-weight:600}
+
+/* chart */
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;font-family:Archivo,sans-serif;font-size:13px;color:var(--ink-2);margin:4px 0 10px}
+.legend i{display:inline-block;width:18px;height:2px;border-radius:2px;vertical-align:middle;margin-right:7px}
+.panels{display:grid;grid-template-columns:1fr;gap:22px;max-width:980px}
+@media (min-width:880px){.panels{grid-template-columns:1fr 1fr}}
+.panel{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:5px;padding:14px 14px 10px}
+.panel h4{font-family:Archivo,sans-serif;font-weight:600;font-size:14.5px;margin:0 0 2px}
+.panel .sub{font-size:13px;color:var(--muted);margin:0 0 6px}
+.panel svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.panel svg text{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--rule-strong);border-radius:4px;padding:8px 10px;box-shadow:var(--shadow);font-family:Archivo,sans-serif;font-size:12.5px;line-height:1.5;min-width:140px}
+.tip .h{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-bottom:3px}
+.tip .l{display:flex;align-items:center;gap:7px}
+.tip .l i{width:12px;height:2px;border-radius:2px;display:inline-block}
+.tip .l b{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.tip .l span{color:var(--muted)}
+details{margin:12px 0 0;max-width:980px}
+summary{cursor:pointer;font-family:Archivo,sans-serif;font-size:13.5px;color:var(--accent)}
+
+/* script box */
+.say{counter-reset:say;list-style:none;padding:0;max-width:var(--measure)}
+.say li{counter-increment:say;position:relative;padding:10px 0 10px 42px;border-bottom:1px solid var(--rule);margin:0}
+.say li::before{content:counter(say);position:absolute;left:0;top:10px;font-family:Archivo,sans-serif;font-weight:700;font-size:15px;color:var(--accent);width:28px;text-align:right}
+blockquote{margin:0 0 18px;padding:16px 20px;background:var(--surface);border:1px solid var(--rule);border-radius:5px;max-width:var(--measure);font-size:16px;color:var(--ink-2)}
+blockquote p:last-child{margin-bottom:0}
+footer{border-top:1px solid var(--rule-strong);padding-top:22px;font-size:13px;color:var(--muted);max-width:var(--measure)}
+/* parte 2 */
+.part{margin:70px 0 36px;padding-top:28px;border-top:2px solid var(--rule-strong)}
+.part span{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--accent)}
+.part h2{font-size:clamp(26px,3.2vw,36px);margin:10px 0 12px}
+.part p{font-size:18px;line-height:1.5;color:var(--ink-2);max-width:62ch}
+nav.toc li.sep{margin-top:16px;padding:6px 0 2px 12px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.walk.unit{--u:clamp(30px,5.4vw,42px)}
+.walk.unit .obj{font-size:14px;font-weight:600}
+.walk.unit .lane{gap:3px}
+.prop{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:0 5px 5px 0;padding:16px 20px 4px;margin:0 0 20px;max-width:820px}
+.prop h3{margin-top:0}
+.prop p,.prop ul{max-width:none}
+/* parte 3: derivacao */
+.deriv{counter-reset:passo;display:grid;gap:16px;margin:12px 0 30px;max-width:860px}
+.passo{position:relative;background:var(--surface);border:1px solid var(--rule);border-radius:5px;padding:16px 20px 8px 66px}
+.passo::before{counter-increment:passo;content:counter(passo);position:absolute;left:16px;top:13px;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:Archivo,sans-serif;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}
+.passo h3{margin:4px 0 8px;font-size:17px}
+.passo p,.passo ul{max-width:none}
+.passo pre{margin-bottom:12px}
+.eqbox{background:var(--code-bg);border-radius:4px;padding:12px 16px;margin:0 0 12px;overflow-x:auto}
+.algebra{display:grid;grid-template-columns:minmax(0,1fr);gap:0 18px;margin:4px 0 12px}
+.algebra .eqbox{margin:0 0 4px}
+.algebra .why{font-size:14px;color:var(--muted);margin:0 0 12px}
+@media (min-width:700px){.algebra{grid-template-columns:minmax(280px,auto) 1fr;align-items:center}.algebra .eqbox{margin:0 0 6px}.algebra .why{margin:0 0 6px}}
+.ztab{max-width:600px}
+@media (max-width:600px){.passo{padding:56px 16px 8px}.passo::before{top:12px;left:16px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="masthead">
+  <p class="kicker"><span>guia de estudo</span><span>·</span><span>Sabnis &amp; Sitaraman, IMC 2021</span></p>
+  <h1>TRAGEN por dentro</h1>
+  <p class="standfirst">Cada sigla, cada fórmula e cada parâmetro do gerador, explicados a partir do paper <em>e</em> do código-fonte — com um exemplo pequeno o bastante para conferir à mão. Na <a href="#parte2">segunda parte</a>, a abordagem alternativa para quando o tamanho dos objetos não importa, e cinco formas de construir a distribuição P(s) por parâmetros. Na <a href="#parte3">terceira</a>, como definir cenários de stack distance baixa, média e alta com números.</p>
+  <div class="stamp">
+    <span>Paper IMC '21 + código do branch master (último push: mar/2024)</span>
+    <span>Números reais dos modelos eu-3 e tc-0 do repositório</span>
+    <span>Acompanha <code>tragen_mini.py</code></span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Índice">
+  <ol>
+    <li><a href="#ideia">A ideia em um parágrafo</a></li>
+    <li><a href="#glossario">Glossário</a></li>
+    <li><a href="#formulas">As fórmulas, uma a uma</a></li>
+    <li><a href="#pipeline">Os três módulos</a></li>
+    <li><a href="#parametros">Os parâmetros</a></li>
+    <li><a href="#algoritmo">Como ele gera</a></li>
+    <li><a href="#frente">Por que para frente</a></li>
+    <li><a href="#codigo">Código × paper</a></li>
+    <li><a href="#limites">O que garante e o que não</a></li>
+    <li><a href="#uso">Para o seu experimento</a></li>
+    <li><a href="#explicar">Como explicar e justificar</a></li>
+    <li class="sep">Parte 2 · LRUSM</li>
+    <li><a href="#lrusm">LRUSM: como funciona</a></li>
+    <li><a href="#construir">Construir a P(s)</a></li>
+    <li><a href="#prop-a">A · Lei de potência</a></li>
+    <li><a href="#prop-b">B · Zipf de popularidade</a></li>
+    <li><a href="#prop-c">C · Mistura de componentes</a></li>
+    <li><a href="#prop-d">D · MRC-alvo</a></li>
+    <li><a href="#prop-e">E · Medir e operar</a></li>
+    <li><a href="#escolher">Qual proposta usar</a></li>
+    <li class="sep">Parte 3 · Cenários</li>
+    <li><a href="#cenarios">Definir baixa, média e alta</a></li>
+    <li><a href="#formula">A fórmula, passo a passo</a></li>
+    <li><a href="#cargas">As três cargas</a></li>
+    <li><a href="#encaixe">E a potência e o Zipf?</a></li>
+    <li><a href="#texto-metodologia">Texto para a metodologia</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<div class="note">
+  <span class="tag">Correção ao documento anterior</span>
+  <p>No <code>docs/controlando-stack-distance.html</code> eu escrevi que o gerador do TRAGEN "é o loop LRUSM". Está impreciso: o TRAGEN usa a mesma matéria-prima do LRUSM (a distribuição de stack distance), mas o mecanismo é o oposto — ele <strong>agenda para frente</strong> em vez de sortear para trás, e o próprio paper mostra (seção 5.3) que o LRUSM clássico falha com objetos de tamanhos diferentes. Já corrigi esses trechos naquele arquivo. A seção <a href="#frente">Por que para frente</a> explica a diferença com números.</p>
+</div>
+
+<section id="ideia">
+  <p class="eyebrow">Antes de tudo</p>
+  <h2>A ideia em um parágrafo</h2>
+  <div class="lede">
+    <p>Traces de caches de produção são privados, então ninguém os publica. O TRAGEN contorna isso guardando do trace original <strong>uma única estatística</strong>: toda vez que um objeto é pedido de novo, quantos bytes de <em>outros</em> objetos, distintos, foram pedidos no meio. Essa grandeza é a <strong>stack distance</strong>, e a distribuição dela determina, sozinha, quantos acertos um cache LRU teria em <em>qualquer</em> tamanho de cache. Depois ele monta uma sequência nova, com objetos inventados, que tem a mesma distribuição. O resultado não revela nada do trace original, mas simulado num cache LRU produz a mesma curva de hit rate.</p>
+  </div>
+  <p>Tudo o que vem a seguir é o detalhamento dessas três frases: <em>qual</em> estatística (o footprint descriptor), <em>por que</em> ela basta (os teoremas), e <em>como</em> se constrói uma sequência com ela (o algoritmo).</p>
+</section>
+
+<hr class="rule">
+
+<section id="glossario">
+  <p class="eyebrow">Referência</p>
+  <h2>Glossário: cada sigla e cada símbolo</h2>
+  <p>O paper usa <em>s</em> tanto para stack distance quanto para tamanho de cache. Aqui eu separo: <strong><em>s</em> é sempre stack distance</strong> e <strong><em>c</em> é sempre tamanho de cache</strong>.</p>
+
+  <p class="gloss-group">O trace e o cache</p>
+  <dl class="gloss">
+    <div><dt>Trace<span class="sym">Π (original) · S (sintético)</span></dt><dd>Sequência de requisições, na ordem em que chegaram. Cada requisição é a tripla ⟨<em>t</em>, <em>id</em>, <em>z</em>⟩: instante em segundos, identificador do objeto, tamanho. No TRAGEN o tamanho é em <strong>KB</strong>.<em class="ex">Linha de entrada do TRAGEN: <code>1532702631,0,26624</code> = no instante 1532702631, objeto 0, 26.624 KB.</em></dd></div>
+    <div><dt>CDN<span class="sym">Content Delivery Network</span></dt><dd>Rede de servidores-cache espalhados pelo mundo, perto dos usuários. A Akamai é a maior; é de lá que vêm os modelos do TRAGEN.</dd></div>
+    <div><dt>Classe de tráfego</dt><dd>Tipo de conteúdo de um provedor, tratado como unidade no planejamento do cache: vídeos, páginas web, downloads de software, imagens. Cada classe tem padrões de acesso próprios e, no TRAGEN, um modelo próprio.<em class="ex">Ex.: <code>tc-0</code> = downloads; <code>eu-3</code> = mídia social.</em></dd></div>
+    <div><dt>LRU<span class="sym">Least Recently Used</span></dt><dd>Política de despejo: quando falta espaço, expulsa o objeto usado há mais tempo. É a política para a qual o TRAGEN tem <strong>prova</strong> de correção.</dd></div>
+    <div><dt>Hit · miss</dt><dd>Acerto: o objeto estava no cache. Falha: precisa ser buscado na origem, longe e caro.</dd></div>
+    <div><dt>Primeira referência<span class="sym">stack distance = ∞</span></dt><dd>A primeira vez que um objeto aparece nunca pode ser hit (miss compulsório). O TRAGEN representa isso como stack distance infinita.</dd></div>
+  </dl>
+
+  <p class="gloss-group">As métricas</p>
+  <dl class="gloss">
+    <div><dt>RHR<span class="sym">Request Hit Rate</span></dt><dd>Fração das <em>requisições</em> que foram hit. Toda requisição pesa igual. Correlaciona com a experiência média do usuário.</dd></div>
+    <div><dt>BHR<span class="sym">Byte Hit Rate</span></dt><dd>Fração dos <em>bytes</em> servidos pelo cache. Um hit num vídeo de 1 GB pesa 500 000 vezes mais que num ícone de 2 KB. Correlaciona com o custo de banda até a origem.<em class="ex">RHR e BHR divergem quando objetos pequenos e grandes têm localidade diferente.</em></dd></div>
+    <div><dt>HRC · rHRC · bHRC<span class="sym">Hit Rate Curve</span></dt><dd>A hit rate em função do tamanho do cache <em>c</em>. rHRC(<em>c</em>) usa RHR; bHRC(<em>c</em>) usa BHR. A MRC (miss ratio curve) é 1 − HRC.</dd></div>
+    <div><dt>Eviction age</dt><dd>Quanto tempo um objeto fica no cache depois do último acesso até ser expulso. O paper usa como validação extra: diferença média de 1,8% entre original e sintético no trace de vídeo.</dd></div>
+  </dl>
+
+  <p class="gloss-group">O modelo: o que o TRAGEN guarda</p>
+  <dl class="gloss">
+    <div><dt>Subsequência de reúso<span class="sym">θ (teta)</span></dt><dd>Um trecho do trace que começa num pedido a um objeto e termina no <em>próximo</em> pedido ao mesmo objeto, sem ele no meio.<em class="ex">Em <code>A B C B A</code>, o trecho inteiro é uma subsequência de reúso de A; <code>B C B</code> é uma de B.</em></dd></div>
+    <div><dt>Stack distance<span class="sym">s · no código: sd</span></dt><dd>Bytes <strong>únicos</strong> dentro de uma subsequência de reúso: a soma dos tamanhos dos objetos <em>distintos</em> que aparecem nela, incluindo o próprio objeto. No TRAGEN é medida em <strong>bytes</strong>, não em número de objetos.<em class="ex">Em <code>A B C B A</code> com A = 2, B = 3 e C = 1 KB: s = 2 + 3 + 1 = 6 KB (B conta uma vez só). Sem contar o próprio A, seriam 4 KB — é essa a grandeza que o gerador posiciona; a diferença de um objeto é absorvida pela prova.</em></dd></div>
+    <div><dt>Duração<span class="sym">t · no código: iat</span></dt><dd>Tempo entre os dois pedidos da subsequência de reúso, <em>t</em> = <em>t<sub>j</sub></em> − <em>t<sub>i</sub></em>. O código chama de <code>iat</code> (inter-arrival time).</dd></div>
+    <div><dt>FD<span class="sym">Footprint Descriptor · ⟨λ, Pʳ(s,t), Pᵃ(s,t)⟩</span></dt><dd>O "modelo" de uma classe de tráfego. λ: taxa de requisições (req/s). Pʳ(<em>s</em>,<em>t</em>): probabilidade de uma subsequência de <em>reúso</em> ter <em>s</em> bytes únicos e durar <em>t</em> segundos. Pᵃ(<em>s</em>,<em>t</em>): o mesmo para <em>qualquer</em> trecho do trace. Criado por Sundarrajan et al. (CoNEXT 2017) e usado em produção na Akamai.<em class="ex">Os arquivos distribuídos e o código atual só usam Pʳ.</em></dd></div>
+    <div><dt>bFD<span class="sym">byte-weighted FD · Pʳᵇ(s,t)</span></dt><dd>A mesma coisa, mas cada reúso pesa pelo tamanho do objeto: conta "bytes que voltam", não "requisições que voltam". λ passa a ser bytes/s. Existe porque o FD prevê a RHR mas não a BHR.</dd></div>
+    <div><dt>P(s)<span class="sym">marginal · Σₜ Pʳ(s,t)</span></dt><dd>Pʳ somado sobre todas as durações. É a distribuição que o gerador de fato <strong>sorteia</strong>. A duração só serve para misturar classes e para os timestamps.</dd></div>
+    <div><dt>P(∞)</dt><dd>Fração de requisições que são primeira referência. No arquivo: <code>requests_miss / no_reqs</code> (ou <code>bytes_miss / total_bytes</code> no bFD).<em class="ex">eu-3: 10 456 049 / 24 840 479 = 42,1%. tc-0: 4,0%.</em></dd></div>
+    <div><dt>SZ(z)</dt><dd>Distribuição de tamanho dos objetos da classe (arquivo <code>sz.txt</code>). Os objetos inventados recebem tamanhos sorteados dela.</dd></div>
+    <div><dt>Popularidade</dt><dd>Quantos pedidos cada objeto recebe no trace (arquivo <code>popularity.txt</code>). Não aparece no Algoritmo 2 do paper, mas o código atual usa — ver <a href="#codigo">Código × paper</a>.</dd></div>
+    <div><dt>pFD<span class="sym">popularity-size FD</span></dt><dd>O modelo do sucessor JEDI (IMC 2022): acrescenta a relação entre popularidade e tamanho de cada objeto.</dd></div>
+  </dl>
+
+  <p class="gloss-group">A mecânica</p>
+  <dl class="gloss">
+    <div><dt>FD calculus</dt><dd>Regras para combinar modelos sem precisar dos traces: <strong>soma</strong> (misturar duas classes), <strong>subtração</strong> (tirar uma classe de uma mistura), <strong>escala</strong> (mudar o volume de uma classe).</dd></div>
+    <div><dt>Convolução<span class="sym">∗</span></dt><dd>A operação que dá a distribuição de uma <em>soma</em> de duas quantidades independentes. Aparece porque, numa janela de tempo, os bytes únicos da mistura são os bytes únicos de uma classe mais os da outra.</dd></div>
+    <div><dt>FFT<span class="sym">Fast Fourier Transform</span></dt><dd>Algoritmo que calcula uma convolução em O(<em>n</em> log <em>n</em>) em vez de O(<em>n</em>²). Puro detalhe de desempenho.</dd></div>
+    <div><dt>OWV<span class="sym">object weight vector</span></dt><dd>Proporção de objetos de cada classe que o trace sintético deve ter. Serve para decidir de qual SZ sortear o tamanho de cada objeto novo numa mistura.</dd></div>
+    <div><dt>Lista C</dt><dd>A estrutura central do gerador: os objetos <strong>na ordem em que serão pedidos</strong>. O paper a chama de "cache", mas ela funciona como uma agenda.</dd></div>
+    <div><dt>B⁺-tree</dt><dd>Árvore cujas folhas são os objetos da lista C e cujos nós internos guardam a soma de bytes abaixo deles. Permite achar "a posição a <em>s</em> bytes da frente" e inserir ali em O(log <em>m</em>), onde <em>m</em> é o número de objetos.</dd></div>
+    <div><dt>IRM · LRUSM</dt><dd>Os dois modelos clássicos contra os quais o TRAGEN se posiciona. IRM: cada requisição sorteada independentemente por popularidade (sem localidade temporal). LRUSM: pilha LRU operada ao contrário, sorteando a profundidade — ver <a href="#frente">Por que para frente</a>.</dd></div>
+  </dl>
+</section>
+
+<hr class="rule">
+
+<section id="formulas">
+  <p class="eyebrow">Matemática</p>
+  <h2>As fórmulas, uma a uma</h2>
+  <p>São cinco. As duas primeiras justificam o método inteiro; as outras três só entram quando você mistura classes de tráfego.</p>
+
+  <article class="formula">
+    <header><b>Teorema 1 — a hit rate LRU sai direto do FD</b><span>Sundarrajan et al. 2017; paper, seção 2.2</span></header>
+    <div class="eq">
+      <math display="block"><mrow><mi>rHRC</mi><mo>(</mo><mi>c</mi><mo>)</mo><mo>=</mo><munder><mo>∑</mo><mi>t</mi></munder><munder><mo>∑</mo><mrow><mi>s</mi><mo>≤</mo><mi>c</mi></mrow></munder><msup><mi>P</mi><mi>r</mi></msup><mo>(</mo><mi>s</mi><mo>,</mo><mi>t</mi><mo>)</mo></mrow></math>
+    </div>
+    <div class="body">
+      <div>
+        <h4>Em palavras</h4>
+        <p>A hit rate de um cache LRU com <em>c</em> bytes é a probabilidade de uma requisição ser um reúso cujo trecho tem <strong>no máximo <em>c</em> bytes únicos</strong> — contando o próprio objeto, que também precisa caber. A duração <em>t</em> não importa para o LRU, por isso soma-se sobre todas.</p>
+        <p><strong>Por que é verdade:</strong> o LRU só expulsa A depois que entram mais bytes distintos do que cabem. Se A tem 2 KB, desde o último pedido passaram 4 KB de outros objetos distintos e o cache tem 10 KB, então 6 ≤ 10 e A ainda está lá: hit. Se passaram 12 KB, A foi expulso: miss. Não há outro caso.</p>
+      </div>
+      <div>
+        <h4>Com números reais (tc-0, downloads)</h4>
+        <p>No <code>fd.txt</code> do tc-0, as células com <em>s</em> &lt; 200 MB somam 0,845. Logo, um cache LRU de 200 MB acertaria <strong>84,5%</strong> das requisições.</p>
+        <p><strong>O teto da curva:</strong> quando <em>c</em> → ∞, rHRC → 1 − P(∞). No tc-0, 1 − 0,040 = 0,960; no eu-3, 1 − 0,421 = 0,579. Nenhum cache, de nenhum tamanho, passa disso — são as primeiras referências.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="formula">
+    <header><b>Teorema 2 — a mesma coisa em bytes</b><span>paper, seção 2.3</span></header>
+    <div class="eq">
+      <math display="block"><mrow><mi>bHRC</mi><mo>(</mo><mi>c</mi><mo>)</mo><mo>=</mo><munder><mo>∑</mo><mi>t</mi></munder><munder><mo>∑</mo><mrow><mi>s</mi><mo>≤</mo><mi>c</mi></mrow></munder><msup><mi>P</mi><mrow><mi>r</mi><mi>b</mi></mrow></msup><mo>(</mo><mi>s</mi><mo>,</mo><mi>t</mi><mo>)</mo></mrow></math>
+    </div>
+    <div class="body">
+      <div>
+        <h4>Em palavras</h4>
+        <p>Idêntica ao Teorema 1, mas cada reúso é contado <em>z</em> vezes, onde <em>z</em> é o tamanho do objeto — como se o trace fosse uma sequência de bytes, não de requisições. Na construção do bFD, o contador C(<em>s</em>,<em>t</em>) é incrementado <em>z</em> vezes por reúso e depois dividido pelo total de bytes do trace.</p>
+      </div>
+      <div>
+        <h4>Com números reais (tc-0)</h4>
+        <p>bHRC(200 MB) = 0,748, contra rHRC(200 MB) = 0,845. Um cache pequeno segura os reúsos dos objetos pequenos, mas os downloads grandes não cabem — então acerta proporcionalmente menos <em>bytes</em> do que <em>requisições</em>. Por isso existem dois modelos, e por isso você escolhe um dos dois ao gerar.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="formula">
+    <header><b>Soma de classes — convolução</b><span>FD calculus; <code>FDUtils.convolve_2d_fft</code></span></header>
+    <div class="eq">
+      <math display="block"><mrow><mi>P</mi><mo>(</mo><mi>s</mi><mo>|</mo><mi>t</mi><mo>)</mo><mo>=</mo><munder><mo>∑</mo><msub><mi>s</mi><mn>1</mn></msub></munder><msub><mi>P</mi><mn>1</mn></msub><mo>(</mo><msub><mi>s</mi><mn>1</mn></msub><mo>|</mo><mi>t</mi><mo>)</mo><mo>·</mo><msub><mi>P</mi><mn>2</mn></msub><mo>(</mo><mi>s</mi><mo>−</mo><msub><mi>s</mi><mn>1</mn></msub><mo>|</mo><mi>t</mi><mo>)</mo></mrow></math>
+      <math display="block"><mrow><msub><mi>P</mi><mn>12</mn></msub><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mfrac><msub><mi>r</mi><mn>1</mn></msub><mrow><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><msub><mi>r</mi><mn>2</mn></msub></mrow></mfrac><msub><mi>P</mi><mn>1</mn></msub><mo>(</mo><mi>t</mi><mo>)</mo><mo>+</mo><mfrac><msub><mi>r</mi><mn>2</mn></msub><mrow><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><msub><mi>r</mi><mn>2</mn></msub></mrow></mfrac><msub><mi>P</mi><mn>2</mn></msub><mo>(</mo><mi>t</mi><mo>)</mo></mrow></math>
+    </div>
+    <div class="body">
+      <div>
+        <h4>Em palavras</h4>
+        <p>Olhe uma janela de <em>t</em> segundos do tráfego misturado. Os objetos das duas classes são disjuntos, então os bytes únicos da janela são <strong>os da classe 1 mais os da classe 2</strong>. A probabilidade de a soma dar <em>s</em> é a soma, sobre todas as divisões <em>s</em> = <em>s</em>₁ + (<em>s</em> − <em>s</em>₁), das probabilidades de cada parte. Isso é, por definição, uma convolução. P(<em>s</em>|<em>t</em>) é a distribuição de <em>s</em> <em>dado</em> que a duração é <em>t</em>.</p>
+        <p>A segunda linha diz quanto pesa cada duração na mistura: uma média ponderada pelas taxas <em>r</em> — quem pede mais contribui com mais reúsos.</p>
+      </div>
+      <div>
+        <h4>Exemplo de brinquedo</h4>
+        <p>Numa janela, a classe 1 traz 1 GB ou 2 GB únicos (50% cada); a classe 2 traz 0 GB ou 1 GB (50% cada). Somando todas as combinações: 1 GB (25%), 2 GB (50%), 3 GB (25%).</p>
+        <p><strong>No código:</strong> para cada bucket de <em>t</em>, calcula o P(<em>s</em>|<em>t</em>) de cada classe, convolve via FFT e multiplica pelo P(<em>t</em>) misturado. Com três classes ou mais, aplica em cadeia: (1 + 2) + 3.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="formula">
+    <header><b>Escala de volume</b><span><code>FD.scale()</code></span></header>
+    <div class="eq">
+      <math display="block"><mrow><msup><mi>P</mi><mo>′</mo></msup><mo>(</mo><mi>s</mi><mo>,</mo><mfrac><mi>t</mi><mi>k</mi></mfrac><mo>)</mo><mo>=</mo><mi>P</mi><mo>(</mo><mi>s</mi><mo>,</mo><mi>t</mi><mo>)</mo><mspace width="1.2em"/><mi>k</mi><mo>=</mo><mfrac><mtext>volume pedido</mtext><mtext>volume original da classe</mtext></mfrac></mrow></math>
+    </div>
+    <div class="body">
+      <div>
+        <h4>Em palavras</h4>
+        <p>Multiplicar o volume por <em>k</em> é tocar o mesmo trace <em>k</em> vezes mais rápido: os mesmos objetos, na mesma ordem. Cada reúso tem a <strong>mesma stack distance</strong> e dura <em>t</em>/<em>k</em>. As taxas e contagens são multiplicadas por <em>k</em>.</p>
+      </div>
+      <div>
+        <h4>O ponto sutil</h4>
+        <p>Sozinha, a escala <strong>não muda a HRC</strong> de uma classe: <em>s</em> fica igual. Ela só importa na mistura: numa mesma janela de <em>t</em> segundos, uma classe mais rápida contribui com mais bytes únicos e empurra os objetos da outra classe para fora do cache.</p>
+      </div>
+    </div>
+  </article>
+
+  <article class="formula">
+    <header><b>Taxa de bytes únicos e proporção de objetos</b><span>Algoritmo 1; <code>TrafficMixer.object_weight_vector</code></span></header>
+    <div class="eq">
+      <math display="block"><mrow><mi>U</mi><mo>=</mo><munder><mo>∑</mo><mi>s</mi></munder><munder><mo>∑</mo><mi>t</mi></munder><mi>P</mi><mo>(</mo><mi>s</mi><mo>,</mo><mi>t</mi><mo>)</mo><mo>·</mo><mfrac><mi>s</mi><mi>t</mi></mfrac><mspace width="1.6em"/><msub><mi>o</mi><mi>i</mi></msub><mo>=</mo><mfrac><msub><mi>U</mi><mi>i</mi></msub><msub><mover><mi>z</mi><mo>¯</mo></mover><mi>i</mi></msub></mfrac></mrow></math>
+    </div>
+    <div class="body">
+      <div>
+        <h4>Em palavras</h4>
+        <p>Cada reúso "passeia" por <em>s</em> bytes únicos em <em>t</em> segundos, ou seja, a <em>s</em>/<em>t</em> bytes novos por segundo. A média disso é <em>U</em>, a taxa com que a classe traz bytes novos. Dividindo pelo tamanho médio de objeto <em>z̄</em>, sai quantos objetos novos por segundo: <em>o<sub>i</sub></em>. Normalizando entre as classes, sai o OWV.</p>
+      </div>
+      <div>
+        <h4>Para que serve</h4>
+        <p>Só para mistura: decide de qual SZ sortear o tamanho de cada objeto novo. Com uma classe só, OWV = [1] e esta fórmula não tem efeito. No código, <em>t</em> é tomado no meio do bucket (<code>iat + 100</code>).</p>
+      </div>
+    </div>
+  </article>
+
+  <h3>Vendo o Teorema 1 em dados reais</h3>
+  <p>As curvas abaixo não vêm de simulação: são o Teorema 1 e o Teorema 2 aplicados diretamente aos arquivos <code>fd.txt</code> e <code>bfd.txt</code> distribuídos no repositório, somando os buckets de 200 MB. Repare no teto de cada curva: é exatamente 1 − P(∞).</p>
+  <div class="legend" aria-hidden="true"><span><i style="background:var(--s1)"></i>rHRC — hit rate de requisições (do fd.txt)</span><span><i style="background:var(--s2)"></i>bHRC — hit rate de bytes (do bfd.txt)</span></div>
+  <div class="panels" id="panels"></div>
+  <details>
+    <summary>Ver os números em tabela</summary>
+    <div class="scroller" style="margin-top:10px">
+      <table id="hrc-table"><thead><tr><th>Cache</th><th class="num">tc-0 rHRC</th><th class="num">tc-0 bHRC</th><th class="num">eu-3 rHRC</th><th class="num">eu-3 bHRC</th></tr></thead><tbody></tbody></table>
+    </div>
+  </details>
+</section>
+
+<hr class="rule">
+
+<section id="pipeline">
+  <p class="eyebrow">Arquitetura</p>
+  <h2>Os três módulos, em ordem</h2>
+  <p>O TRAGEN é uma linha de montagem. O primeiro módulo roda raramente e perto dos dados privados; os outros dois rodam em qualquer máquina, sem acesso a eles.</p>
+
+  <div class="pipe">
+    <div class="stage">
+      <span class="n">Módulo 1 · offline</span>
+      <h4>Traffic Modeler</h4>
+      <span class="file">traffic_modeler.py &lt;trace&gt; &lt;dir&gt;</span>
+      <dl>
+        <dt>Entra</dt><dd>O trace real, uma linha por requisição: <code>timestamp,object_id,size_KB</code>.</dd>
+        <dt>Faz</dt><dd>Passa o trace por um LRU simulado de 10 TB (aquecido com os primeiros 10 GB de objetos únicos) e, para cada reúso, mede (<em>s</em>, <em>t</em>), arredondando para buckets de 200 MB × 200 s.</dd>
+        <dt>Sai</dt><dd><code>fd.txt</code>, <code>bfd.txt</code>, <code>sz.txt</code>, <code>popularity.txt</code>.</dd>
+      </dl>
+    </div>
+    <div class="stage">
+      <span class="n">Módulo 2 · a cada geração</span>
+      <h4>Traffic Mixer</h4>
+      <span class="file">traffic_mixer.py</span>
+      <dl>
+        <dt>Entra</dt><dd>Seu <code>config.json</code> e os modelos das classes escolhidas.</dd>
+        <dt>Faz</dt><dd>Converte unidades, escala cada FD ao volume pedido, convolve as classes e calcula o OWV.</dd>
+        <dt>Sai</dt><dd>Um único FD da mistura, em memória.</dd>
+      </dl>
+    </div>
+    <div class="stage">
+      <span class="n">Módulo 3 · a cada geração</span>
+      <h4>Trace Generator</h4>
+      <span class="file">trace_generator.py</span>
+      <dl>
+        <dt>Entra</dt><dd>O FD da mistura, SZ, popularidades, comprimento <em>N</em>.</dd>
+        <dt>Faz</dt><dd>Monta a lista C e repete <em>N</em> vezes: emite → sorteia <em>s</em> → reinsere. Depois atribui timestamps.</dd>
+        <dt>Sai</dt><dd><code>OUTPUT/&lt;unix&gt;/gen_sequence.txt</code>, linhas <code>timestamp,obj_id,size_KB</code>.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3>Anatomia dos arquivos de modelo</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Arquivo</th><th>Formato</th><th>O que significa</th></tr></thead>
+    <tbody>
+      <tr><td class="k">fd.txt</td><td>1ª linha: <code>no_reqs total_bytes start_tm end_tm requests_miss bytes_miss</code><br>demais: <code>t s p</code></td><td>Cabeçalho = totais do trace original. Cada linha é uma célula de Pʳ(<em>s</em>,<em>t</em>); <em>t</em> e <em>s</em> são o limite inferior do bucket. <em>p</em> é dividido pelo total de requisições, então Σ<em>p</em> + P(∞) = 1.</td></tr>
+      <tr><td class="k">bfd.txt</td><td>Igual ao fd.txt</td><td><em>p</em> = bytes que voltam naquela célula ÷ bytes totais.</td></tr>
+      <tr><td class="k">sz.txt</td><td>Blocos: uma linha com um número, seguida de linhas <code>tamanho_KB fração</code></td><td>O número do bloco é o intervalo médio entre pedidos do objeto (−1 = pedido uma vez só). O gerador ignora os blocos e usa só a marginal de tamanho.</td></tr>
+      <tr><td class="k">popularity.txt</td><td>Blocos: uma linha com a popularidade <em>p</em>, seguida de <code>tamanho_KB fração</code></td><td>Fração de objetos que receberam exatamente <em>p</em> pedidos, separada por tamanho.</td></tr>
+    </tbody>
+    <caption>O cabeçalho real do <code>eu-3/fd.txt</code>: 24 840 479 requisições · 14 528 589 341 KB (≈ 14,5 TB) · 369 637 s (≈ 4,3 dias) · 10 456 049 primeiras referências. A primeira célula, <code>0 0 0.532</code>, diz que 53,2% das requisições são reúsos em menos de 200 s <em>e</em> menos de 200 MB.</caption>
+  </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="parametros">
+  <p class="eyebrow">Configuração</p>
+  <h2>Os parâmetros, em três camadas</h2>
+  <p>Há parâmetros que você define, parâmetros que vêm do modelo que você escolhe, e parâmetros fixos no código. Os da terceira camada são os que mais limitam um experimento — e não aparecem no README.</p>
+
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Parâmetro</th><th>Valores</th><th>O que controla</th><th>Atenção</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Você define — config.json</td></tr>
+      <tr><td class="k">Trace_length</td><td>string numérica, ex. <code>"20000000"</code></td><td><em>N</em>, o número de requisições geradas.</td><td>Custo O(<em>N</em> log <em>m</em>); o paper cita ~10 min por 10 milhões.</td></tr>
+      <tr><td class="k">Hitrate_type</td><td><code>"rhr"</code> · <code>"bhr"</code></td><td>Qual curva o sintético vai reproduzir. Troca o arquivo lido (fd.txt × bfd.txt), a taxa usada para ponderar a mistura (req/s × bytes/s) e o P(∞) (de requisições × de bytes).</td><td>Um trace acerta uma das duas curvas, não as duas. Escolha a métrica do seu experimento.</td></tr>
+      <tr><td class="k">Input_unit</td><td><code>"reqs/s"</code> · <code>"gbps"</code></td><td>Unidade de <code>traffic_volume</code>. Internamente, rhr trabalha em req/s e bhr em GB/s; a conversão usa a razão bytes/requisição de cada classe.</td><td>O código só aceita <code>"gbps"</code> minúsculo; o <code>"GBps"</code> escrito no README é rejeitado.</td></tr>
+      <tr><td class="k">Traffic_classes[]</td><td>lista de <code>{traffic_class, traffic_volume}</code></td><td>Quais modelos entram e com que volume. <em>k</em> = volume pedido ÷ volume original (colunas 4 e 5 de <code>available_fds.txt</code>).</td><td>Classe fora de <code>available_fds.txt</code> é descartada sem aviso.</td></tr>
+
+      <tr class="grp"><td colspan="4">Você define — linha de comando</td></tr>
+      <tr><td class="k">-c &lt;arquivo&gt;</td><td>caminho</td><td>O config.json.</td><td>Rode da raiz do repositório: os caminhos internos são relativos.</td></tr>
+      <tr><td class="k">-d &lt;dir&gt;</td><td>caminho</td><td>Documentado como diretório de saída.</td><td><strong>Lido mas não usado.</strong> A saída vai sempre para <code>OUTPUT/&lt;unix&gt;/gen_sequence.txt</code>.</td></tr>
+      <tr><td class="k">-a · -x</td><td>—</td><td>Lista as classes disponíveis · mostra um exemplo.</td><td></td></tr>
+
+      <tr class="grp"><td colspan="4">Vêm do modelo — você escolhe a classe, não os números</td></tr>
+      <tr><td class="k">P(s,t)</td><td>fd.txt / bfd.txt</td><td>A localidade temporal inteira.</td><td>Não há knob para alterar; para outra P(<em>s</em>), outro arquivo.</td></tr>
+      <tr><td class="k">P(∞)</td><td>cabeçalho</td><td>Fração de primeiras referências = 1 − teto da HRC.</td><td></td></tr>
+      <tr><td class="k">λ</td><td>cabeçalho</td><td>Taxa usada nos timestamps e na mistura.</td><td></td></tr>
+      <tr><td class="k">SZ(z) · popularidade</td><td>sz.txt · popularity.txt</td><td>Tamanhos dos objetos inventados · número-alvo de pedidos de cada um.</td><td>Sorteados de forma independente um do outro.</td></tr>
+      <tr><td class="k">s<sub>max</sub></td><td>maior <em>s</em> finito</td><td>Tamanho, em bytes, com que a lista C é mantida.</td><td>eu-3: 6,13 TB → ~10 milhões de objetos na lista.</td></tr>
+
+      <tr class="grp"><td colspan="4">Fixos no código — definem a resolução da ferramenta</td></tr>
+      <tr><td class="k">sd_gran = 200 000</td><td>KB = <strong>200 MB</strong></td><td>Resolução da stack distance. Nada abaixo de 200 MB é distinguível; o gerador espalha <em>s</em> uniformemente dentro do bucket.</td><td>Aparece em traffic_mixer.py, traffic_modeler.py e trace_generator.py (<code>randint(sd, sd+200000)</code>).</td></tr>
+      <tr><td class="k">iat_gran = 200</td><td>segundos</td><td>Resolução da duração <em>t</em>.</td><td>Só afeta mistura e timestamps.</td></tr>
+      <tr><td class="k">sd_limit · iat_limit</td><td>10 TB · 4 000 000 s</td><td>Caudas além disso viram miss.</td><td>Também o LRU do modeler tem 10 TB.</td></tr>
+      <tr><td class="k">janela = 50</td><td>objetos</td><td>Candidatos examinados a cada passo.</td><td>Ver <a href="#codigo">Código × paper</a>.</td></tr>
+      <tr><td class="k">70 × 10⁶</td><td>objetos por lote</td><td>Tamanhos e popularidades pré-sorteados.</td><td>Três listas Python desse tamanho: vários GB de RAM antes de gerar a primeira requisição.</td></tr>
+      <tr><td class="k">relógio de 1 s</td><td>—</td><td>Resolução dos timestamps.</td><td>Ver ressalva em <a href="#codigo">Código × paper</a>.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Um config mínimo, anotado</h3>
+<pre><code>{
+  "Trace_length": "20000000",        // N = 20 milhões de requisições
+  "Hitrate_type": "bhr",             // reproduzir a curva de BYTES (lê bfd.txt)
+  "Input_unit"  : "reqs/s",          // volumes abaixo em requisições/s
+  "Traffic_classes" : [
+    { "traffic_class": "v", "traffic_volume": "1000" },   // vídeo a 1000 req/s
+    { "traffic_class": "w", "traffic_volume": "1000" }    // web   a 1000 req/s
+  ]
+}
+// JSON não aceita comentários: tire-os antes de usar.
+// Rodar, na raiz do repositório:  python3 tragen_cli.py -c config.json</code></pre>
+</section>
+
+<hr class="rule">
+
+<section id="algoritmo">
+  <p class="eyebrow">O coração</p>
+  <h2>Como ele gera o trace</h2>
+  <p>A ideia que torna tudo simples: a lista C <strong>não é o passado, é o futuro</strong>. Ela guarda os objetos na ordem em que serão pedidos. Cada passo tem três movimentos:</p>
+  <ol>
+    <li><strong>Emite</strong> o objeto da frente da lista: essa é a próxima requisição do trace.</li>
+    <li><strong>Sorteia</strong> uma stack distance <em>s</em> de P(<em>s</em>). Ela responde: "daqui a quantos bytes únicos este objeto volta a ser pedido?"</li>
+    <li><strong>Reinsere</strong> o objeto na posição em que há <em>s</em> bytes de objetos à frente dele. Se o sorteio deu ∞, o objeto nunca mais volta: sai da lista, e entram objetos novos no fim.</li>
+  </ol>
+  <p>Antes do primeiro passo, a lista é preenchida com objetos inventados (tamanhos sorteados de SZ) até somar s<sub>max</sub> bytes, para que qualquer <em>s</em> sorteado caiba.</p>
+
+  <h3>Exemplo conferível à mão</h3>
+  <p>Cinco objetos com tamanhos em bytes: A = 2, B = 3, C = 1, D = 4, E = 3. A largura de cada caixa é proporcional ao tamanho, então o colchete mostra literalmente "<em>s</em> bytes à frente". Os <em>s</em> foram escolhidos para cair em fronteiras de objeto, o que dispensa o arredondamento. Saída real de <code>python3 tragen_mini.py passo-a-passo</code>.</p>
+
+  <div class="walk" role="figure" aria-label="Evolução da lista C em seis passos do algoritmo">
+    <div class="row">
+      <div class="what">Início<small>ordem de pedido →</small></div>
+      <div class="lane"><span class="obj" style="--z:2">A<sub>2</sub></span><span class="obj" style="--z:3">B<sub>3</sub></span><span class="obj" style="--z:1">C<sub>1</sub></span><span class="obj" style="--z:4">D<sub>4</sub></span></div>
+      <div class="tr">trace: —</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 1<small>emite A · sorteia s = 4</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*4 + 2px)"><span>4 bytes à frente</span></span><span class="obj" style="--z:3">B<sub>3</sub></span><span class="obj" style="--z:1">C<sub>1</sub></span><span class="obj moved" style="--z:2">A<sub>2</sub></span><span class="obj" style="--z:4">D<sub>4</sub></span></div>
+      <div class="tr">trace: <b>A</b></div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 2<small>emite B · sorteia s = ∞</small></div>
+      <div class="lane"><span class="obj" style="--z:1">C<sub>1</sub></span><span class="obj" style="--z:2">A<sub>2</sub></span><span class="obj" style="--z:4">D<sub>4</sub></span><span class="obj fresh" style="--z:3">E<sub>3</sub></span></div>
+      <div class="tr">trace: A <b>B</b></div>
+      <div class="check">B sai da lista para sempre. E, novo e tracejado, entra no fim até a lista voltar a ter 10 bytes.</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 3<small>emite C · sorteia s = 6</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*6 + 2px)"><span>6 bytes à frente</span></span><span class="obj" style="--z:2">A<sub>2</sub></span><span class="obj" style="--z:4">D<sub>4</sub></span><span class="obj moved" style="--z:1">C<sub>1</sub></span><span class="obj fresh" style="--z:3">E<sub>3</sub></span></div>
+      <div class="tr">trace: A B <b>C</b></div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 4<small>emite A · sorteia s = 5</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*5 + 2px)"><span>5 bytes à frente</span></span><span class="obj" style="--z:4">D<sub>4</sub></span><span class="obj" style="--z:1">C<sub>1</sub></span><span class="obj moved" style="--z:2">A<sub>2</sub></span><span class="obj fresh" style="--z:3">E<sub>3</sub></span></div>
+      <div class="tr">trace: A B C <b>A</b></div>
+      <div class="check">A voltou. No meio foram pedidos B (3) e C (1): 4 bytes únicos — exatamente o <em>s</em> sorteado no passo 1.</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 5<small>emite D · sorteia s = 3</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*3 + 2px)"><span>3 bytes à frente</span></span><span class="obj" style="--z:1">C<sub>1</sub></span><span class="obj" style="--z:2">A<sub>2</sub></span><span class="obj moved" style="--z:4">D<sub>4</sub></span><span class="obj fresh" style="--z:3">E<sub>3</sub></span></div>
+      <div class="tr">trace: A B C A <b>D</b></div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 6<small>emite C · sorteia s = 2</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*2)"><span>2 bytes</span></span><span class="obj" style="--z:2">A<sub>2</sub></span><span class="obj moved" style="--z:1">C<sub>1</sub></span><span class="obj" style="--z:4">D<sub>4</sub></span><span class="obj fresh" style="--z:3">E<sub>3</sub></span></div>
+      <div class="tr">trace: A B C A D <b>C</b></div>
+      <div class="check">C voltou. No meio foram pedidos A (2) e D (4): 6 bytes únicos — exatamente o <em>s</em> sorteado no passo 3.</div>
+    </div>
+  </div>
+  <p class="hint">Caixa verde-clara: objeto recém-reinserido. Caixa tracejada: objeto novo. Trace gerado: <code>A B C A D C</code>. As conferências contam os bytes <em>entre</em> os dois pedidos, que é o que o gerador posiciona; a definição do paper soma também o próprio objeto, diferença de um objeto que a prova absorve.</p>
+
+  <h3>Por que funciona: a prova em palavras</h3>
+  <p>Quando reinsiro A com <em>s</em> bytes à frente, pergunto: quais objetos serão pedidos antes de A voltar? Exatamente os que estão à frente dele. Três fatos garantem isso:</p>
+  <ul>
+    <li>A frente é sempre emitida primeiro, então todo objeto à frente de A será pedido antes dele.</li>
+    <li>Objetos novos entram no <em>fim</em> da lista, atrás de A: nunca se intrometem.</li>
+    <li>Um objeto da frente pode ser reinserido ainda à frente de A e ser pedido de novo, mas ele já estava na conta: não acrescenta bytes <em>únicos</em>.</li>
+  </ul>
+  <p>Logo, os bytes únicos entre os dois pedidos de A são os bytes que estavam à frente dele: <em>s</em>, a menos do tamanho de um objeto (o arredondamento para uma fronteira). Como cada <em>s</em> é sorteado de P(<em>s</em>), a distribuição de stack distance do trace gerado converge para P(<em>s</em>) quando <em>N</em> cresce — e, pelo Teorema 1, a rHRC também. Essa é a prova do Teorema 3 do paper.</p>
+  <p>A aproximação "a menos de um objeto" só é boa quando <em>s</em> ≫ tamanho dos objetos. Numa CDN, <em>s</em> é da ordem de centenas de GB e os objetos, de KB a MB, então o erro some.</p>
+  <p><strong>E a versão em bytes (Teorema 4)?</strong> O gerador escolhe o objeto emitido pela posição, nunca pelo tamanho. Por isso, no trace sintético, a distribuição de <em>s</em> por requisição é igual à distribuição por byte. Alimentando o gerador com Pʳᵇ, a rHRC do sintético iguala a bHRC do original, e como no sintético as duas são iguais, a bHRC também.</p>
+</section>
+
+<hr class="rule">
+
+<section id="frente">
+  <p class="eyebrow">A decisão de projeto</p>
+  <h2>Por que para frente, e não para trás</h2>
+  <p>O jeito clássico (LRUSM, 1970–77) é olhar para trás: manter a pilha LRU do que já foi pedido, sortear <em>s</em> e pedir "o objeto que está a <em>s</em> bytes do topo". Com todos os objetos do mesmo tamanho, isso funciona e é exato. Com tamanhos diferentes, surge um problema que o paper aponta na seção 5.3:</p>
+  <div class="lede">
+    <p>Um objeto de 256 bytes ocupa 256 posições-byte da pilha; um de 1 byte ocupa uma. Sorteando um byte ao acaso, o grande é escolhido 256 vezes mais. O trace passa a ser dominado por objetos grandes — é o viés de tamanho, o mesmo "paradoxo da inspeção" que faz quem chega a um ponto de ônibus cair, em média, num intervalo entre ônibus maior que o intervalo médio.</p>
+  </div>
+  <p>No TRAGEN, quem é emitido é sempre o objeto da frente, independentemente do tamanho; o sorteio só decide <em>onde</em> ele volta. O viés não tem por onde entrar. Para confirmar, o <code>tragen_mini.py comparar</code> gera 200 000 requisições com os dois métodos a partir do mesmo modelo de brinquedo (tamanhos 1 a 256 B, média 23,2 B):</p>
+
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Medida</th><th class="num">Modelo</th><th class="num">TRAGEN (frente)</th><th class="num">LRUSM-bytes (trás)</th></tr></thead>
+    <tbody>
+      <tr><td>Tamanho médio por requisição</td><td class="num">23,2 B</td><td class="num good">23,7 B</td><td class="num bad">224,6 B</td></tr>
+      <tr><td>Fração de primeiras referências</td><td class="num">0,100</td><td class="num">0,103</td><td class="num">0,101</td></tr>
+      <tr class="grp"><td colspan="4">A distribuição de s saiu como pedida?</td></tr>
+      <tr><td>P(<em>s</em> ≤ 200 B)</td><td class="num">0,307</td><td class="num good">0,294</td><td class="num">0,343</td></tr>
+      <tr><td>P(<em>s</em> ≤ 800 B)</td><td class="num">0,532</td><td class="num good">0,533</td><td class="num">0,568</td></tr>
+      <tr><td>P(<em>s</em> ≤ 5 000 B)</td><td class="num">0,898</td><td class="num good">0,896</td><td class="num">0,899</td></tr>
+      <tr class="grp"><td colspan="4">E num cache LRU de verdade?</td></tr>
+      <tr><td>RHR, cache de 200 B</td><td class="num">—</td><td class="num">0,274</td><td class="num bad">0,008</td></tr>
+      <tr><td>BHR, cache de 5 000 B</td><td class="num">—</td><td class="num">0,893</td><td class="num bad">0,984</td></tr>
+    </tbody>
+    <caption>Uma execução com semente fixa. O modelo sorteia <em>s</em> uniforme dentro de buckets de 50 B, como o TRAGEN faz com os de 200 MB.</caption>
+  </table>
+  </div>
+  <p>O LRUSM-bytes pede objetos com tamanho médio quase 10 vezes maior que o da população. Como consequência, a RHR num cache pequeno desaba para quase zero (os objetos pedidos nem cabem) e a BHR num cache grande fica inflada — exatamente o sintoma da Figura 12b do paper.</p>
+  <div class="note">
+    <span class="tag">E o genwl.py do documento anterior?</span>
+    <p>Ele é um LRUSM, mas trabalha com objetos de tamanho <strong>unitário</strong>, e aí o viés não existe: com todos os tamanhos iguais, sortear por byte é o mesmo que sortear por objeto. Continua correto para cache de blocos, páginas ou linhas. O viés só aparece quando os tamanhos variam — e é justamente o caso que o TRAGEN resolve.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="codigo">
+  <p class="eyebrow">Leitura do código-fonte</p>
+  <h2>O que o código faz diferente do paper</h2>
+  <p>Li o branch <code>master</code> (último push em março de 2024). O núcleo é o Algoritmo 2, mas com acréscimos que o paper de 2021 não descreve. Se você for citar o comportamento da ferramenta, cite o que roda.</p>
+  <ul>
+    <li><strong>Janela de popularidade.</strong> Em vez de emitir sempre o objeto da frente, o código olha os <strong>50 primeiros</strong>, calcula quantos pedidos cada um ainda "deve" (popularidade sorteada menos pedidos já feitos) e escolhe pela posição de <em>s</em> na distribuição: <em>s</em> pequeno escolhe um objeto com muitos pedidos restantes; <em>s</em> grande, um com poucos; <em>s</em> = ∞, o com menos, que então é aposentado. O efeito é dar reúsos curtos aos objetos populares, aproximando a distribuição de popularidade do original, que o Algoritmo 2 sozinho não controla. Como 50 objetos somam poucos MB e a resolução é de 200 MB, a garantia de stack distance quase não é afetada.</li>
+    <li><strong>Arredondamento estocástico.</strong> Quando <em>s</em> cai no meio de um objeto, o reinserido vai para depois dele com probabilidade igual à fração atravessada. O paper descreve uma regra determinística de "metade do objeto".</li>
+    <li><strong>Reposição por bytes.</strong> Quando um objeto é aposentado, entram objetos novos até a lista voltar a somar s<sub>max</sub> bytes — podem ser vários, não um só.</li>
+    <li><strong><em>s</em> que não cabe.</strong> Se o <em>s</em> sorteado passa do total de bytes da lista, o sorteio é descartado e repetido (contador <code>fail</code> no log).</li>
+    <li><strong>Popularidade e tamanho independentes.</strong> São sorteados em listas separadas e embaralhadas; a relação conjunta que existe em <code>popularity.txt</code> não é usada. É o que o JEDI passa a modelar.</li>
+    <li><strong>OWV sem os seus volumes.</strong> O Algoritmo 1 multiplica <em>U</em> pelo volume pedido; na função do código, a multiplicação não aparece. Só afeta a mistura de <em>tamanhos</em> quando os volumes fogem dos originais.</li>
+    <li><strong>Timestamps.</strong> O relógio avança 1 s cada vez que os KB acumulados passam de <code>byte_rate/1000</code>, e <code>byte_rate</code> já está em KB/s. No arquivo de exemplo do próprio repositório (<code>INPUT/v/gen_sequence.txt</code>), o trace sintético tem ~6,5 req/s de timestamp, contra ~400 req/s no modelo <code>v</code>. A <strong>ordem</strong> das requisições, que é o que decide HRC e MRC, não é afetada; mas não use esses timestamps para métricas de tempo (TTL, taxa, eviction age em segundos) sem recalibrar.</li>
+    <li><strong>Detalhes de uso.</strong> <code>-d</code> é ignorado; <code>Input_unit</code> precisa ser <code>"gbps"</code> minúsculo; gera <em>N</em> + 1 requisições; exige vários GB de RAM (três listas de 70 milhões de itens mais a árvore com milhões de objetos). Por isso não rodei o TRAGEN original nesta máquina, de 7 GB — o <code>tragen_mini.py</code> reproduz o mecanismo em escala de brinquedo.</li>
+  </ul>
+</section>
+
+<hr class="rule">
+
+<section id="limites">
+  <p class="eyebrow">Validade</p>
+  <h2>O que ele garante e o que não</h2>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Categoria</th><th>O quê</th><th>Base</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Provado</strong></td><td>LRU: rHRC (com FD) e bHRC (com bFD) iguais às do original quando <em>N</em> → ∞ e <em>s</em> ≫ tamanho dos objetos.</td><td>Teoremas 3 e 4</td></tr>
+      <tr><td><strong>Validado</strong></td><td>LRU, SLRU, FIFO, RANDOM, PLRU, MARKERS e CLOCK: erro médio de 1,5% em RHR e 1% em BHR. Eviction age: 1,8% no trace de vídeo.</td><td>Seção 5, traces Akamai de centenas de milhões de requisições</td></tr>
+      <tr><td><strong>Conjectura</strong></td><td>Funciona para políticas que decidem principalmente por <em>recência</em>.</td><td>Palavra dos autores</td></tr>
+      <tr><td><strong>Sem garantia</strong></td><td>Políticas com <em>admissão</em> (TinyLFU, AdaptSize), guiadas por <em>frequência</em> (LFU) ou por <em>tempo</em> (TTL).</td><td>Os autores declaram a limitação</td></tr>
+      <tr><td><strong>Fora do alcance</strong></td><td>Caches menores que ~200 MB (resolução do modelo); tráfego não estacionário (ciclo dia/noite, viralização); caches de CPU ou de blocos pequenos.</td><td>Constantes do código; P(<em>s</em>) é o mesmo do início ao fim</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="uso">
+  <p class="eyebrow">Aplicação</p>
+  <h2>Para o seu experimento com stack distance controlada</h2>
+  <p>O ponto decisivo: com os modelos distribuídos, <strong>você escolhe uma classe de tráfego, não uma distribuição de stack distance</strong>. O TRAGEN é um gerador de cenários realistas, não um botão de <em>s</em>. Há três caminhos, conforme o que você quer variar:</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Objetivo</th><th>Ferramenta</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Cenário realista de CDN, objetos de tamanho variável, sem acesso a trace</td><td><strong>TRAGEN / JEDI</strong> com os modelos da Akamai</td><td>Único caminho validado contra produção. JEDI se a popularidade por objeto importar.</td></tr>
+      <tr><td>Varrer P(<em>s</em>) como variável independente, objetos de tamanho igual</td><td><strong>genwl.py</strong> (LRUSM)</td><td>Controle direto de P(<em>s</em>), exato para tamanho unitário, sem limite de resolução.</td></tr>
+      <tr><td>Varrer P(<em>s</em>) com tamanhos variáveis</td><td><strong>TRAGEN com um FD escrito por você</strong></td><td>Crie <code>FOOTPRINT_DESCRIPTORS/minha-classe/</code> com um <code>fd.txt</code> contendo a P(<em>s</em>,<em>t</em>) que quiser, mais <code>sz.txt</code> e <code>popularity.txt</code>, e registre em <code>available_fds.txt</code>. Para resolução abaixo de 200 MB, troque <code>200000</code> nos três arquivos indicados na tabela de parâmetros.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Para os experimentos de <strong>amostragem</strong>: o Teorema 1 dá a HRC exata de LRU direto do FD, sem simular. Isso é um <em>ground truth</em> analítico contra o qual comparar a MRC estimada por SHARDS ou por miniature simulation — o erro medido é só do amostrador, não do workload.</p>
+</section>
+
+<hr class="rule">
+
+<section id="explicar">
+  <p class="eyebrow">Para levar</p>
+  <h2>Como explicar em dois minutos</h2>
+  <ol class="say">
+    <li>O que decide se um cache LRU acerta é quantos bytes distintos passaram entre dois pedidos ao mesmo objeto. Essa grandeza é a stack distance.</li>
+    <li>Pelo teorema de Mattson, na forma de Sundarrajan et al., a distribuição da stack distance determina a curva de hit rate LRU inteira: hit rate com <em>c</em> bytes = probabilidade de <em>s</em> ≤ <em>c</em>.</li>
+    <li>O TRAGEN guarda, de traces reais da Akamai, só essa distribuição — o footprint descriptor, junto com a duração dos reúsos — e a distribuição de tamanhos.</li>
+    <li>Para gerar, mantém uma fila dos próximos objetos a serem pedidos. Emite o da frente, sorteia uma stack distance e o reinsere a essa distância, em bytes. Se sortear infinito, o objeto sai e entra um novo no fim.</li>
+    <li>Os objetos à frente são exatamente os que serão pedidos no meio, então a distância sorteada vira a distância real do trace.</li>
+    <li>Escolher sempre a frente, e não "quem está a <em>s</em> bytes", evita o viés de tamanho que derruba o LRUSM clássico.</li>
+    <li>Para misturar tipos de tráfego, convolve os descritores: bytes únicos de classes disjuntas se somam. Garantia formal para LRU; validado para FIFO, CLOCK, SLRU e outras com ~1,5% de erro; sem garantia para políticas de admissão ou frequência.</li>
+  </ol>
+
+  <h3>Um parágrafo para a metodologia</h3>
+  <blockquote>
+    <p>Os traces sintéticos foram gerados com o TRAGEN [Sabnis e Sitaraman, IMC 2021], a partir de <em>footprint descriptors</em> de tráfego de produção da Akamai. O footprint descriptor preserva a distribuição conjunta da stack distance, em bytes únicos, e da duração das subsequências de reúso do trace original; pelo Teorema 1 de Sundarrajan et al. [CoNEXT 2017], essa distribuição determina a curva de hit rate de um cache LRU. Assim, os traces sintéticos reproduzem a curva de hit rate de requisições (ou, com o descritor ponderado por bytes, a de bytes) do trace original. Os autores validaram empiricamente a semelhança também para SLRU, FIFO, RANDOM, PLRU, MARKERS e CLOCK, com erro médio de 1,5% na RHR e de 1% na BHR. Como a garantia formal se restringe ao LRU, os resultados obtidos com [política X] devem ser lidos como [...]. A ordem das requisições é usada tal como gerada; os timestamps não são usados.</p>
+  </blockquote>
+  <p class="hint">Adapte a última frase ao seu uso: se precisar de tempo, diga como recalibrou.</p>
+</section>
+
+
+<div class="part" id="parte2">
+  <span>Parte 2</span>
+  <h2>A outra abordagem: LRUSM com P(s) sob medida</h2>
+  <p>Tudo até aqui pressupõe objetos de tamanhos diferentes e uma curva medida de tráfego real. Se no seu caso todos os objetos têm o mesmo tamanho e o que importa é a requisição, o caminho é outro: mais simples, exato, e com a distribuição sob seu controle em vez de vinda de um trace. Esta parte descreve esse caminho e, depois, cinco formas de <em>construir</em> a distribuição a partir de parâmetros.</p>
+</div>
+
+<section id="lrusm">
+  <p class="eyebrow">A abordagem</p>
+  <h2>LRUSM: como funciona</h2>
+  <p>É o modelo clássico de Mattson (1970), na forma que Turner e Strecker deram em 1977 para simulação. A estrutura central é a mesma lista, mas usada ao contrário da do TRAGEN: aqui ela é <strong>a pilha LRU do passado</strong>, com o mais recente no topo. Cada passo tem dois movimentos:</p>
+  <ol>
+    <li><strong>Sorteia</strong> uma profundidade <em>d</em> de P(<em>s</em>).</li>
+    <li><strong>Pede o objeto que está naquela profundidade</strong> e o promove ao topo. Se o sorteio deu ∞, entra um objeto novo no topo.</li>
+  </ol>
+  <p>A diferença de fundo para o TRAGEN: lá o sorteio decide o <em>futuro</em> do objeto que acabou de ser emitido; aqui ele decide o <em>presente</em>. E é isso que o torna exato: o objeto na profundidade <em>d</em> tem, por definição da pilha LRU, exatamente <em>d</em> objetos distintos usados mais recentemente que ele. A stack distance da requisição <strong>é</strong> o número sorteado, sem arredondamento e sem "a menos de um objeto".</p>
+
+  <h3>Exemplo conferível à mão</h3>
+  <p>Quatro objetos, A a D, todos do mesmo tamanho. Cada linha mostra a pilha <em>antes</em> do passo (topo à esquerda), com o objeto escolhido destacado e o colchete cobrindo os objetos acima dele.</p>
+
+  <div class="walk unit" role="figure" aria-label="Cinco passos do LRUSM sobre uma pilha de quatro objetos">
+    <div class="row">
+      <div class="what">Depois do prefixo<small>pilha: topo → base</small></div>
+      <div class="lane"><span class="obj">A</span><span class="obj">B</span><span class="obj">C</span><span class="obj">D</span></div>
+      <div class="tr">trace: D C B A</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 1<small>sorteia d = 2</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*2 + 3px)"><span>2 objetos acima</span></span><span class="obj">A</span><span class="obj">B</span><span class="obj moved">C</span><span class="obj">D</span></div>
+      <div class="tr">emite <b>C</b></div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 2<small>sorteia d = 0</small></div>
+      <div class="lane"><span class="obj moved">C</span><span class="obj">A</span><span class="obj">B</span><span class="obj">D</span></div>
+      <div class="tr">emite <b>C</b></div>
+      <div class="check">d = 0 é o topo da pilha: um re-pedido imediato, com zero objetos distintos no meio.</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 3<small>sorteia d = ∞</small></div>
+      <div class="lane"><span class="obj fresh">E</span><span class="obj">C</span><span class="obj">A</span><span class="obj">B</span><span class="obj">D</span></div>
+      <div class="tr">emite <b>E</b></div>
+      <div class="check">Objeto novo entra direto no topo; a pilha cresce.</div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 4<small>sorteia d = 3</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*3 + 6px)"><span>3 objetos acima</span></span><span class="obj">E</span><span class="obj">C</span><span class="obj">A</span><span class="obj moved">B</span><span class="obj">D</span></div>
+      <div class="tr">emite <b>B</b></div>
+    </div>
+    <div class="row">
+      <div class="what">Passo 5<small>sorteia d = 1</small></div>
+      <div class="lane"><span class="brk" style="width:calc(var(--u)*1)"><span>1 objeto acima</span></span><span class="obj">B</span><span class="obj moved">E</span><span class="obj">C</span><span class="obj">A</span><span class="obj">D</span></div>
+      <div class="tr">emite <b>E</b></div>
+    </div>
+  </div>
+  <p class="hint">Trace completo, com o prefixo: <code>D C B A C C E B E</code>. Medindo a stack distance desse trace, as requisições depois do prefixo dão <code>2 0 inf 3 1</code> — exatamente os números sorteados. Saída de <code>genwl.stack_distances</code>.</p>
+
+  <h3>O prefixo de aquecimento</h3>
+  <p>O gerador começa com a pilha já cheia, senão não haveria de onde tirar um objeto a 500 de profundidade. Só que, para quem lê o trace depois, esses objetos aparecem pela primeira vez — e uma primeira aparição é sempre um miss compulsório. Sem cuidado, você pede P(∞) = 2% e mede 16%.</p>
+  <p>A solução é emitir a pilha inicial, da base para o topo, como um prefixo do trace: quem replay-ar o trace chega ao fim do prefixo com o cache no mesmo estado do gerador. Daí em diante as medidas batem exatamente. No <code>genwl.py</code>: <code>--emit-warmup</code> na geração e <code>--skip N</code> na análise, com o mesmo N que ele imprime.</p>
+
+  <h3>O que isso dá de graça</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Propriedade</th><th>Consequência prática</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Gabarito analítico</strong><br><code>miss(C) = P(∞) + P(d ≥ C)</code></td><td>A MRC de LRU sai da sua própria distribuição, sem simular. É o valor verdadeiro contra o qual medir o erro de um estimador amostrado (SHARDS, mini-simulação).</td></tr>
+      <tr><td><strong>d é o IRR do LIRS</strong></td><td>Controlar P(<em>s</em>) é controlar a distribuição de Inter-Reference Recency. Não é preciso um mecanismo à parte para políticas que olham IRR.</td></tr>
+      <tr><td><strong>Sem viés de tamanho</strong></td><td>Com tamanhos iguais, sortear por posição é sortear por objeto. O problema que obriga o TRAGEN a agendar para frente não existe.</td></tr>
+      <tr><td><strong>Não precisa de trace de base</strong></td><td>Nenhum arquivo de modelo, nenhuma distribuição de tamanhos, nenhuma popularidade medida.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>E o que não dá</h3>
+  <ul>
+    <li><strong>A popularidade emerge.</strong> Você fixa P(<em>s</em>); quantas vezes cada objeto é pedido é consequência. Não dá para fixar as duas.</li>
+    <li><strong>Sorteios independentes.</strong> Cada <em>d</em> é sorteado sem memória do anterior, então não há fases, rajadas nem ciclo dia/noite — a carga é estacionária por construção.</li>
+    <li><strong>Sem eixo de tempo.</strong> Só há ordem. Para TTL ou métricas em segundos, é preciso acrescentar timestamps por fora.</li>
+  </ul>
+
+  <h3>Rodando</h3>
+<pre><code>python3 genwl.py gen --model lrusm --sd-file ps.txt --emit-warmup \
+        --requests 300000 -o trace.txt
+python3 genwl.py analyze trace.txt --skip 1000 --sizes 1,10,50,100,1000</code></pre>
+  <p>Com um arquivo pedindo 20% em <em>d</em> = 0, 30% entre 1 e 9, 25% entre 10 e 99, 15% entre 100 e 999 e 10% de objetos novos, o trace gerado mede:</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Cache LRU</th><th class="num">Teoria</th><th class="num">Medido</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1 objeto</td><td class="num">0,800</td><td class="num">0,8010</td></tr>
+      <tr><td class="k">10</td><td class="num">0,500</td><td class="num">0,5008</td></tr>
+      <tr><td class="k">50</td><td class="num">0,389</td><td class="num">0,3901</td></tr>
+      <tr><td class="k">100</td><td class="num">0,250</td><td class="num">0,2513</td></tr>
+      <tr><td class="k">1000</td><td class="num">0,100</td><td class="num">0,1002</td></tr>
+    </tbody>
+    <caption>300 mil requisições, uma semente. A coluna "Teoria" é <code>P(∞) + P(d ≥ C)</code> calculada no papel a partir do arquivo.</caption>
+  </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="construir">
+  <p class="eyebrow">A segunda metade do problema</p>
+  <h2>Construir a P(s) a partir de parâmetros</h2>
+  <p>Definir a distribuição e gerar a carga são tarefas distintas, e vale mantê-las separadas: o construtor produz um arquivo, que é um objeto de estudo por si só — dá para versionar, comparar, publicar junto com o experimento e, principalmente, calcular a MRC exata antes de gerar qualquer requisição.</p>
+
+  <div class="pipe">
+    <div class="stage">
+      <span class="n">Passo 1 · construtor</span>
+      <h4>mkps.py</h4>
+      <span class="file">mkps.py &lt;construtor&gt; [params] -o ps.txt</span>
+      <dl>
+        <dt>Entra</dt><dd>Parâmetros da distribuição.</dd>
+        <dt>Sai</dt><dd>O arquivo <code>ps.txt</code> e, no terminal, a MRC teórica.</dd>
+      </dl>
+    </div>
+    <div class="stage">
+      <span class="n">Passo 2 · gerador</span>
+      <h4>genwl.py gen</h4>
+      <span class="file">--sd-file ps.txt --emit-warmup</span>
+      <dl>
+        <dt>Entra</dt><dd>O arquivo e o número de requisições.</dd>
+        <dt>Sai</dt><dd>O trace, um id por linha.</dd>
+      </dl>
+    </div>
+    <div class="stage">
+      <span class="n">Passo 3 · conferência</span>
+      <h4>genwl.py analyze</h4>
+      <span class="file">--skip N --sizes ...</span>
+      <dl>
+        <dt>Entra</dt><dd>O trace.</dd>
+        <dt>Sai</dt><dd>Histograma medido e MRC medida, para bater com a teórica do passo 1.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3>O formato do arquivo</h3>
+<pre><code># uma entrada por linha; '#' comenta; as probabilidades são normalizadas juntas
+0          0.20     # d exato
+1-9        0.30     # faixa: espalha por igual entre d=1 e d=9
+100-999    0.15
+inf        0.10     # objeto novo (primeira referência)</code></pre>
+  <p>Um detalhe que custa caro se passar batido: o <code>inf</code> entra na mesma normalização das linhas finitas. Se as finitas somam 1 e você acrescenta <code>inf 0.10</code>, o P(∞) efetivo vira 0,10 / 1,10 = 0,0909. O <code>mkps.py</code> já escreve tudo somando 1.</p>
+
+  <h3>A regra que liga tudo</h3>
+  <p>Projetar P(<em>s</em>) é projetar a MRC, porque as duas são a mesma informação:</p>
+  <div class="formula"><div class="eq" style="border-bottom:none">
+    <math display="block"><mrow><mi>miss</mi><mo>(</mo><mi>C</mi><mo>)</mo><mo>=</mo><mi>P</mi><mo>(</mo><mo>∞</mo><mo>)</mo><mo>+</mo><munder><mo>∑</mo><mrow><mi>d</mi><mo>≥</mo><mi>C</mi></mrow></munder><mi>P</mi><mo>(</mo><mi>d</mi><mo>)</mo></mrow></math>
+  </div></div>
+  <p>Todo construtor abaixo é uma forma diferente de preencher P(<em>d</em>) — e todos imprimem essa curva antes de você gerar nada. As duas primeiras são famílias paramétricas; a terceira monta comportamentos; a quarta inverte a curva; a quinta parte de dados.</p>
+  <p class="hint">O <code>genwl.py</code> também aceita as famílias direto, sem arquivo: <code>--sd-dist zipf|lognormal|exp|uniform</code> com <code>--sd-beta</code>, <code>--sd-max</code> e <code>--cold-prob</code>. É o caminho rápido; o arquivo é o caminho reproduzível.</p>
+</section>
+
+<hr class="rule">
+
+<section id="prop-a">
+  <p class="eyebrow">Proposta A</p>
+  <h2>Lei de potência na própria distância</h2>
+  <div class="prop">
+    <p><strong>A ideia.</strong> Aplicar a forma de Zipf diretamente sobre a stack distance: P(<em>d</em>) ∝ (<em>d</em>+1)<sup>−β</sup>. Reúsos curtos são muito mais prováveis que longos, e a cauda decai devagar — a assinatura de localidade temporal que se vê em traces reais.</p>
+    <div class="scroller" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Parâmetro</th><th>O que é</th><th>Efeito na curva</th></tr></thead>
+      <tbody>
+        <tr><td class="k">--beta</td><td>Inclinação da cauda.</td><td>β maior = localidade mais forte: a MRC despenca com caches pequenos. β menor = cauda pesada, o cache precisa ser grande para valer a pena.</td></tr>
+        <tr><td class="k">--dmax</td><td>Maior distância finita.</td><td>O "catálogo ativo". Acima dele, aumentar o cache não pega mais nada finito.</td></tr>
+        <tr><td class="k">--inf</td><td>P(∞).</td><td>O piso da MRC: o miss nunca desce abaixo disso.</td></tr>
+      </tbody>
+    </table>
+    </div>
+<pre style="margin-top:14px"><code>python3 mkps.py potencia --beta 0.9 --dmax 10000 --inf 0.05 -o ps.txt
+
+P(inf) = 0.0500   |   d finita: media 1454.6, mediana 236, maximo 9999
+MRC teorica de LRU (miss ratio):
+   cache(objs)       miss
+            10     0.8050
+           100     0.6108
+          1000     0.3628</code></pre>
+    <p><strong>Quando usar.</strong> É o ponto de partida natural para varrer localidade como variável independente: mantenha tudo fixo e mova só o β.</p>
+  </div>
+
+  <div class="panels" id="panels2"></div>
+  <details>
+    <summary>Ver os números em tabela</summary>
+    <div class="scroller" style="margin-top:10px">
+      <table id="mrc-table"><thead><tr><th>Cache</th><th class="num">β = 0,6</th><th class="num">β = 0,9</th><th class="num">β = 1,2</th><th class="num">com loop</th><th class="num">sem loop</th></tr></thead><tbody></tbody></table>
+    </div>
+  </details>
+  <p class="hint">Curvas calculadas direto das distribuições, sem simular. O degrau do painel da direita é a Proposta C.</p>
+</section>
+
+<hr class="rule">
+
+<section id="prop-b">
+  <p class="eyebrow">Proposta B</p>
+  <h2>Zipf de popularidade, convertida em P(s)</h2>
+  <div class="prop">
+    <p><strong>A ideia.</strong> Você prefere pensar no vocabulário clássico — "catálogo de N objetos, popularidade Zipf(α)" — mas quer gerar pelo LRUSM. O construtor faz a ponte: calcula qual distribuição de stack distance esse modelo implica e escreve o arquivo.</p>
+    <p><strong>Como.</strong> Pela aproximação de Che. Para um "tempo característico" <em>T</em>, um objeto de popularidade <em>p</em> está no cache com probabilidade 1 − e<sup>−pT</sup>. Somando sobre os objetos sai o tamanho de cache <em>C</em>(<em>T</em>) correspondente; ponderando por <em>p</em> sai a hit rate <em>h</em>(<em>T</em>). Varrendo <em>T</em> tem-se a curva inteira, e daí P(<em>d</em> = <em>k</em>) = <em>h</em>(<em>k</em>+1) − <em>h</em>(<em>k</em>), porque um cache de <em>k</em>+1 objetos acerta exatamente os reúsos com <em>d</em> ≤ <em>k</em>.</p>
+    <div class="scroller" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Parâmetro</th><th>O que é</th><th>Efeito</th></tr></thead>
+      <tbody>
+        <tr><td class="k">--alpha</td><td>Expoente de Zipf da popularidade.</td><td>α maior = concentração em poucos objetos quentes = hit rate alta com cache pequeno.</td></tr>
+        <tr><td class="k">--objetos</td><td>Tamanho do catálogo N.</td><td>Onde a curva satura: com cache ≥ N, tudo cabe.</td></tr>
+        <tr><td class="k">--inf</td><td>P(∞), opcional.</td><td>No IRM puro é 0 (catálogo fixo). Suba se quiser conteúdo novo entrando.</td></tr>
+      </tbody>
+    </table>
+    </div>
+<pre style="margin-top:14px"><code>python3 mkps.py irm --alpha 0.9 --objetos 5000 --inf 0 -o ps.txt</code></pre>
+    <p><strong>Confere?</strong> Gerei 600 mil requisições pelo LRUSM com essa P(<em>d</em>) e, separadamente, 600 mil requisições de IRM Zipf(0,9) sobre 5000 objetos. As MRCs de LRU coincidem em toda a faixa:</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Cache</th><th class="num">Teoria de Che</th><th class="num">LRUSM com essa P(d)</th><th class="num">IRM de verdade</th></tr></thead>
+      <tbody>
+        <tr><td class="k">10</td><td class="num">0,9205</td><td class="num">0,9204</td><td class="num">0,9199</td></tr>
+        <tr><td class="k">50</td><td class="num">0,7716</td><td class="num">0,7718</td><td class="num">0,7718</td></tr>
+        <tr><td class="k">100</td><td class="num">0,6907</td><td class="num">0,6909</td><td class="num">0,6914</td></tr>
+        <tr><td class="k">500</td><td class="num">0,4634</td><td class="num">0,4635</td><td class="num">0,4646</td></tr>
+        <tr><td class="k">1000</td><td class="num">0,3435</td><td class="num">0,3438</td><td class="num">0,3445</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><strong>Quando usar — com um cuidado.</strong> A carga gerada assim reproduz a curva de <em>LRU</em> de um Zipf, mas não é uma carga Zipf: no LRUSM a popularidade é passageira. Com cache de 100 objetos, o LFU tem miss 0,542 num Zipf de verdade e 0,961 nesta carga — de melhor política a pior. Então, para comparar com a literatura que fala em α e N, ou para testar políticas que usam frequência (LFU, TinyLFU, ARC), gere Zipf direto com <code>genwl.py gen --model irm</code>. Use esta proposta quando a métrica for LRU, ou quando quiser a forma da curva de um Zipf para perturbá-la — esticar, somar um loop — e medir o efeito isolado de cada mudança.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="prop-c">
+  <p class="eyebrow">Proposta C</p>
+  <h2>Mistura de componentes</h2>
+  <div class="prop">
+    <p><strong>A ideia.</strong> Uma carga real é a soma de comportamentos: um punhado de objetos quentes, um working set que gira, uma varredura periódica, uma cauda longa de conteúdo raro. Cada componente é uma forma sobre <em>d</em>, e a distribuição final é a soma ponderada. O peso é a fração das requisições que se comporta daquele jeito.</p>
+    <div class="scroller" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Componente</th><th>Forma</th><th>Modela</th></tr></thead>
+      <tbody>
+        <tr><td class="k">exp:m</td><td>Decai a partir de d = 0, média m.</td><td>Hot set: poucos objetos repetidos o tempo todo.</td></tr>
+        <tr><td class="k">lognormal:mediana:sigma</td><td>Corpo em torno de uma distância típica.</td><td>Working set de tamanho conhecido, com dispersão.</td></tr>
+        <tr><td class="k">loop:L[:jitter]</td><td>Pico em d = L − 1.</td><td>Varredura cíclica de L objetos — a leitura sequencial que destrói LRU.</td></tr>
+        <tr><td class="k">uniforme:a:b</td><td>Chapada entre a e b.</td><td>Acesso sem preferência dentro de uma faixa.</td></tr>
+        <tr><td class="k">potencia:beta</td><td>Cauda de lei de potência.</td><td>A cauda longa de conteúdo raro.</td></tr>
+      </tbody>
+    </table>
+    </div>
+<pre style="margin-top:14px"><code>python3 mkps.py mistura --comp 0.5:exp:20 --comp 0.2:loop:500:5 \
+        --comp 0.3:potencia:0.7 --dmax 10000 --inf 0.05 -o ps.txt</code></pre>
+    <p><strong>O degrau.</strong> O componente <code>loop</code> é o mais interessante para testar políticas. Um loop de 500 objetos coloca massa em <em>d</em> = 499: um cache de 499 objetos erra <em>todas</em> essas requisições, e um de 505 acerta todas. Medido no trace gerado:</p>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Cache</th><th class="num">miss medido</th></tr></thead>
+      <tbody>
+        <tr><td class="k">100</td><td class="num">0,4682</td></tr>
+        <tr><td class="k">499</td><td class="num">0,3317</td></tr>
+        <tr><td class="k">505</td><td class="num">0,2280</td></tr>
+        <tr><td class="k">5000</td><td class="num">0,1063</td></tr>
+      </tbody>
+      <caption>Seis objetos a mais de cache derrubam o miss em 10 pontos. É a patologia que ARC, LIRS, 2Q e SIEVE existem para tratar — e aqui você a liga e desliga com um parâmetro.</caption>
+    </table>
+    </div>
+    <p><strong>Quando usar.</strong> Para construir cenários com uma patologia conhecida e controlada, e para comparar políticas em terreno onde elas deveriam diferir. Um trace de lei de potência pura, como vimos na Parte 1, quase não separa LRU de FIFO; um com loop separa.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="prop-d">
+  <p class="eyebrow">Proposta D</p>
+  <h2>MRC-alvo: projetar pela curva</h2>
+  <div class="prop">
+    <p><strong>A ideia.</strong> A mais direta de todas para desenho experimental: você não pensa em P(<em>d</em>), pensa na curva que quer. "Miss de 80% com 10 objetos, 50% com 100, 20% com 1000, e piso de 10%." Como <code>miss(C) = P(∞) + P(d ≥ C)</code>, dar pontos da MRC é dar pontos da acumulada de <em>d</em>; o construtor preenche o meio e escreve o arquivo.</p>
+    <div class="scroller" style="margin-top:14px">
+    <table>
+      <thead><tr><th>Parâmetro</th><th>O que é</th></tr></thead>
+      <tbody>
+        <tr><td class="k">--pontos</td><td>Pares <code>C:miss</code>, separados por vírgula. O miss não pode subir com C.</td></tr>
+        <tr><td class="k">--inf</td><td>O piso. Se omitido, vira o miss do último ponto (a curva achata ali).</td></tr>
+        <tr><td class="k">--dmax</td><td>Até onde espalhar a massa que sobra entre o último ponto e o piso.</td></tr>
+        <tr><td class="k">--interp</td><td>Como preencher entre dois pontos: <code>log</code> (padrão, reta em escala log) ou <code>linear</code>.</td></tr>
+      </tbody>
+    </table>
+    </div>
+<pre style="margin-top:14px"><code>python3 mkps.py mrc --pontos 10:0.8,100:0.5,1000:0.2 --inf 0.10 \
+        --dmax 20000 -o ps.txt</code></pre>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Cache</th><th class="num">Pedido</th><th class="num">Medido no trace</th></tr></thead>
+      <tbody>
+        <tr><td class="k">10</td><td class="num">0,80</td><td class="num">0,8004</td></tr>
+        <tr><td class="k">100</td><td class="num">0,50</td><td class="num">0,4996</td></tr>
+        <tr><td class="k">1000</td><td class="num">0,20</td><td class="num">0,2000</td></tr>
+        <tr><td class="k">20000</td><td class="num">0,10</td><td class="num">0,0999</td></tr>
+      </tbody>
+      <caption>400 mil requisições. Você desenha a curva, o trace sai com ela.</caption>
+    </table>
+    </div>
+    <p><strong>Quando usar.</strong> Quando o experimento exige controle sobre o <em>resultado</em>, não sobre a forma. Exemplos: duas cargas com a mesma MRC em C = 100 mas trajetórias diferentes nos extremos; ou uma família de cargas que cruza um limiar de interesse exatamente no ponto que você quer estudar.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="prop-e">
+  <p class="eyebrow">Proposta E</p>
+  <h2>Estilo TRAGEN: medir e operar</h2>
+  <div class="prop">
+    <p><strong>A ideia.</strong> É a Parte 1 reduzida ao caso de tamanho unitário. Em vez de inventar a distribuição, meça a de um trace que você tem — público, de produção, ou gerado — e depois aplique operadores sobre o descritor, como o FD calculus faz.</p>
+<pre><code># medir (o "traffic modeler" desta abordagem)
+python3 mkps.py trace trace.txt --skip 1000 -o ps_medida.txt
+
+# operar: esticar todas as distâncias por 4
+python3 mkps.py transformar ps_medida.txt --esticar 4 -o ps_maior.txt
+
+# operar: 70% do comportamento A, 30% do B, com outro piso
+python3 mkps.py transformar ps_a.txt:0.7 ps_b.txt:0.3 --inf 0.08 -o ps_mix.txt</code></pre>
+    <div class="scroller">
+    <table>
+      <thead><tr><th>Operador</th><th>O que faz</th><th>Para que serve</th></tr></thead>
+      <tbody>
+        <tr><td class="k">--esticar k</td><td>Multiplica todas as distâncias por k.</td><td>Simular um catálogo ou working set k vezes maior, preservando a forma da localidade. Desloca a MRC inteira para a direita.</td></tr>
+        <tr><td class="k">arquivo:peso</td><td>Soma ponderada de descritores.</td><td>"Metade das requisições se comporta como a carga A, metade como a B."</td></tr>
+        <tr><td class="k">--inf p</td><td>Troca o piso.</td><td>Variar a taxa de conteúdo novo sem mexer no resto.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>A ida e volta fecha: medindo de volta o trace gerado a partir de uma mistura, o construtor devolve P(∞) = 0,0497 contra 0,05 pedido, e miss(10) = 0,7917 contra 0,7905 da teoria.</p>
+    <div class="note">
+      <span class="tag">Onde isto difere do TRAGEN de verdade</span>
+      <p>Somar dois descritores com pesos <strong>não é</strong> misturar duas classes de tráfego. A soma ponderada diz "cada requisição se comporta como a classe 1 com probabilidade w" — comportamentos misturados dentro de um fluxo só. Intercalar dois fluxos independentes é outra coisa: os objetos da classe 2 passam a contar como objetos distintos no meio dos reúsos da classe 1, então as distâncias de <em>ambas</em> esticam. É exatamente por isso que o FD do TRAGEN carrega a duração <em>t</em> e o descritor Pᵃ, e por isso a mistura lá é uma convolução por janela de tempo. Sem o eixo de tempo, não há como prever a intercalação a partir dos dois P(<em>d</em>) — o caminho honesto é gerar as duas cargas, intercalá-las e <em>medir</em> o resultado.</p>
+    </div>
+    <p><strong>Quando usar.</strong> Para calibrar contra dados reais (traces do Twitter, MSR Cambridge, Wikipedia) e depois perturbar de forma controlada — que é o mais perto que dá para chegar de "realista e sob controle" ao mesmo tempo.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="escolher">
+  <p class="eyebrow">Resumo da Parte 2</p>
+  <h2>Qual proposta usar</h2>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Se o seu objetivo é…</th><th>Proposta</th><th>Comando</th></tr></thead>
+    <tbody>
+      <tr><td>Varrer localidade como variável independente</td><td><strong>A</strong> · lei de potência</td><td class="k">mkps.py potencia --beta …</td></tr>
+      <tr><td>Reproduzir a curva LRU de um Zipf(α) para perturbá-la (para Zipf de verdade: <code>genwl.py gen --model irm</code>)</td><td><strong>B</strong> · Zipf de popularidade</td><td class="k">mkps.py irm --alpha … --objetos …</td></tr>
+      <tr><td>Criar uma patologia controlada (varredura, working set)</td><td><strong>C</strong> · mistura</td><td class="k">mkps.py mistura --comp …</td></tr>
+      <tr><td>Fixar o resultado: a MRC tem que passar por estes pontos</td><td><strong>D</strong> · MRC-alvo</td><td class="k">mkps.py mrc --pontos …</td></tr>
+      <tr><td>Partir de um trace real e perturbá-lo</td><td><strong>E</strong> · medir e operar</td><td class="k">mkps.py trace … / transformar …</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Em todos os casos o construtor imprime a MRC teórica antes de você gerar qualquer requisição. Para os experimentos de amostragem que motivaram tudo isso, é esse número que serve de verdade de referência: o erro que você medir num estimador amostrado é dele, não do workload.</p>
+</section>
+
+<hr class="rule">
+
+<div class="part" id="parte3">
+  <span>Parte 3</span>
+  <h2>Cenários de stack distance baixa, média e alta</h2>
+  <p>Como transformar "baixa" e "alta" em números: qual escala usar, qual distribuição, de onde vem a fórmula que dá os parâmetros, e como descrever os cenários no seu documento de modo que outra pessoa consiga reproduzi-los.</p>
+</div>
+
+<section id="cenarios">
+  <p class="eyebrow">O princípio</p>
+  <h2>"Alta" só existe em relação a uma escala</h2>
+  <p>Uma stack distance de 300 é alta para um cache de 50 objetos e baixa para um de 10.000. Uma definição de "alta" ou "baixa" sem escala de referência não pode ser medida nem reproduzida. A escala natural é um <strong>cache de referência C*</strong>: o tamanho de cache em torno do qual o seu estudo gira.</p>
+  <p>A escolha não é arbitrária. Num cache LRU de C* objetos, um reúso acerta exatamente quando <em>d</em> &lt; C* (Parte 2). A pergunta "este reúso tem stack distance alta?" vira "este reúso cabe no cache de referência?", e o nível de uma carga inteira vira uma fração:</p>
+
+  <article class="formula">
+    <header><b>A grandeza que define o cenário</b><span>H* — lê-se "H estrela"</span></header>
+    <div class="eq"><math display="block"><mrow><msup><mi>H</mi><mo>*</mo></msup><mo>=</mo><mi>P</mi><mo>(</mo><mi>d</mi><mo>&lt;</mo><msup><mi>C</mi><mo>*</mo></msup><mo>∣</mo><mtext>reúso</mtext><mo>)</mo></mrow></math></div>
+    <div class="body">
+      <div><h4>Em palavras</h4><p>A fração dos reúsos cuja stack distance é menor que o cache de referência — ou seja, a fração dos reúsos que um cache LRU de C* objetos atende.</p></div>
+      <div><h4>Leitura</h4><p><strong>H* = 0,9:</strong> 90% dos reúsos cabem no cache → stack distance baixa.<br><strong>H* = 0,1:</strong> só 10% cabem → stack distance alta.</p></div>
+    </div>
+  </article>
+
+  <h3>O que H* fixa, e o que não fixa</h3>
+  <p>"90% dos reúsos têm <em>d</em> menor que C*" é o mesmo que dizer que <strong>C* é o percentil 90 de <em>d</em></strong>. Do mesmo jeito, H* = 0,5 faz de C* a mediana, e H* = 0,1 faz de C* o percentil 10. Ou seja, H* fixa <em>um único ponto</em> da distribuição.</p>
+  <p>Todo o resto — onde fica a mediana da carga baixa, quão espalhados são os reúsos, quantos são repetições imediatas — é decidido pela família de distribuição e pelos outros parâmetros dela. É por isso que a escolha da família importa, e a seção <a href="#encaixe">E a lei de potência e o Zipf?</a> mostra isso com números.</p>
+
+  <h3>O desenho: variar uma coisa só</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Grandeza</th><th>Entre os três cenários</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td><strong>H*</strong></td><td>varia: 0,9 / 0,5 / 0,1</td><td>É o que define baixa, média e alta.</td></tr>
+      <tr><td><strong>Mediana <em>m</em></strong></td><td>varia, calculada a partir de H*</td><td>É o parâmetro que a fórmula ajusta.</td></tr>
+      <tr><td>σ (espalhamento)</td><td>igual</td><td>Para que só o nível mude, não a forma.</td></tr>
+      <tr><td>P(∞) (objetos novos)</td><td>igual</td><td>Senão, a taxa de novidade se mistura com a localidade.</td></tr>
+      <tr><td><em>d</em><sub>max</sub>, requisições, aquecimento, semente</td><td>iguais</td><td>Condições de geração idênticas.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="formula">
+  <p class="eyebrow">Matemática</p>
+  <h2>A fórmula, passo a passo</h2>
+  <p>O problema: dado o cache de referência C* e a fração H* que você quer, achar a mediana <em>m</em> da distribuição de <em>d</em>. A resposta é</p>
+  <div class="formula"><div class="eq" style="border-bottom:none">
+    <math display="block"><mrow><mi>m</mi><mo>=</mo><msup><mi>C</mi><mo>*</mo></msup><mo>·</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>σ</mi><mo>·</mo><mi>z</mi></mrow></msup><mspace width="1.4em"/><mtext>com</mtext><mspace width="0.6em"/><mi>z</mi><mo>=</mo><msup><mi>Φ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>(</mo><msup><mi>H</mi><mo>*</mo></msup><mo>)</mo></mrow></math>
+  </div></div>
+  <p>e os passos abaixo mostram de onde ela vem, sem pular nada. Cada passo usa só o anterior.</p>
+
+  <div class="deriv">
+
+    <div class="passo">
+      <h3>Por que trabalhar em escala logarítmica</h3>
+      <p>Stack distances variam por ordens de grandeza: um reúso tem 3 objetos no meio, outro 30.000. Para um cache, o que pesa é a <em>proporção</em>: dobrar a distância de 100 para 200 tem o mesmo efeito relativo que dobrar de 10.000 para 20.000. O logaritmo transforma multiplicação em soma, e aí passos proporcionais viram passos iguais:</p>
+      <div class="eqbox"><math display="block"><mrow><mi>ln</mi><mn>1.000</mn><mo>−</mo><mi>ln</mi><mn>100</mn><mo>=</mo><mi>ln</mi><mn>10.000</mn><mo>−</mo><mi>ln</mi><mn>1.000</mn><mo>=</mo><mi>ln</mi><mn>10</mn><mo>≈</mo><mn>2,30</mn></mrow></math></div>
+      <p>Em escala log, "dez vezes maior" é sempre o mesmo passo. Por isso faz sentido descrever <em>d</em> com uma distribuição simétrica <em>em escala log</em>.</p>
+    </div>
+
+    <div class="passo">
+      <h3>O que é uma lognormal</h3>
+      <p>Dizer que <em>d</em> é lognormal com mediana <em>m</em> e parâmetro σ é dizer que <strong>o logaritmo de <em>d</em> segue uma normal</strong> (o sino de Gauss) com média ln <em>m</em> e desvio-padrão σ:</p>
+      <div class="eqbox"><math display="block"><mrow><mi>ln</mi><mi>d</mi><mspace width="0.4em"/><mo>∼</mo><mspace width="0.4em"/><mtext>Normal</mtext><mo>(</mo><mspace width="0.2em"/><mi>ln</mi><mi>m</mi><mo>,</mo><mspace width="0.4em"/><mi>σ</mi><mspace width="0.2em"/><mo>)</mo></mrow></math></div>
+      <ul>
+        <li><strong><em>m</em> é a mediana de <em>d</em></strong>: metade dos reúsos abaixo, metade acima. O centro do sino é ln <em>m</em>, e o logaritmo preserva a ordem, então o meio em escala log é o meio em escala normal.</li>
+        <li><strong>σ é o espalhamento em escala log.</strong> Subir um σ é multiplicar a distância por e<sup>σ</sup>; com σ = 1, por e ≈ 2,72. Descer um σ é dividir.</li>
+      </ul>
+      <p>O painel da esquerda da figura abaixo mostra os três cenários exatamente assim: três sinos idênticos, deslocados.</p>
+    </div>
+
+    <div class="passo">
+      <h3>Escrever H* como uma probabilidade da normal</h3>
+      <div class="eqbox"><math display="block"><mrow><msup><mi>H</mi><mo>*</mo></msup><mo>=</mo><mi>P</mi><mo>(</mo><mi>d</mi><mo>&lt;</mo><msup><mi>C</mi><mo>*</mo></msup><mo>)</mo><mo>=</mo><mi>P</mi><mo>(</mo><mi>ln</mi><mi>d</mi><mo>&lt;</mo><mi>ln</mi><msup><mi>C</mi><mo>*</mo></msup><mo>)</mo></mrow></math></div>
+      <p>O logaritmo é crescente: se <em>d</em> é menor que C*, então ln <em>d</em> é menor que ln C*, e vice-versa. A igualdade troca uma pergunta sobre a lognormal por uma pergunta sobre a normal, que sabemos responder.</p>
+    </div>
+
+    <div class="passo">
+      <h3>Padronizar e chegar em Φ</h3>
+      <p>Qualquer normal vira a <em>normal padrão</em> (média 0, desvio 1) quando se subtrai a média e se divide pelo desvio:</p>
+      <div class="eqbox"><math display="block"><mrow><mi>Z</mi><mo>=</mo><mfrac><mrow><mi>ln</mi><mi>d</mi><mo>−</mo><mi>ln</mi><mi>m</mi></mrow><mi>σ</mi></mfrac></mrow></math></div>
+      <p>Fazendo a mesma operação dos dois lados da desigualdade do passo anterior:</p>
+      <div class="eqbox"><math display="block"><mrow><msup><mi>H</mi><mo>*</mo></msup><mo>=</mo><mi>P</mi><mrow><mo>(</mo><mi>Z</mi><mo>&lt;</mo><mfrac><mrow><mi>ln</mi><msup><mi>C</mi><mo>*</mo></msup><mo>−</mo><mi>ln</mi><mi>m</mi></mrow><mi>σ</mi></mfrac><mo>)</mo></mrow><mo>=</mo><mi>Φ</mi><mrow><mo>(</mo><mfrac><mrow><mi>ln</mi><mo>(</mo><msup><mi>C</mi><mo>*</mo></msup><mo>/</mo><mi>m</mi><mo>)</mo></mrow><mi>σ</mi></mfrac><mo>)</mo></mrow></mrow></math></div>
+      <p><strong>Φ(z)</strong> é a função de distribuição acumulada da normal padrão: a fração da normal padrão que fica abaixo de <em>z</em>. (Na segunda igualdade usamos ln C* − ln <em>m</em> = ln(C*/<em>m</em>).) Φ não tem fórmula fechada simples; é tabelada e está em qualquer software. Os valores que aparecem aqui:</p>
+      <div class="scroller ztab">
+      <table>
+        <thead><tr><th class="num">z</th><th class="num">Φ(z)</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr><td class="num">−1,2816</td><td class="num">0,10</td><td>10% da normal padrão fica abaixo de −1,28</td></tr>
+          <tr><td class="num">0</td><td class="num">0,50</td><td>metade fica abaixo do centro</td></tr>
+          <tr><td class="num">1</td><td class="num">0,8413</td><td>um desvio acima do centro</td></tr>
+          <tr><td class="num">1,2816</td><td class="num">0,90</td><td>90% fica abaixo de 1,28</td></tr>
+          <tr><td class="num">1,96</td><td class="num">0,975</td><td>o famoso 1,96 dos intervalos de 95%</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>O argumento de Φ tem uma leitura direta: <strong>ln(C*/<em>m</em>)/σ é quantos σ o cache de referência está acima da mediana, em escala log.</strong> Se C* está 1,28 σ acima da mediana, 90% dos reúsos ficam abaixo dele.</p>
+    </div>
+
+    <div class="passo">
+      <h3>Inverter para achar <em>m</em></h3>
+      <p>Até aqui a fórmula vai de <em>m</em> para H*. Queremos o caminho de volta. Φ⁻¹, a inversa de Φ, devolve o <em>z</em> que tem a fração H* abaixo dele: Φ⁻¹(0,9) = 1,2816.</p>
+      <div class="algebra">
+        <div class="eqbox"><math><mrow><msup><mi>H</mi><mo>*</mo></msup><mo>=</mo><mi>Φ</mi><mo>(</mo><mi>ln</mi><mo>(</mo><msup><mi>C</mi><mo>*</mo></msup><mo>/</mo><mi>m</mi><mo>)</mo><mo>/</mo><mi>σ</mi><mo>)</mo></mrow></math></div><div class="why">o ponto de partida (passo 4)</div>
+        <div class="eqbox"><math><mrow><msup><mi>Φ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>(</mo><msup><mi>H</mi><mo>*</mo></msup><mo>)</mo><mo>=</mo><mi>ln</mi><mo>(</mo><msup><mi>C</mi><mo>*</mo></msup><mo>/</mo><mi>m</mi><mo>)</mo><mo>/</mo><mi>σ</mi></mrow></math></div><div class="why">aplica Φ⁻¹ dos dois lados; ela desfaz Φ</div>
+        <div class="eqbox"><math><mrow><mi>z</mi><mo>·</mo><mi>σ</mi><mo>=</mo><mi>ln</mi><mo>(</mo><msup><mi>C</mi><mo>*</mo></msup><mo>/</mo><mi>m</mi><mo>)</mo></mrow></math></div><div class="why">dá o nome <em>z</em> a Φ⁻¹(H*) e multiplica os dois lados por σ</div>
+        <div class="eqbox"><math><mrow><msup><mi>e</mi><mrow><mi>z</mi><mo>·</mo><mi>σ</mi></mrow></msup><mo>=</mo><msup><mi>C</mi><mo>*</mo></msup><mo>/</mo><mi>m</mi></mrow></math></div><div class="why">aplica a exponencial dos dois lados; ela desfaz o ln</div>
+        <div class="eqbox"><math><mrow><mi>m</mi><mo>=</mo><msup><mi>C</mi><mo>*</mo></msup><mo>·</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>σ</mi><mo>·</mo><mi>z</mi></mrow></msup></mrow></math></div><div class="why">isola <em>m</em>: multiplica por <em>m</em>, divide por e<sup>zσ</sup></div>
+      </div>
+      <p><strong>Leitura:</strong> <em>m</em> é C* dividido por e<sup>σz</sup>. Se H* &gt; 0,5, <em>z</em> é positivo e a mediana fica <em>abaixo</em> do cache (stack distance baixa). Se H* &lt; 0,5, <em>z</em> é negativo e a mediana fica <em>acima</em> (alta). Se H* = 0,5, <em>z</em> = 0 e a mediana é o próprio C*.</p>
+    </div>
+
+    <div class="passo">
+      <h3>Aplicar aos três cenários</h3>
+      <p>Com C* = 1.000 e σ = 1:</p>
+      <div class="scroller">
+      <table>
+        <thead><tr><th>Cenário</th><th class="num">H*</th><th class="num">z = Φ⁻¹(H*)</th><th class="num">σ·z</th><th class="num">e<sup>−σz</sup></th><th class="num">m = 1.000 · e<sup>−σz</sup></th></tr></thead>
+        <tbody>
+          <tr><td>Baixa</td><td class="num">0,9</td><td class="num">1,2816</td><td class="num">1,2816</td><td class="num">0,2776</td><td class="num"><strong>278</strong></td></tr>
+          <tr><td>Média</td><td class="num">0,5</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num"><strong>1.000</strong></td></tr>
+          <tr><td>Alta</td><td class="num">0,1</td><td class="num">−1,2816</td><td class="num">−1,2816</td><td class="num">3,602</td><td class="num"><strong>3.602</strong></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Para calcular sem tabela:</p>
+<pre><code># Python
+from statistics import NormalDist; import math
+m = 1000 * math.exp(-1 * NormalDist().inv_cdf(0.9))        # 277,6
+
+# Excel em português
+=1000*EXP(-1*INV.NORMP.N(0,9))</code></pre>
+    </div>
+
+    <div class="passo">
+      <h3>Conferir: a mesma ideia prevê todos os percentis</h3>
+      <p>Trocando H* por qualquer fração <em>q</em> e C* pelo percentil <em>p<sub>q</sub></em>, a fórmula do passo 5 dá o percentil em vez da mediana:</p>
+      <div class="eqbox"><math display="block"><mrow><msub><mi>p</mi><mi>q</mi></msub><mo>=</mo><mi>m</mi><mo>·</mo><msup><mi>e</mi><mrow><mi>σ</mi><mo>·</mo><msup><mi>Φ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>(</mo><mi>q</mi><mo>)</mo></mrow></msup></mrow></math></div>
+      <p>Com Φ⁻¹(0,1) = −1,2816 e Φ⁻¹(0,9) = 1,2816, isso dá <strong>p10 = <em>m</em> ÷ 3,6</strong> e <strong>p90 = <em>m</em> × 3,6</strong>. Comparando com os traces gerados (1.000.000 de requisições cada):</p>
+      <div class="scroller">
+      <table>
+        <thead><tr><th>Cenário</th><th class="num">p10 previsto → medido</th><th class="num">p50 previsto → medido</th><th class="num">p90 previsto → medido</th></tr></thead>
+        <tbody>
+          <tr><td>Baixa</td><td class="num">77 → 76</td><td class="num">278 → 278</td><td class="num">1.001 → 1.006</td></tr>
+          <tr><td>Média</td><td class="num">278 → 277</td><td class="num">1.000 → 1.000</td><td class="num">3.602 → 3.611</td></tr>
+          <tr><td>Alta</td><td class="num">1.000 → 996</td><td class="num">3.602 → 3.583</td><td class="num">12.975 → 12.725</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>Repare na diagonal: o p90 da baixa, a mediana da média e o p10 da alta caem todos em ≈ 1.000 = C*. Não é coincidência — é a definição de H* (seção anterior). E o p10 da média (277) é a mediana da baixa (278), porque as medianas ficaram espaçadas exatamente pelo fator e<sup>1,2816</sup> = 3,6 que separa p10 de p50. Isso é consequência de escolher H* = 0,9 / 0,5 / 0,1 com σ = 1.</p>
+    </div>
+
+    <div class="passo">
+      <h3>Do H* à taxa de miss do cache</h3>
+      <p>H* conta só os reúsos. A taxa de miss de um LRU de C* objetos, sobre <em>todas</em> as requisições, acrescenta os objetos novos (que são sempre miss):</p>
+      <div class="eqbox"><math display="block"><mrow><mtext>miss</mtext><mo>(</mo><msup><mi>C</mi><mo>*</mo></msup><mo>)</mo><mo>=</mo><mi>P</mi><mo>(</mo><mo>∞</mo><mo>)</mo><mo>+</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>P</mi><mo>(</mo><mo>∞</mo><mo>)</mo><mo>)</mo><mo>·</mo><mo>(</mo><mn>1</mn><mo>−</mo><msup><mi>H</mi><mo>*</mo></msup><mo>)</mo></mrow></math></div>
+      <div class="scroller">
+      <table>
+        <thead><tr><th>Cenário</th><th>Conta</th><th class="num">Previsto</th><th class="num">Medido</th></tr></thead>
+        <tbody>
+          <tr><td>Baixa</td><td class="k">0,05 + 0,95 × 0,1</td><td class="num">0,145</td><td class="num">0,1456</td></tr>
+          <tr><td>Média</td><td class="k">0,05 + 0,95 × 0,5</td><td class="num">0,525</td><td class="num">0,5249</td></tr>
+          <tr><td>Alta</td><td class="k">0,05 + 0,95 × 0,9</td><td class="num">0,905</td><td class="num">0,9044</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="passo">
+      <h3>A fórmula que o código realmente usa</h3>
+      <p>O gerador trabalha com inteiros <em>d</em> = 0, 1, 2, …, <em>d</em><sub>max</sub> − 1, então o <code>mkps.py</code> escreve a versão discreta:</p>
+      <div class="eqbox"><math display="block"><mrow><mi>P</mi><mo>(</mo><mi>d</mi><mo>)</mo><mspace width="0.3em"/><mo>∝</mo><mspace width="0.3em"/><mfrac><mn>1</mn><mrow><mi>d</mi><mo>+</mo><mn>1</mn></mrow></mfrac><mo>·</mo><mi>exp</mi><mrow><mo>(</mo><mo>−</mo><mfrac><msup><mrow><mo>(</mo><mi>ln</mi><mo>(</mo><mi>d</mi><mo>+</mo><mn>1</mn><mo>)</mo><mo>−</mo><mi>ln</mi><mo>(</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo>)</mo><mo>)</mo></mrow><mn>2</mn></msup><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac><mo>)</mo></mrow></mrow></math></div>
+      <div class="scroller">
+      <table>
+        <thead><tr><th>Peça</th><th>O que faz</th></tr></thead>
+        <tbody>
+          <tr><td class="k">exp(−(x − μ)² / 2σ²)</td><td>O sino de Gauss do passo 2, escrito por extenso, com x = ln(<em>d</em>+1) e μ = ln(<em>m</em>+1).</td></tr>
+          <tr><td class="k">ln(d+1) em vez de ln d</td><td><em>d</em> = 0 é válido (repetição imediata) e ln 0 não existe. Para <em>m</em> ≫ 1 a diferença some.</td></tr>
+          <tr><td class="k">÷ (d+1)</td><td>Converte "probabilidade por unidade de log" em "probabilidade por inteiro". Faixas de mesma largura em log contêm mais inteiros quanto maior <em>d</em>: [10, 20] tem 10 inteiros, [100, 200] tem 100. Sem a divisão, as distâncias grandes ganhariam peso demais e a mediana sairia do lugar.</td></tr>
+          <tr><td class="k">∝ e o corte em d_max</td><td>"Proporcional a": os pesos são normalizados para somar 1 − P(∞), e nada acima de <em>d</em><sub>max</sub> é gerado.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p><strong>O efeito do corte.</strong> No cenário alto, 0,43% da lognormal fica acima de 50.000 e é cortado; a renormalização puxa os percentis altos um pouco para baixo — por isso a mediana medida é 3.583 em vez de 3.602 (−0,5%) e o p90 é 12.725 em vez de 12.975 (−1,9%). Para diminuir o efeito, aumente <em>d</em><sub>max</sub>. Regra prática: <em>d</em><sub>max</sub> ≥ p99 do cenário alto = <em>m</em><sub>alta</sub> · e<sup>2,33σ</sup>.</p>
+      <p><strong>Conferência da discretização.</strong> Na figura abaixo, o pico de cada sino vale 0,399 = 1/√(2π), exatamente o pico da normal padrão: a versão discreta preserva a forma.</p>
+    </div>
+  </div>
+
+  <div class="panels" id="panels3"></div>
+  <details>
+    <summary>Ver os valores dos gráficos em tabela</summary>
+    <div class="scroller" style="margin-top:10px">
+      <table id="tab3"><thead><tr><th class="num">d</th><th class="num">densidade baixa</th><th class="num">densidade média</th><th class="num">densidade alta</th><th class="num">P(d &lt; x) baixa</th><th class="num">P(d &lt; x) média</th><th class="num">P(d &lt; x) alta</th></tr></thead><tbody></tbody></table>
+    </div>
+  </details>
+  <p class="hint">Calculado das três distribuições escritas pelo <code>mkps.py</code>. Densidade por unidade de ln <em>d</em>. A linha vertical é o cache de referência C* = 1.000.</p>
+</section>
+
+<hr class="rule">
+
+<section id="cargas">
+  <p class="eyebrow">Resultado</p>
+  <h2>As três cargas: parâmetros, comandos e medidas</h2>
+
+  <h3>Parâmetros</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Parâmetro</th><th>Valor</th><th>Igual nos três?</th></tr></thead>
+    <tbody>
+      <tr><td>Cache de referência C*</td><td class="num">1.000 objetos</td><td>sim</td></tr>
+      <tr><td>Família de P(<em>d</em>)</td><td>lognormal</td><td>sim</td></tr>
+      <tr><td>σ</td><td class="num">1</td><td>sim</td></tr>
+      <tr><td>P(∞)</td><td class="num">0,05</td><td>sim</td></tr>
+      <tr><td><em>d</em><sub>max</sub></td><td class="num">50.000</td><td>sim</td></tr>
+      <tr><td>Requisições</td><td class="num">1.000.000 + 50.000 de aquecimento</td><td>sim</td></tr>
+      <tr><td>Semente</td><td class="num">7</td><td>sim</td></tr>
+      <tr><td><strong>H*</strong></td><td class="num"><strong>0,9 / 0,5 / 0,1</strong></td><td>não — define o cenário</td></tr>
+      <tr><td><strong>Mediana <em>m</em></strong></td><td class="num"><strong>278 / 1.000 / 3.602</strong></td><td>não — calculada de H*</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Comandos</h3>
+<pre><code>python3 mkps.py mistura --comp 1:lognormal:278:1  --dmax 50000 --inf 0.05 -o ps_baixa.txt
+python3 mkps.py mistura --comp 1:lognormal:1000:1 --dmax 50000 --inf 0.05 -o ps_media.txt
+python3 mkps.py mistura --comp 1:lognormal:3602:1 --dmax 50000 --inf 0.05 -o ps_alta.txt
+
+for c in baixa media alta; do
+  python3 genwl.py gen --model lrusm --sd-file ps_$c.txt --emit-warmup \
+          --requests 1000000 --seed 7 -o carga_$c.txt
+done
+
+python3 genwl.py analyze carga_baixa.txt --skip 50000 --sizes 100,1000,10000</code></pre>
+
+  <h3>O que as cargas mediram</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Medida</th><th class="num">Baixa</th><th class="num">Média</th><th class="num">Alta</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Controladas pelo projeto</td></tr>
+      <tr><td>H* projetado → medido</td><td class="num">0,90 → 0,899</td><td class="num">0,50 → 0,500</td><td class="num">0,10 → 0,101</td></tr>
+      <tr><td>P(∞) medido</td><td class="num">0,0495</td><td class="num">0,0495</td><td class="num">0,0495</td></tr>
+      <tr><td>p10 de <em>d</em></td><td class="num">76</td><td class="num">277</td><td class="num">996</td></tr>
+      <tr><td>p25 de <em>d</em></td><td class="num">141</td><td class="num">508</td><td class="num">1.825</td></tr>
+      <tr><td>Mediana de <em>d</em></td><td class="num">278</td><td class="num">1.000</td><td class="num">3.583</td></tr>
+      <tr><td>p75 de <em>d</em></td><td class="num">548</td><td class="num">1.968</td><td class="num">7.015</td></tr>
+      <tr><td>p90 de <em>d</em></td><td class="num">1.006</td><td class="num">3.611</td><td class="num">12.725</td></tr>
+      <tr class="grp"><td colspan="4">Consequência no cache LRU</td></tr>
+      <tr><td>Miss com C = 100</td><td class="num">0,853</td><td class="num">0,990</td><td class="num">1,000</td></tr>
+      <tr><td>Miss com C = 1.000 (= C*)</td><td class="num">0,146</td><td class="num">0,525</td><td class="num">0,904</td></tr>
+      <tr><td>Miss com C = 10.000</td><td class="num">0,050</td><td class="num">0,060</td><td class="num">0,193</td></tr>
+      <tr class="grp"><td colspan="4">Emergem — não são parâmetros; reporte como medidas</td></tr>
+      <tr><td>Objetos distintos</td><td class="num">51.256</td><td class="num">55.743</td><td class="num">68.716</td></tr>
+      <tr><td>Fração dos pedidos no top 1% dos objetos</td><td class="num">5,6%</td><td class="num">5,3%</td><td class="num">4,4%</td></tr>
+    </tbody>
+    <caption>Medido nas cargas geradas, depois do aquecimento. Quanto maior a stack distance, mais objetos distintos ficam ativos e mais achatada fica a popularidade — efeitos do nível, não controlados à parte.</caption>
+  </table>
+  </div>
+
+  <h3>Como escolher os valores no seu projeto</h3>
+  <ul>
+    <li><strong>C*:</strong> o tamanho de cache central do estudo. Se você simula vários tamanhos, o do meio da faixa.</li>
+    <li><strong>H*:</strong> o quanto os cenários se separam. 0,9 / 0,5 / 0,1 é simétrico em torno do meio; para extremos, 0,99 / 0,5 / 0,01.</li>
+    <li><strong>σ:</strong> o espalhamento. Com σ = 1, 80% dos reúsos ficam entre <em>m</em> ÷ 3,6 e <em>m</em> × 3,6. σ maior afasta as medianas para o mesmo H* (<em>m</em> = C* · e<sup>−σz</sup>) e exige <em>d</em><sub>max</sub> bem maior.</li>
+    <li><strong><em>d</em><sub>max</sub>:</strong> pelo menos o p99 do cenário alto, <em>m</em><sub>alta</sub> · e<sup>2,33σ</sup>. Aqui: 3.602 × 10,2 ≈ 37 mil, então 50.000 basta.</li>
+  </ul>
+</section>
+
+<hr class="rule">
+
+<section id="encaixe">
+  <p class="eyebrow">Onde isso se encaixa</p>
+  <h2>E a lei de potência e o Zipf? Não foram descartados</h2>
+  <p>São duas coisas diferentes, que se combinam:</p>
+  <div class="scroller">
+  <table>
+    <thead><tr><th></th><th>O que é</th><th>Exemplos</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Família de distribuição</strong></td><td>A <em>forma</em> de P(<em>d</em>).</td><td>Lei de potência (Proposta A), Zipf convertido (B), mistura (C) — incluindo o componente lognormal —, pontos de MRC (D).</td></tr>
+      <tr><td><strong>Método de cenários</strong></td><td>Como escolher os <em>valores</em> dos parâmetros para que "baixa / média / alta" tenham definição numérica.</td><td>Fixar C*, escolher H*, variar uma coisa só (esta Parte 3).</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>O método funciona com qualquer família. A lognormal não é uma sexta proposta: é um componente da Proposta C (<code>mistura --comp 1:lognormal:m:σ</code>) usado sozinho. A pergunta que decide é: <strong>com qual família o método produz cenários que diferem só no nível?</strong></p>
+  <p>Para responder, construí os mesmos três cenários — H* = 0,9, 0,5 e 0,1, com C* = 1.000 e <em>d</em><sub>max</sub> = 50.000 — com as três famílias. Em cada uma, o parâmetro foi ajustado por bisseção até H* bater.</p>
+
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Família</th><th>Cenário</th><th class="num">Parâmetro</th><th class="num">p10</th><th class="num">p50</th><th class="num">p90</th><th class="num">Espalhamento (p90+1)/(p10+1)</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="7">Lognormal, σ = 1 — ajusta a mediana m</td></tr>
+      <tr><td></td><td>Baixa</td><td class="num">m = 278</td><td class="num">76</td><td class="num">278</td><td class="num">1.004</td><td class="num good">13</td></tr>
+      <tr><td></td><td>Média</td><td class="num">m = 1.000</td><td class="num">277</td><td class="num">1.000</td><td class="num">3.604</td><td class="num good">13</td></tr>
+      <tr><td></td><td>Alta</td><td class="num">m = 3.602</td><td class="num">997</td><td class="num">3.583</td><td class="num">12.701</td><td class="num good">13</td></tr>
+      <tr class="grp"><td colspan="7">Lei de potência — ajusta β</td></tr>
+      <tr><td></td><td>Baixa</td><td class="num">β = 1,254</td><td class="num">0</td><td class="num">6</td><td class="num">999</td><td class="num bad">1.000</td></tr>
+      <tr><td></td><td>Média</td><td class="num">β = 0,882</td><td class="num">4</td><td class="num">1.000</td><td class="num">26.081</td><td class="num bad">5.216</td></tr>
+      <tr><td></td><td>Alta</td><td class="num">β = 0,414</td><td class="num">999</td><td class="num">15.348</td><td class="num">41.780</td><td class="num bad">42</td></tr>
+      <tr class="grp"><td colspan="7">Zipf de popularidade, N = 50.000 — ajusta α</td></tr>
+      <tr><td></td><td>Baixa</td><td class="num">α = 1,314</td><td class="num">1</td><td class="num">12</td><td class="num">999</td><td class="num bad">500</td></tr>
+      <tr><td></td><td>Média</td><td class="num">α = 0,969</td><td class="num">14</td><td class="num">1.000</td><td class="num">25.264</td><td class="num bad">1.684</td></tr>
+      <tr><td></td><td>Alta</td><td class="num">α = 0,627</td><td class="num">1.000</td><td class="num">14.053</td><td class="num">40.500</td><td class="num bad">41</td></tr>
+    </tbody>
+    <caption>Calculado diretamente das distribuições; o LRUSM as reproduz (Parte 2). Para Zipf, P(d) vem da aproximação de Che (Proposta B). O "+1" no espalhamento evita dividir por zero quando p10 = 0.</caption>
+  </table>
+  </div>
+
+  <h3>Três leituras da tabela</h3>
+  <ol>
+    <li><strong>H* fixa o mesmo percentil em todas as famílias.</strong> O p90 da baixa, a mediana da média e o p10 da alta dão ≈ 1.000 em todas as linhas — como a seção <a href="#cenarios">O que H* fixa</a> previa.</li>
+    <li><strong>Na lognormal, só a posição muda.</strong> O espalhamento é 13 nos três cenários.</li>
+    <li><strong>Na lei de potência e no Zipf, a forma muda junto com o nível.</strong> A "baixa" da lei de potência tem mediana 6: é uma carga dominada por repetições quase imediatas, com cauda até 1.000. A "baixa" lognormal tem mediana 278. E o espalhamento vai de 1.000 a 5.216 a 42. Comparar baixa × alta com essas famílias mede dois efeitos misturados: o nível e a forma.</li>
+  </ol>
+
+  <div class="panels" id="panels4"></div>
+  <details>
+    <summary>Ver os valores dos gráficos em tabela</summary>
+    <div class="scroller" style="margin-top:10px">
+      <table id="tab4"><thead><tr><th class="num">d</th><th class="num">potência baixa</th><th class="num">potência média</th><th class="num">potência alta</th><th class="num">Zipf baixa</th><th class="num">Zipf média</th><th class="num">Zipf alta</th></tr></thead><tbody></tbody></table>
+    </div>
+  </details>
+  <p class="hint">Compare com o painel da direita da figura da lognormal, na seção anterior: as curvas cruzam C* nas mesmas alturas (0,90, 0,50, 0,10), mas lá elas são paralelas; aqui, cada uma tem uma inclinação.</p>
+
+  <h3>Qual família para qual pergunta</h3>
+  <div class="scroller">
+  <table>
+    <thead><tr><th>Pergunta do estudo</th><th>Família</th><th>Varia</th><th>Fica fixo</th></tr></thead>
+    <tbody>
+      <tr><td>O <strong>nível</strong> de stack distance muda o resultado?</td><td>Lognormal</td><td><em>m</em>, via H*</td><td>σ, P(∞), <em>d</em><sub>max</sub></td></tr>
+      <tr><td>O <strong>espalhamento</strong> muda o resultado, com o mesmo acerto em C*?</td><td>Lognormal</td><td>σ</td><td><em>m</em> = C* (H* = 0,5 em todos)</td></tr>
+      <tr><td>O <strong>peso da cauda</strong> — repetições imediatas × reúsos muito distantes — importa?</td><td>Lei de potência</td><td>β</td><td><em>d</em><sub>max</sub>, P(∞); sabendo que o nível muda junto</td></tr>
+      <tr><td>A <strong>concentração de popularidade</strong> importa?</td><td>Zipf gerado direto (<code>--model irm</code>)</td><td>α</td><td>N</td></tr>
+      <tr><td>Preciso passar por <strong>valores exatos</strong> da MRC sem supor forma?</td><td>MRC-alvo (Proposta D)</td><td>os pontos</td><td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>A segunda linha é o experimento complementar ao desta Parte 3: com <em>m</em> = C* fixo e σ = 0,5 / 1 / 2, as três cargas têm o mesmo acerto no cache de referência e diferem só no espalhamento. Juntos, os dois desenhos separam "o quanto a distância é longa" de "o quanto ela varia".</p>
+</section>
+
+<hr class="rule">
+
+<section id="texto-metodologia">
+  <p class="eyebrow">Para o documento</p>
+  <h2>Texto para a metodologia</h2>
+  <p>Dois parágrafos: o primeiro descreve a geração; o segundo justifica a escolha da distribuição. Troque "Tabela X" pela numeração do seu documento e use a tabela de medidas da seção <a href="#cargas">As três cargas</a>.</p>
+  <blockquote>
+    <p>Para estudar o efeito do nível de stack distance, geramos três cargas sintéticas — de stack distance baixa, média e alta — com o LRU Stack Model [Mattson et al., 1970; Turner e Strecker, 1977]. A cada requisição, sorteia-se uma distância <em>d</em>, o número de objetos distintos requisitados desde a última referência ao mesmo objeto, e requisita-se o objeto que ocupa a profundidade <em>d</em> da pilha LRU; com probabilidade P(∞) = 0,05, requisita-se um objeto novo. A distância <em>d</em> segue uma distribuição lognormal — ln <em>d</em> tem distribuição normal com média ln <em>m</em> e desvio-padrão σ — truncada em <em>d</em><sub>max</sub> = 50.000. Os três cenários usam o mesmo σ = 1 e diferem apenas na mediana <em>m</em>. Os níveis foram definidos em relação a um cache de referência de C* = 1.000 objetos, pela fração H* dos reúsos com <em>d</em> &lt; C* — a fração dos reúsos atendida por um cache LRU desse tamanho: H* = 0,9 (baixa), 0,5 (média) e 0,1 (alta). Como ln <em>d</em> é normal, H* = P(ln <em>d</em> &lt; ln C*) = Φ(ln(C*/<em>m</em>)/σ), em que Φ é a função de distribuição acumulada da normal padrão; invertendo, <em>m</em> = C*·exp(−σ·Φ⁻¹(H*)), o que resulta em medianas de 278, 1.000 e 3.602 objetos. Com essa escolha, o cache de referência corresponde ao percentil 90, 50 e 10 da distância em cada cenário. Cada carga contém 1.000.000 de requisições, precedidas de 50.000 requisições de aquecimento excluídas das medidas. A Tabela X apresenta as estatísticas medidas nas cargas geradas.</p>
+    <p>A distribuição lognormal foi escolhida por separar o nível da distância (<em>m</em>) do seu espalhamento (σ): com σ fixo, a razão entre os percentis 90 e 10 é a mesma nos três cenários (≈ 13), de modo que eles diferem apenas no nível. Ajustar uma lei de potência, P(<em>d</em>) ∝ (<em>d</em>+1)<sup>−β</sup>, aos mesmos valores de H* exigiria β = 1,254, 0,882 e 0,414 e alteraria simultaneamente a forma da distribuição, com essa razão variando entre 42 e 5.216.</p>
+  </blockquote>
+</section>
+
+
+<footer>
+  <p>Fontes: A. Sabnis e R. K. Sitaraman, <em>TRAGEN: A Synthetic Trace Generator for Realistic Cache Simulations</em>, ACM IMC 2021 (seções 1–5, Algoritmos 1 e 2, Teoremas 1–4); código em <a href="https://github.com/UMass-LIDS/Tragen">github.com/UMass-LIDS/Tragen</a>, branch master, arquivos <code>arg_util.py</code>, <code>traffic_mixer.py</code>, <code>FDUtils.py</code>, <code>fd.py</code>, <code>joint_dst.py</code>, <code>trace_generator.py</code>, <code>traffic_modeler.py</code>, <code>util.py</code>, <code>treelib.py</code>; modelos <code>eu-3</code> e <code>tc-0</code> do mesmo repositório. A. Sundarrajan et al., <em>Footprint Descriptors</em>, CoNEXT 2017. Exemplos e tabela comparativa: <code>docs/tragen_mini.py</code>.</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function(){
+  var X = [0.2,0.5,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000];
+  var SETS = [
+    {id:"tc-0", title:"tc-0 · downloads", sub:"P(∞) = 4,0% das requisições e 0,8% dos bytes → tetos em 96,0% e 99,2%",
+     r:[.845,.892,.906,.920,.933,.941,.948,.956,.959,.960,.960,.960,.960,.960,.960],
+     b:[.748,.938,.965,.974,.981,.985,.988,.991,.992,.992,.992,.992,.992,.992,.992]},
+    {id:"eu-3", title:"eu-3 · mídia social", sub:"P(∞) = 42,1% das requisições e 47,7% dos bytes → tetos em 57,9% e 52,3%",
+     r:[.532,.569,.574,.577,.578,.578,.578,.579,.579,.579,.579,.579,.579,.579,.579],
+     b:[.489,.513,.520,.523,.523,.523,.523,.523,.523,.523,.523,.523,.523,.523,.523]}
+  ];
+  var NS = "http://www.w3.org/2000/svg";
+  var W = 460, H = 250, M = {l:44, r:14, t:12, b:34};
+  var lx0 = Math.log10(X[0]), lx1 = Math.log10(X[X.length-1]);
+  function sx(g){ return M.l + (Math.log10(g) - lx0) / (lx1 - lx0) * (W - M.l - M.r); }
+  function sy(v){ return M.t + (1 - v) * (H - M.t - M.b); }
+  function size(g){ return g >= 1000 ? (g/1000).toLocaleString("pt-BR") + " TB" : g < 1 ? Math.round(g*1000) + " MB" : g.toLocaleString("pt-BR") + " GB"; }
+  function pct(v){ return (v*100).toFixed(1).replace(".", ",") + "%"; }
+  function el(tag, attrs, parent){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+  var host = document.getElementById("panels");
+  SETS.forEach(function(d){
+    var panel = document.createElement("div"); panel.className = "panel";
+    var h = document.createElement("h4"); h.textContent = d.title; panel.appendChild(h);
+    var sub = document.createElement("p"); sub.className = "sub"; sub.textContent = d.sub; panel.appendChild(sub);
+    var svg = el("svg", {viewBox:"0 0 " + W + " " + H, role:"img", "aria-label":"Curvas rHRC e bHRC de " + d.title + " em função do tamanho do cache"});
+    panel.appendChild(svg);
+    [0, .25, .5, .75, 1].forEach(function(v){
+      el("line", {x1:M.l, x2:W-M.r, y1:sy(v), y2:sy(v), stroke:"var(--rule)", "stroke-width":1}, svg);
+      var t = el("text", {x:M.l-8, y:sy(v)+3.5, "text-anchor":"end"}, svg); t.textContent = (v*100) + "%";
+    });
+    [0.2,1,10,100,1000,10000].forEach(function(g, i, a){
+      var t = el("text", {x:sx(g), y:H-M.b+18, "text-anchor": i === 0 ? "start" : i === a.length-1 ? "end" : "middle"}, svg);
+      t.textContent = size(g);
+    });
+    el("line", {x1:M.l, x2:W-M.r, y1:sy(0), y2:sy(0), stroke:"var(--rule-strong)", "stroke-width":1}, svg);
+    function path(vals){ return vals.map(function(v,i){ return (i ? "L" : "M") + sx(X[i]).toFixed(1) + "," + sy(v).toFixed(1); }).join(""); }
+    el("path", {d:path(d.r), fill:"none", stroke:"var(--s1)", "stroke-width":2, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+    el("path", {d:path(d.b), fill:"none", stroke:"var(--s2)", "stroke-width":2, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+    var n = X.length - 1;
+    [["r","--s1"],["b","--s2"]].forEach(function(p){
+      el("circle", {cx:sx(X[n]), cy:sy(d[p[0]][n]), r:4, fill:"var(" + p[1] + ")", stroke:"var(--surface)", "stroke-width":2}, svg);
+    });
+    var cross = el("line", {y1:M.t, y2:H-M.b, stroke:"var(--muted)", "stroke-width":1, visibility:"hidden"}, svg);
+    var dr = el("circle", {r:4.5, fill:"var(--s1)", stroke:"var(--surface)", "stroke-width":2, visibility:"hidden"}, svg);
+    var db = el("circle", {r:4.5, fill:"var(--s2)", stroke:"var(--surface)", "stroke-width":2, visibility:"hidden"}, svg);
+    var hit = el("rect", {x:M.l, y:M.t, width:W-M.l-M.r, height:H-M.t-M.b, fill:"transparent", tabindex:0, "aria-label":"Explorar valores: use as setas"}, svg);
+    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; panel.appendChild(tip);
+    var idx = -1;
+    function show(i){
+      idx = Math.max(0, Math.min(n, i));
+      var x = sx(X[idx]);
+      cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("visibility", "visible");
+      dr.setAttribute("cx", x); dr.setAttribute("cy", sy(d.r[idx])); dr.setAttribute("visibility", "visible");
+      db.setAttribute("cx", x); db.setAttribute("cy", sy(d.b[idx])); db.setAttribute("visibility", "visible");
+      tip.textContent = "";
+      var hd = document.createElement("div"); hd.className = "h"; hd.textContent = "cache de " + size(X[idx]); tip.appendChild(hd);
+      [["r","--s1","rHRC"],["b","--s2","bHRC"]].forEach(function(p){
+        var l = document.createElement("div"); l.className = "l";
+        var k = document.createElement("i"); k.style.background = "var(" + p[1] + ")";
+        var v = document.createElement("b"); v.textContent = pct(d[p[0]][idx]);
+        var s = document.createElement("span"); s.textContent = p[2];
+        l.appendChild(k); l.appendChild(v); l.appendChild(s); tip.appendChild(l);
+      });
+      tip.hidden = false;
+      var box = svg.getBoundingClientRect(), pb = panel.getBoundingClientRect();
+      var px = (x / W) * box.width + (box.left - pb.left);
+      var left = px + 12; if (left + tip.offsetWidth > pb.width - 6) left = px - tip.offsetWidth - 12;
+      tip.style.left = Math.max(6, left) + "px";
+      tip.style.top = ((M.t + 6) / H * box.height + (box.top - pb.top)) + "px";
+    }
+    function hide(){ cross.setAttribute("visibility","hidden"); dr.setAttribute("visibility","hidden"); db.setAttribute("visibility","hidden"); tip.hidden = true; }
+    hit.addEventListener("pointermove", function(e){
+      var box = svg.getBoundingClientRect(); var vx = (e.clientX - box.left) / box.width * W;
+      var best = 0, bd = Infinity; X.forEach(function(g,i){ var dd = Math.abs(sx(g) - vx); if (dd < bd){ bd = dd; best = i; } });
+      show(best);
+    });
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("blur", hide);
+    hit.addEventListener("focus", function(){ show(idx < 0 ? 0 : idx); });
+    hit.addEventListener("keydown", function(e){
+      if (e.key === "ArrowRight"){ show(idx + 1); e.preventDefault(); }
+      else if (e.key === "ArrowLeft"){ show(idx - 1); e.preventDefault(); }
+      else if (e.key === "Escape"){ hide(); }
+    });
+    host.appendChild(panel);
+  });
+
+  var tb = document.querySelector("#hrc-table tbody");
+  X.forEach(function(g, i){
+    var tr = document.createElement("tr");
+    var c = document.createElement("td"); c.className = "k"; c.textContent = size(g); tr.appendChild(c);
+    [SETS[0].r, SETS[0].b, SETS[1].r, SETS[1].b].forEach(function(a){
+      var td = document.createElement("td"); td.className = "num"; td.textContent = pct(a[i]); tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var X = [1,2,3,5,8,12,20,32,50,80,125,200,320,400,450,490,500,520,600,800,1250,2000,3200,5000,8000,10000];
+  var D = {
+    b06:[0.9903,0.9838,0.9788,0.9709,0.9617,0.9522,0.9375,0.921,0.9022,0.8782,0.8508,0.8162,0.7743,0.7515,0.7386,0.7289,0.7265,0.7219,0.7044,0.6661,0.5972,0.5099,0.4047,0.2846,0.1327,0.05],
+    b09:[0.9394,0.907,0.8845,0.8529,0.821,0.7915,0.752,0.7133,0.6747,0.6319,0.5893,0.5422,0.4928,0.4685,0.4554,0.4459,0.4436,0.4392,0.4229,0.3894,0.3355,0.2761,0.2138,0.1519,0.0836,0.05],
+    b12:[0.802,0.7159,0.6629,0.5967,0.5382,0.4903,0.4341,0.3865,0.3449,0.3046,0.2697,0.236,0.2053,0.1917,0.1847,0.1798,0.1787,0.1764,0.1684,0.1531,0.1309,0.1096,0.0901,0.0733,0.0572,0.05],
+    loop:[0.9711,0.9456,0.922,0.8791,0.8231,0.761,0.6686,0.5828,0.5183,0.4787,0.4608,0.4477,0.4337,0.4262,0.4221,0.4191,0.3147,0.2269,0.2214,0.2098,0.1896,0.1652,0.1371,0.1065,0.0695,0.05],
+    sem:[0.9673,0.9395,0.9141,0.8685,0.8096,0.7446,0.6478,0.5574,0.4878,0.4421,0.4175,0.3962,0.3728,0.3604,0.3536,0.3484,0.3472,0.3448,0.3357,0.3163,0.2827,0.242,0.1952,0.1441,0.0825,0.05]
+  };
+  var PANELS = [
+    {title:"Lei de potência: o efeito de β", sub:"mesma dmax (10 000) e mesmo piso P(∞) = 5%",
+     series:[{k:"b06", nome:"β = 0,6 · cauda pesada", cor:"--o1"}, {k:"b09", nome:"β = 0,9", cor:"--o2"}, {k:"b12", nome:"β = 1,2 · localidade forte", cor:"--o3"}]},
+    {title:"Mistura com um loop de 500", sub:"mesma hot set e mesma cauda; só o componente de varredura muda",
+     series:[{k:"loop", nome:"com loop de 500", cor:"--s2"}, {k:"sem", nome:"sem loop", cor:"--s1"}]}
+  ];
+  var NS = "http://www.w3.org/2000/svg", W = 460, H = 250, M = {l:44, r:14, t:12, b:34};
+  function sx(g){ return M.l + (Math.log10(g) / 4) * (W - M.l - M.r); }
+  function sy(v){ return M.t + (1 - v) * (H - M.t - M.b); }
+  function pct(v){ return (v*100).toFixed(1).replace(".", ",") + "%"; }
+  function el(t, a, par){ var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); if (par) par.appendChild(e); return e; }
+
+  var host = document.getElementById("panels2");
+  if (!host) return;
+  PANELS.forEach(function(P){
+    var panel = document.createElement("div"); panel.className = "panel";
+    var h = document.createElement("h4"); h.textContent = P.title; panel.appendChild(h);
+    var sb = document.createElement("p"); sb.className = "sub"; sb.textContent = P.sub; panel.appendChild(sb);
+    var leg = document.createElement("div"); leg.className = "legend";
+    P.series.forEach(function(se){
+      var it = document.createElement("span");
+      var sw = document.createElement("i"); sw.style.background = "var(" + se.cor + ")";
+      it.appendChild(sw); it.appendChild(document.createTextNode(se.nome));
+      leg.appendChild(it);
+    });
+    panel.appendChild(leg);
+    var svg = el("svg", {viewBox:"0 0 " + W + " " + H, role:"img",
+      "aria-label":"Miss ratio em função do tamanho do cache — " + P.title});
+    panel.appendChild(svg);
+    [0,.25,.5,.75,1].forEach(function(v){
+      el("line", {x1:M.l, x2:W-M.r, y1:sy(v), y2:sy(v), stroke:"var(--rule)", "stroke-width":1}, svg);
+      var t = el("text", {x:M.l-8, y:sy(v)+3.5, "text-anchor":"end"}, svg); t.textContent = (v*100) + "%";
+    });
+    [1,10,100,1000,10000].forEach(function(g, i, a){
+      var t = el("text", {x:sx(g), y:H-M.b+18,
+        "text-anchor": i === 0 ? "start" : i === a.length-1 ? "end" : "middle"}, svg);
+      t.textContent = g.toLocaleString("pt-BR");
+    });
+    el("line", {x1:M.l, x2:W-M.r, y1:sy(0), y2:sy(0), stroke:"var(--rule-strong)", "stroke-width":1}, svg);
+    P.series.forEach(function(se){
+      var d = D[se.k].map(function(v,i){ return (i?"L":"M") + sx(X[i]).toFixed(1) + "," + sy(v).toFixed(1); }).join("");
+      el("path", {d:d, fill:"none", stroke:"var(" + se.cor + ")", "stroke-width":2,
+                  "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+      el("circle", {cx:sx(X[X.length-1]), cy:sy(D[se.k][X.length-1]), r:4,
+                    fill:"var(" + se.cor + ")", stroke:"var(--surface)", "stroke-width":2}, svg);
+    });
+    var cross = el("line", {y1:M.t, y2:H-M.b, stroke:"var(--muted)", "stroke-width":1, visibility:"hidden"}, svg);
+    var dots = P.series.map(function(se){
+      return el("circle", {r:4.5, fill:"var(" + se.cor + ")", stroke:"var(--surface)", "stroke-width":2, visibility:"hidden"}, svg);
+    });
+    var hit = el("rect", {x:M.l, y:M.t, width:W-M.l-M.r, height:H-M.t-M.b, fill:"transparent",
+                          tabindex:0, "aria-label":"Explorar valores: use as setas"}, svg);
+    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; panel.appendChild(tip);
+    var idx = -1;
+    function show(i){
+      idx = Math.max(0, Math.min(X.length-1, i));
+      var x = sx(X[idx]);
+      cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("visibility","visible");
+      P.series.forEach(function(se, k){
+        dots[k].setAttribute("cx", x); dots[k].setAttribute("cy", sy(D[se.k][idx]));
+        dots[k].setAttribute("visibility", "visible");
+      });
+      tip.textContent = "";
+      var hd = document.createElement("div"); hd.className = "h";
+      hd.textContent = "cache de " + X[idx].toLocaleString("pt-BR") + " objetos"; tip.appendChild(hd);
+      P.series.forEach(function(se){
+        var l = document.createElement("div"); l.className = "l";
+        var k = document.createElement("i"); k.style.background = "var(" + se.cor + ")";
+        var v = document.createElement("b"); v.textContent = pct(D[se.k][idx]);
+        var n = document.createElement("span"); n.textContent = se.nome;
+        l.appendChild(k); l.appendChild(v); l.appendChild(n); tip.appendChild(l);
+      });
+      tip.hidden = false;
+      var box = svg.getBoundingClientRect(), pb = panel.getBoundingClientRect();
+      var px = (x / W) * box.width + (box.left - pb.left);
+      var left = px + 12; if (left + tip.offsetWidth > pb.width - 6) left = px - tip.offsetWidth - 12;
+      tip.style.left = Math.max(6, left) + "px";
+      tip.style.top = ((M.t + 6) / H * box.height + (box.top - pb.top)) + "px";
+    }
+    function hide(){ cross.setAttribute("visibility","hidden");
+      dots.forEach(function(d){ d.setAttribute("visibility","hidden"); }); tip.hidden = true; }
+    hit.addEventListener("pointermove", function(e){
+      var box = svg.getBoundingClientRect(), vx = (e.clientX - box.left) / box.width * W, best = 0, bd = Infinity;
+      X.forEach(function(g,i){ var dd = Math.abs(sx(g) - vx); if (dd < bd){ bd = dd; best = i; } });
+      show(best);
+    });
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("blur", hide);
+    hit.addEventListener("focus", function(){ show(idx < 0 ? 0 : idx); });
+    hit.addEventListener("keydown", function(e){
+      if (e.key === "ArrowRight"){ show(idx+1); e.preventDefault(); }
+      else if (e.key === "ArrowLeft"){ show(idx-1); e.preventDefault(); }
+      else if (e.key === "Escape"){ hide(); }
+    });
+    host.appendChild(panel);
+  });
+
+  var tb = document.querySelector("#mrc-table tbody");
+  X.forEach(function(g, i){
+    var tr = document.createElement("tr");
+    var c = document.createElement("td"); c.className = "k";
+    c.textContent = g.toLocaleString("pt-BR"); tr.appendChild(c);
+    ["b06","b09","b12","loop","sem"].forEach(function(k){
+      var td = document.createElement("td"); td.className = "num"; td.textContent = pct(D[k][i]); tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+})();
+</script>
+<script>
+(function(){
+  var F = {"grid":[1,2,3,4,5,6,7,8,9,11,12,14,17,20,23,27,31,37,43,50,59,69,81,94,110,129,151,177,207,242,283,331,387,453,530,620,725,848,992,1160,1357,1588,1857,2172,2541,2973,3477,4068,4758,5566,6511,7617,8910,10422,12192,14261,16683,19515,22828,26703,31237,36540,42743,50000],"ln":{"dens":{"baixa":[0.0,0.0,0.0,0.0,0.0001,0.0003,0.0004,0.0007,0.0011,0.0021,0.0028,0.0045,0.008,0.0124,0.0177,0.0261,0.0357,0.0518,0.0694,0.091,0.1193,0.1503,0.1857,0.2208,0.2587,0.2963,0.3304,0.3597,0.3816,0.3949,0.3989,0.3932,0.3781,0.3547,0.3247,0.29,0.2529,0.2151,0.1784,0.1445,0.1142,0.0879,0.0662,0.0486,0.0348,0.0243,0.0166,0.011,0.0071,0.0045,0.0028,0.0017,0.001,0.0006,0.0003,0.0002,0.0001,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"media":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0002,0.0003,0.0006,0.001,0.0017,0.0028,0.0045,0.0072,0.0112,0.0169,0.0243,0.0348,0.0489,0.0667,0.0889,0.1152,0.1456,0.1796,0.2163,0.254,0.2914,0.3259,0.3557,0.3787,0.3935,0.3989,0.3946,0.3809,0.3587,0.3296,0.2955,0.2585,0.2206,0.1838,0.1493,0.1184,0.0916,0.0691,0.0509,0.0366,0.0256,0.0175,0.0117,0.0076,0.0048,0.003,0.0018,0.0011,0.0006,0.0003,0.0002],"alta":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0002,0.0003,0.0005,0.0009,0.0016,0.0026,0.0043,0.0068,0.0104,0.0158,0.0232,0.0333,0.0467,0.0638,0.0852,0.1108,0.1407,0.1744,0.2108,0.2487,0.2864,0.3216,0.3525,0.377,0.3933,0.4004,0.3977,0.3855,0.3645,0.3363,0.3027,0.2659,0.2279,0.1906,0.1555,0.1238,0.0962,0.0729,0.0539,0.0389,0.0274,0.0188,0.0126]},"cdf":{"baixa":[0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0002,0.0004,0.0007,0.0009,0.0016,0.0028,0.0045,0.0067,0.0102,0.0146,0.0224,0.0316,0.0437,0.0611,0.0823,0.1092,0.1395,0.1772,0.2214,0.2707,0.3255,0.3836,0.4442,0.5064,0.5684,0.6287,0.6864,0.7398,0.7879,0.8304,0.867,0.8978,0.923,0.9432,0.959,0.971,0.9799,0.9864,0.991,0.9942,0.9963,0.9977,0.9986,0.9992,0.9995,0.9997,0.9999,0.9999,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],"media":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0002,0.0003,0.0005,0.0009,0.0014,0.0024,0.0038,0.0061,0.0091,0.0138,0.0204,0.0295,0.0418,0.0578,0.0781,0.1036,0.1346,0.1713,0.2143,0.2627,0.3163,0.3738,0.4344,0.4966,0.5588,0.6197,0.6779,0.7318,0.7808,0.8243,0.8619,0.8935,0.9196,0.9405,0.9569,0.9695,0.9788,0.9856,0.9905,0.9938,0.9961,0.9976,0.9986,0.9992,0.9995,0.9998,0.9999,1.0,1.0],"alta":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0001,0.0001,0.0002,0.0004,0.0008,0.0013,0.0022,0.0035,0.0055,0.0086,0.0129,0.0192,0.0278,0.0395,0.0547,0.0744,0.0991,0.1292,0.1652,0.2073,0.2549,0.3078,0.3651,0.4257,0.4879,0.5507,0.6122,0.6711,0.7261,0.7763,0.8209,0.8596,0.8924,0.9195,0.9413,0.9585,0.9717,0.9816,0.9888,0.994,0.9976,1.0]},"H":{"baixa":0.8992,"media":0.4998,"alta":0.1005},"m":{"baixa":278,"media":1000,"alta":3602}},"pot":{"cdf":{"baixa":[0.2338,0.3319,0.3908,0.4319,0.4629,0.4877,0.508,0.5252,0.5401,0.5647,0.575,0.5929,0.6147,0.6322,0.6467,0.6629,0.6763,0.6929,0.7064,0.7196,0.7334,0.746,0.7584,0.7695,0.7808,0.7918,0.8022,0.8123,0.8219,0.8311,0.84,0.8485,0.8567,0.8646,0.8722,0.8795,0.8865,0.8932,0.8997,0.9059,0.9118,0.9176,0.9231,0.9284,0.9335,0.9384,0.9431,0.9476,0.952,0.9561,0.9601,0.964,0.9677,0.9712,0.9747,0.9779,0.9811,0.9841,0.9871,0.9899,0.9925,0.9951,0.9976,1.0],"media":[0.0444,0.0686,0.0854,0.0985,0.1093,0.1184,0.1264,0.1335,0.1399,0.1511,0.1561,0.165,0.1766,0.1866,0.1953,0.2056,0.2146,0.2263,0.2366,0.247,0.2587,0.27,0.2818,0.293,0.305,0.3174,0.3299,0.3427,0.3557,0.3688,0.3822,0.3959,0.4098,0.424,0.4385,0.4533,0.4683,0.4836,0.4992,0.515,0.5312,0.5478,0.5645,0.5816,0.5991,0.6169,0.635,0.6534,0.6722,0.6913,0.7108,0.7307,0.7509,0.7715,0.7925,0.8139,0.8357,0.8579,0.8805,0.9035,0.927,0.9509,0.9752,1.0],"alta":[0.001,0.0018,0.0025,0.0031,0.0036,0.0041,0.0045,0.005,0.0054,0.0062,0.0065,0.0073,0.0082,0.0092,0.01,0.0111,0.0121,0.0136,0.0149,0.0164,0.0182,0.02,0.0221,0.0242,0.0266,0.0293,0.0323,0.0355,0.0391,0.0429,0.0471,0.0518,0.0568,0.0625,0.0686,0.0753,0.0826,0.0907,0.0995,0.1092,0.1198,0.1315,0.1442,0.1582,0.1736,0.1904,0.2088,0.229,0.2512,0.2754,0.3021,0.3313,0.3632,0.3983,0.4368,0.4789,0.5251,0.5757,0.6312,0.6921,0.7588,0.8319,0.9121,1.0]},"H":{"baixa":0.9,"media":0.5,"alta":0.1},"beta":{"baixa":1.254,"media":0.882,"alta":0.414}},"zipf":{"cdf":{"baixa":[0.0895,0.1665,0.2317,0.286,0.3309,0.3679,0.3985,0.424,0.4456,0.4804,0.4947,0.5193,0.5488,0.5724,0.5919,0.6133,0.631,0.6526,0.6701,0.6868,0.7044,0.7202,0.7357,0.7493,0.7631,0.7764,0.7889,0.8009,0.8122,0.823,0.8332,0.843,0.8523,0.8612,0.8697,0.8777,0.8854,0.8927,0.8997,0.9063,0.9126,0.9187,0.9244,0.9299,0.9351,0.9401,0.9448,0.9494,0.9537,0.9579,0.9618,0.9656,0.9692,0.9727,0.976,0.9792,0.9822,0.9851,0.9879,0.9906,0.9932,0.9956,0.9979,1.0],"media":[0.0093,0.0182,0.0267,0.0348,0.0426,0.0501,0.0572,0.0641,0.0706,0.0829,0.0887,0.0995,0.1142,0.1272,0.1389,0.1526,0.1647,0.1804,0.1938,0.2073,0.2222,0.2364,0.2511,0.2648,0.2795,0.2944,0.3094,0.3246,0.3397,0.3549,0.3703,0.3859,0.4015,0.4174,0.4335,0.4496,0.4659,0.4824,0.4991,0.516,0.533,0.5504,0.5678,0.5855,0.6034,0.6216,0.6399,0.6586,0.6775,0.6968,0.7163,0.7362,0.7563,0.7769,0.7978,0.819,0.8407,0.8628,0.8853,0.9081,0.9313,0.9546,0.9779,1.0],"alta":[0.0002,0.0004,0.0006,0.0008,0.001,0.0011,0.0013,0.0015,0.0017,0.0021,0.0023,0.0026,0.0032,0.0037,0.0043,0.005,0.0057,0.0068,0.0078,0.009,0.0105,0.0122,0.0141,0.0161,0.0186,0.0213,0.0244,0.0279,0.0318,0.036,0.0408,0.046,0.0517,0.058,0.0649,0.0724,0.0806,0.0896,0.0995,0.1102,0.122,0.1349,0.1489,0.1642,0.181,0.1994,0.2194,0.2412,0.265,0.2911,0.3194,0.3504,0.3841,0.4208,0.4608,0.5042,0.5515,0.6028,0.6583,0.7184,0.7831,0.8523,0.9256,1.0]},"H":{"baixa":0.9,"media":0.5,"alta":0.1},"alpha":{"baixa":1.314,"media":0.969,"alta":0.627}}};
+  var NS = "http://www.w3.org/2000/svg", W = 460, H = 250, M = {l:46, r:16, t:18, b:34};
+  var X = F.grid, XMAX = 50000, CREF = 1000;
+  var CEN = [{k:"baixa", nome:"baixa", cor:"--o1"}, {k:"media", nome:"média", cor:"--o2"}, {k:"alta", nome:"alta", cor:"--o3"}];
+  function sx(g){ return M.l + (Math.log10(g) / Math.log10(XMAX)) * (W - M.l - M.r); }
+  function num(v, dec){ return v.toLocaleString("pt-BR", {minimumFractionDigits:dec, maximumFractionDigits:dec}); }
+  function el(t, a, par){ var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); if (par) par.appendChild(e); return e; }
+
+  function painel(host, cfg){
+    var sy = function(v){ return M.t + (1 - v / cfg.ymax) * (H - M.t - M.b); };
+    var panel = document.createElement("div"); panel.className = "panel";
+    var h = document.createElement("h4"); h.textContent = cfg.titulo; panel.appendChild(h);
+    var sb = document.createElement("p"); sb.className = "sub"; sb.textContent = cfg.sub; panel.appendChild(sb);
+    var leg = document.createElement("div"); leg.className = "legend";
+    cfg.series.forEach(function(se){
+      var it = document.createElement("span"); var sw = document.createElement("i");
+      sw.style.background = "var(" + se.cor + ")"; it.appendChild(sw);
+      it.appendChild(document.createTextNode(se.nome)); leg.appendChild(it);
+    });
+    panel.appendChild(leg);
+    var svg = el("svg", {viewBox:"0 0 " + W + " " + H, role:"img", "aria-label": cfg.titulo});
+    panel.appendChild(svg);
+    cfg.yticks.forEach(function(v){
+      el("line", {x1:M.l, x2:W-M.r, y1:sy(v), y2:sy(v), stroke:"var(--rule)", "stroke-width":1}, svg);
+      var t = el("text", {x:M.l-8, y:sy(v)+3.5, "text-anchor":"end"}, svg); t.textContent = cfg.yfmt(v);
+    });
+    [1,10,100,1000,10000].forEach(function(g, i){
+      var t = el("text", {x:sx(g), y:H-M.b+18, "text-anchor": i === 0 ? "start" : "middle"}, svg);
+      t.textContent = g.toLocaleString("pt-BR");
+    });
+    el("line", {x1:M.l, x2:W-M.r, y1:sy(0), y2:sy(0), stroke:"var(--rule-strong)", "stroke-width":1}, svg);
+    el("line", {x1:sx(CREF), x2:sx(CREF), y1:M.t-4, y2:H-M.b, stroke:"var(--ink-2)", "stroke-width":1}, svg);
+    var lab = el("text", {x:sx(CREF)-5, y:M.t+4, "text-anchor":"end", style:"fill:var(--ink-2)"}, svg);
+    lab.textContent = "C* = 1.000";
+    cfg.series.forEach(function(se){
+      var d = se.ys.map(function(v,i){ return (i ? "L" : "M") + sx(X[i]).toFixed(1) + "," + sy(v).toFixed(1); }).join("");
+      el("path", {d:d, fill:"none", stroke:"var(" + se.cor + ")", "stroke-width":2, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+    });
+    if (cfg.marcas) cfg.series.forEach(function(se){
+      el("circle", {cx:sx(CREF), cy:sy(se.hc), r:4, fill:"var(" + se.cor + ")", stroke:"var(--surface)", "stroke-width":2}, svg);
+      var t = el("text", {x:sx(CREF)+9, y:sy(se.hc)+4, style:"fill:var(--ink);font-weight:600",
+                          stroke:"var(--surface)", "stroke-width":3, "paint-order":"stroke"}, svg);
+      t.textContent = num(se.hc, 2);
+    });
+    var cross = el("line", {y1:M.t, y2:H-M.b, stroke:"var(--muted)", "stroke-width":1, visibility:"hidden"}, svg);
+    var dots = cfg.series.map(function(se){
+      return el("circle", {r:4.5, fill:"var(" + se.cor + ")", stroke:"var(--surface)", "stroke-width":2, visibility:"hidden"}, svg);
+    });
+    var hit = el("rect", {x:M.l, y:M.t, width:W-M.l-M.r, height:H-M.t-M.b, fill:"transparent", tabindex:0,
+                          "aria-label":"Explorar valores: use as setas"}, svg);
+    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; panel.appendChild(tip);
+    var idx = -1;
+    function show(i){
+      idx = Math.max(0, Math.min(X.length-1, i));
+      var x = sx(X[idx]);
+      cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("visibility", "visible");
+      cfg.series.forEach(function(se, k){
+        dots[k].setAttribute("cx", x); dots[k].setAttribute("cy", sy(se.ys[idx])); dots[k].setAttribute("visibility", "visible");
+      });
+      tip.textContent = "";
+      var hd = document.createElement("div"); hd.className = "h"; hd.textContent = cfg.cab(X[idx]); tip.appendChild(hd);
+      cfg.series.forEach(function(se){
+        var l = document.createElement("div"); l.className = "l";
+        var k = document.createElement("i"); k.style.background = "var(" + se.cor + ")";
+        var v = document.createElement("b"); v.textContent = cfg.vfmt(se.ys[idx]);
+        var n = document.createElement("span"); n.textContent = se.nome;
+        l.appendChild(k); l.appendChild(v); l.appendChild(n); tip.appendChild(l);
+      });
+      tip.hidden = false;
+      var box = svg.getBoundingClientRect(), pb = panel.getBoundingClientRect();
+      var px = (x / W) * box.width + (box.left - pb.left);
+      var left = px + 12; if (left + tip.offsetWidth > pb.width - 6) left = px - tip.offsetWidth - 12;
+      tip.style.left = Math.max(6, left) + "px";
+      tip.style.top = ((M.t + 6) / H * box.height + (box.top - pb.top)) + "px";
+    }
+    function hide(){ cross.setAttribute("visibility","hidden"); dots.forEach(function(d){ d.setAttribute("visibility","hidden"); }); tip.hidden = true; }
+    hit.addEventListener("pointermove", function(e){
+      var box = svg.getBoundingClientRect(), vx = (e.clientX - box.left) / box.width * W, best = 0, bd = Infinity;
+      X.forEach(function(g,i){ var dd = Math.abs(sx(g) - vx); if (dd < bd){ bd = dd; best = i; } });
+      show(best);
+    });
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("blur", hide);
+    hit.addEventListener("focus", function(){ show(idx < 0 ? 0 : idx); });
+    hit.addEventListener("keydown", function(e){
+      if (e.key === "ArrowRight"){ show(idx+1); e.preventDefault(); }
+      else if (e.key === "ArrowLeft"){ show(idx-1); e.preventDefault(); }
+      else if (e.key === "Escape"){ hide(); }
+    });
+    host.appendChild(panel);
+  }
+
+  var pct = function(v){ return num(v*100, 1) + "%"; };
+  var eixoPct = function(v){ return Math.round(v*100) + "%"; };
+  var cdfCab = function(x){ return "P(d < " + x.toLocaleString("pt-BR") + ")"; };
+  function series(fam, campo, rot){
+    return CEN.map(function(c){ return {nome: c.nome + " · " + rot(c.k), cor: c.cor, ys: F[fam][campo][c.k], hc: F[fam].H[c.k]}; });
+  }
+
+  var h3 = document.getElementById("panels3");
+  if (h3){
+    var mRot = function(k){ return "m = " + F.ln.m[k].toLocaleString("pt-BR"); };
+    painel(h3, {titulo:"Em escala log, cada cenário é um sino", sub:"densidade por unidade de ln d · eixo x: d em escala log",
+      series: series("ln", "dens", mRot), ymax:0.45, yticks:[0,0.1,0.2,0.3,0.4],
+      yfmt:function(v){ return num(v,1); }, vfmt:function(v){ return num(v,3); },
+      cab:function(x){ return "d ≈ " + x.toLocaleString("pt-BR"); }, marcas:false});
+    painel(h3, {titulo:"A acumulada cruza C* na altura H*", sub:"P(d < x): fração dos reúsos com distância menor que x",
+      series: series("ln", "cdf", mRot), ymax:1, yticks:[0,0.25,0.5,0.75,1],
+      yfmt:eixoPct, vfmt:pct, cab:cdfCab, marcas:true});
+  }
+  var h4 = document.getElementById("panels4");
+  if (h4){
+    painel(h4, {titulo:"Lei de potência ajustada ao mesmo H*", sub:"P(d < x) · P(d) ∝ (d+1)^−β, d_max = 50.000",
+      series: series("pot", "cdf", function(k){ return "β = " + num(F.pot.beta[k], 3); }), ymax:1, yticks:[0,0.25,0.5,0.75,1],
+      yfmt:eixoPct, vfmt:pct, cab:cdfCab, marcas:true});
+    painel(h4, {titulo:"Zipf ajustado ao mesmo H*", sub:"P(d < x) · popularidade Zipf(α), N = 50.000, via Che",
+      series: series("zipf", "cdf", function(k){ return "α = " + num(F.zipf.alpha[k], 3); }), ymax:1, yticks:[0,0.25,0.5,0.75,1],
+      yfmt:eixoPct, vfmt:pct, cab:cdfCab, marcas:true});
+  }
+
+  function tabela(id, cols){
+    var tb = document.querySelector("#" + id + " tbody"); if (!tb) return;
+    X.forEach(function(g, i){
+      var tr = document.createElement("tr");
+      var c = document.createElement("td"); c.className = "num"; c.textContent = g.toLocaleString("pt-BR"); tr.appendChild(c);
+      cols.forEach(function(col){
+        var td = document.createElement("td"); td.className = "num"; td.textContent = col.f(col.a[i]); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+  var d3 = function(v){ return num(v,3); };
+  tabela("tab3", [
+    {a:F.ln.dens.baixa, f:d3}, {a:F.ln.dens.media, f:d3}, {a:F.ln.dens.alta, f:d3},
+    {a:F.ln.cdf.baixa, f:pct}, {a:F.ln.cdf.media, f:pct}, {a:F.ln.cdf.alta, f:pct}]);
+  tabela("tab4", [
+    {a:F.pot.cdf.baixa, f:pct}, {a:F.pot.cdf.media, f:pct}, {a:F.pot.cdf.alta, f:pct},
+    {a:F.zipf.cdf.baixa, f:pct}, {a:F.zipf.cdf.media, f:pct}, {a:F.zipf.cdf.alta, f:pct}]);
+})();
+</script>
+</body>
+</html>

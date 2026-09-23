@@ -1,0 +1,14 @@
+{
+  "_comentario": "Parametros comuns aos cenarios. Os caches sao os tamanhos usados na conferencia e no relatorio.",
+  "dmax": 10000,
+  "inf": 0.05,
+  "requisicoes": 50000,
+  "semente": 7,
+  "caches": [10, 100, 1000, 10000],
+  "tolerancia": 0.02,
+  "cenarios": [
+    {"nome": "baixa", "beta": 1.5, "rotulo": "SD baixa"},
+    {"nome": "media", "beta": 1.0, "rotulo": "SD media"},
+    {"nome": "alta",  "beta": 0.5, "rotulo": "SD alta"}
+  ]
+}

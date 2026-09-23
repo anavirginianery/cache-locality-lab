@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conferência das cargas geradas</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#F3F6F5; --surface:#FFFFFF; --surface-2:#EAEFEE;
+  --ink:#111819; --ink-2:#3A4A4C; --muted:#5E7174;
+  --rule:#D3DDDB; --rule-strong:#B4C3C1;
+  --accent:#0D6B6D; --accent-soft:#DCEAE9;
+  --ok:#1F7A45; --ruim:#A33A20; --code:#EDF2F1;
+  {{cores_claro}}
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1315; --surface:#141D1F; --surface-2:#192427;
+    --ink:#E3EBE9; --ink-2:#B7C6C5; --muted:#8CA2A2;
+    --rule:#263336; --rule-strong:#39494C;
+    --accent:#57C2BF; --accent-soft:#14312F;
+    --ok:#5CC48A; --ruim:#E08163; --code:#101A1C;
+    {{cores_escuro}}
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);
+  font:16px/1.6 "Source Serif 4",Georgia,serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:44px 24px 80px}
+h1{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:clamp(26px,4vw,38px);
+  line-height:1.05;letter-spacing:-.02em;margin:0 0 10px}
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:20px;letter-spacing:-.01em;margin:40px 0 8px}
+p{margin:0 0 14px;max-width:68ch}
+.meta{font-family:ui-monospace,"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 24px}
+.hint{font-size:13.5px;color:var(--muted);max-width:68ch}
+.legendas{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 10px;font-size:13.5px;color:var(--ink-2);
+  font-family:Archivo,sans-serif}
+.leg i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:7px;vertical-align:middle}
+.fig{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px 8px;margin:0 0 10px}
+.fig svg{display:block;width:100%;height:auto}
+.scroller{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--surface);margin:0 0 12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:Archivo,sans-serif;font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+td{padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.n,th.n{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.ok{color:var(--ok);font-weight:600;font-size:13px}
+td.ruim{color:var(--ruim);font-weight:600;font-size:13px}
+.pt{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:baseline}
+code{font-family:ui-monospace,monospace;font-size:.86em;background:var(--code);padding:.1em .34em;border-radius:3px}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:0 6px 6px 0;padding:12px 16px}
+.card b{font-family:Archivo,sans-serif;font-size:13px;display:block;color:var(--muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Conferência das cargas geradas</h1>
+<div class="meta">
+  <span>gerado em {{data}}</span>
+  <span>{{req}} requisições por cenário</span>
+  <span>d<sub>max</sub> = {{dmax}}</span>
+  <span>objetos novos = {{inf}}%</span>
+  <span>semente = {{semente}}</span>
+</div>
+
+<p>Cada cenário foi gerado a partir de uma distribuição de stack distance conhecida. Como a distribuição é conhecida,
+todo valor medido na carga tem um valor teórico correspondente, calculado sem simular nada. As linhas dos gráficos são
+o <strong>medido</strong>; os círculos vazados são o <strong>teórico</strong>. Se os dois coincidem, a carga saiu como foi pedida.</p>
+<p>As curvas são de <strong>hit rate</strong>: a fração das requisições atendidas por um cache LRU de cada tamanho.
+O valor teórico vem direto da distribuição de stack distance, por <code>hit(C) = (1 − P(∞)) · P(d &lt; C)</code> — acerta
+quem é reúso e cuja stack distance cabe no cache.</p>
+
+<h2>Resumo por cenário</h2>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">β</th><th class="n">SD mediana</th><th class="n">SD p90</th>
+  <th class="n">SD p99</th><th class="n">footprint em 1.000 req</th><th class="n">objetos novos</th>
+  <th class="n">objetos distintos</th><th>conferência</th></tr></thead>
+  <tbody>
+{{linhas_res}}
+  </tbody>
+</table>
+</div>
+<p class="hint">A conferência compara o hit rate medido com o teórico em cada tamanho de cache; o erro mostrado é o maior deles.
+Tolerância configurada: {{tol}}.</p>
+
+<h2>Curva de hit rate</h2>
+<div class="legendas">{{legenda}}</div>
+<div class="fig">{{svg_hrc}}</div>
+<p class="hint">Quanto mais alta a curva, melhor o cache se sai. A carga de SD alta precisa de um cache muito maior para
+chegar ao mesmo hit rate das outras. O teto de todas é 1 − P(∞): objeto novo nunca pode ser acerto.</p>
+
+<h2>Acumulada da stack distance</h2>
+<div class="legendas">{{legenda}}</div>
+<div class="fig">{{svg_cdf}}</div>
+<p class="hint">Lê-se assim: no ponto x, a curva diz qual porcentagem dos reúsos tem stack distance menor que x — ou seja,
+quantos reúsos caberiam num cache de x objetos.</p>
+
+<h2>Distribuição da stack distance</h2>
+<div class="legendas">{{legenda}}</div>
+<div class="fig">{{svg_hist}}</div>
+<p class="hint">As faixas dobram de tamanho a cada passo (1, 2, 4, 8, …), porque a stack distance varia por ordens de grandeza.</p>
+
+<h2>Footprint</h2>
+<div class="legendas">{{legenda}}</div>
+<div class="fig">{{svg_fp}}</div>
+<p class="hint">Quantos objetos distintos aparecem numa janela de N requisições — os dois eixos em escala log.
+O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance de um reúso é,
+por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos longos
+significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos diferentes.</p>
+
+<h2>Conferência em cada tamanho de cache</h2>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">Cache (objetos)</th><th class="n">Hit teórico</th>
+  <th class="n">Hit medido</th><th class="n">Erro</th><th class="n">Reúsos que cabem</th></tr></thead>
+  <tbody>
+{{linhas_conf}}
+  </tbody>
+</table>
+</div>
+<p class="hint">A última coluna é a resposta para "esta carga tem stack distance alta?" no único jeito que faz sentido:
+em relação ao tamanho de cache que você vai usar — a fração dos reúsos com SD menor que o cache, isto é, os que cabem.
+O mesmo valor de stack distance é alto para um cache pequeno e baixo para um grande. A fração complementar, dos que não
+cabem, está em <code>conferencia.csv</code>.</p>
+
+<footer>
+<p>Gerado por <code>geracao/pipeline.py</code>. Os números deste relatório também estão em
+<code>analise/medidas.csv</code>, <code>analise/hrc.csv</code>, <code>analise/sd_cdf.csv</code>,
+<code>analise/sd_histograma.csv</code>, <code>analise/footprint.csv</code> e <code>analise/conferencia.csv</code>. Os gráficos estão soltos em
+<code>analise/*.svg</code>, prontos para entrar em um documento.</p>
+</footer>
+
+</div>
+</body>
+</html>

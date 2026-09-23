@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{color-scheme:light dark}
+  body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>Controlando a Stack Distance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+:root{
+  --paper:#F3F6F5;
+  --surface:#FFFFFF;
+  --surface-2:#EAEFEE;
+  --ink:#111819;
+  --ink-2:#3A4A4C;
+  --muted:#5E7174;
+  --rule:#D3DDDB;
+  --rule-strong:#B4C3C1;
+  --accent:#0D6B6D;
+  --accent-soft:#DCEAE9;
+  --amber:#9E5514;
+  --amber-soft:#F4E6D6;
+  --code-bg:#EDF2F1;
+  --shadow:0 1px 2px rgba(17,24,25,.06), 0 8px 24px -16px rgba(17,24,25,.35);
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1315;
+    --surface:#141D1F;
+    --surface-2:#192427;
+    --ink:#E3EBE9;
+    --ink-2:#B7C6C5;
+    --muted:#8CA2A2;
+    --rule:#263336;
+    --rule-strong:#39494C;
+    --accent:#57C2BF;
+    --accent-soft:#14312F;
+    --amber:#D9974B;
+    --amber-soft:#33240F;
+    --code-bg:#101A1C;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1315;
+  --surface:#141D1F;
+  --surface-2:#192427;
+  --ink:#E3EBE9;
+  --ink-2:#B7C6C5;
+  --muted:#8CA2A2;
+  --rule:#263336;
+  --rule-strong:#39494C;
+  --accent:#57C2BF;
+  --accent-soft:#14312F;
+  --amber:#D9974B;
+  --amber-soft:#33240F;
+  --code-bg:#101A1C;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -18px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft);color:var(--ink)}
+a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:.06em}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.shell{max-width:1180px;margin:0 auto;padding:0 24px 96px;display:grid;grid-template-columns:1fr;gap:0}
+@media (min-width:1040px){
+  .shell{grid-template-columns:216px minmax(0,1fr);column-gap:56px;padding-right:40px}
+  .masthead{grid-column:1 / -1}
+}
+
+/* ---------- masthead ---------- */
+.masthead{padding:56px 0 34px;border-bottom:1px solid var(--rule-strong)}
+.kicker{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.kicker span:nth-child(2n){color:var(--muted)}
+h1{
+  font-family:Archivo,"Helvetica Neue",Arial,sans-serif;
+  font-weight:700;font-size:clamp(34px,5.2vw,58px);line-height:1.02;
+  letter-spacing:-.028em;margin:0 0 18px;text-wrap:balance;max-width:16ch;
+}
+.standfirst{font-size:20px;line-height:1.5;color:var(--ink-2);max-width:62ch;margin:0}
+.stamp{
+  margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 26px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--muted);letter-spacing:.02em;
+}
+
+/* ---------- toc ---------- */
+nav.toc{display:none}
+@media (min-width:1040px){
+  nav.toc{
+    display:block;position:sticky;top:0;align-self:start;
+    padding-top:44px;max-height:100vh;overflow-y:auto;
+  }
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+  nav.toc a{
+    display:block;padding:5px 0 5px 12px;border-left:2px solid var(--rule);
+    font-family:Archivo,sans-serif;font-size:12.5px;line-height:1.35;
+    color:var(--muted);text-decoration:none;
+  }
+  nav.toc a:hover{color:var(--accent);border-left-color:var(--accent)}
+}
+
+main{padding-top:44px;min-width:0}
+section{margin:0 0 60px;scroll-margin-top:28px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 10px;
+}
+h2{
+  font-family:Archivo,sans-serif;font-weight:600;font-size:clamp(23px,2.6vw,30px);
+  letter-spacing:-.02em;line-height:1.15;margin:0 0 8px;text-wrap:balance;
+}
+h3{
+  font-family:Archivo,sans-serif;font-weight:600;font-size:17px;letter-spacing:-.008em;
+  margin:32px 0 6px;color:var(--ink);
+}
+h4{font-family:Archivo,sans-serif;font-weight:600;font-size:14px;margin:22px 0 4px;color:var(--ink-2)}
+p{margin:0 0 14px;max-width:var(--measure)}
+ul,ol{margin:0 0 14px;padding-left:22px;max-width:var(--measure)}
+li{margin-bottom:6px}
+li::marker{color:var(--muted)}
+strong{font-weight:600}
+em.term{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:.88em;color:var(--accent)}
+code{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.855em;
+  background:var(--code-bg);padding:.1em .34em;border-radius:3px;color:var(--ink);
+}
+pre{
+  background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;
+  padding:14px 16px;overflow-x:auto;margin:0 0 18px;
+}
+pre code{background:none;padding:0;font-size:12.5px;line-height:1.62;white-space:pre}
+.hint{font-size:13px;color:var(--muted);max-width:var(--measure);margin:-8px 0 20px}
+
+/* ---------- callouts ---------- */
+.lede{
+  background:var(--surface);border:1px solid var(--rule);border-top:3px solid var(--accent);
+  border-radius:4px;padding:22px 24px;margin:0 0 34px;box-shadow:var(--shadow);max-width:var(--measure);
+}
+.lede p:last-child{margin-bottom:0}
+.note{
+  border-left:3px solid var(--amber);background:var(--amber-soft);
+  padding:14px 18px;border-radius:0 4px 4px 0;margin:0 0 20px;max-width:var(--measure);
+}
+.note p:last-child{margin-bottom:0}
+.note .tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--amber);display:block;margin-bottom:5px;
+}
+
+/* ---------- tables ---------- */
+.scroller{overflow-x:auto;margin:0 0 12px;border:1px solid var(--rule);border-radius:5px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+thead th{
+  font-family:Archivo,sans-serif;font-weight:600;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);text-align:left;
+  padding:11px 14px;border-bottom:1px solid var(--rule-strong);white-space:nowrap;
+}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.45}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+td.name{font-family:Archivo,sans-serif;font-weight:600;font-size:13.5px;white-space:nowrap}
+td.name a{text-decoration:none}
+td.name a:hover{text-decoration:underline}
+td.name small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:10.5px;color:var(--muted);letter-spacing:.02em;margin-top:2px;white-space:normal}
+.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.grp td{
+  background:var(--surface-2);font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding:8px 14px;
+}
+.grp:hover td{background:var(--surface-2)}
+.pill{
+  display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;
+  padding:2px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap;
+}
+.pill.yes{color:var(--accent)}
+.pill.no{color:var(--muted)}
+.pill.part{color:var(--amber)}
+caption{caption-side:bottom;text-align:left;font-size:12.5px;color:var(--muted);padding:10px 14px 12px}
+
+/* ---------- diagram ---------- */
+figure{margin:0 0 26px}
+figure svg{display:block;width:100%;height:auto;max-width:760px}
+figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;max-width:var(--measure)}
+
+/* ---------- def list ---------- */
+dl.defs{margin:0 0 20px;max-width:var(--measure)}
+dl.defs dt{
+  font-family:Archivo,sans-serif;font-weight:600;font-size:14.5px;
+  margin-top:16px;color:var(--ink);
+}
+dl.defs dt:first-child{margin-top:0}
+dl.defs dd{margin:2px 0 0;color:var(--ink-2)}
+
+.rule{border:none;border-top:1px solid var(--rule);margin:0 0 34px}
+footer{border-top:1px solid var(--rule-strong);padding-top:22px;font-size:13px;color:var(--muted);max-width:var(--measure)}
+footer p{max-width:none}
+.refs{font-size:13.5px;line-height:1.5}
+.refs li{margin-bottom:9px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="masthead">
+  <p class="kicker"><span>levantamento técnico</span><span>·</span><span>cache · localidade · simulação</span></p>
+  <h1>Controlando a stack distance</h1>
+  <p class="standfirst">Quais geradores de carga sintética deixam você <em>fixar</em> a distribuição de stack distance — e não só a inclinação de Zipf — para simular cache com localidade sob controle, inclusive em cenários de amostragem.</p>
+  <div class="stamp">
+    <span>Setembro de 2026</span>
+    <span>14 ferramentas avaliadas</span>
+    <span>Inclui gerador LRUSM pronto para rodar</span>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Índice">
+  <ol>
+    <li><a href="#resumo">O que usar</a></li>
+    <li><a href="#vocabulario">Vocabulário exato</a></li>
+    <li><a href="#familias">Três famílias de modelo</a></li>
+    <li><a href="#catalogo">Catálogo de geradores</a></li>
+    <li><a href="#detalhes">Os quatro que importam</a></li>
+    <li><a href="#amostragem">Amostragem de cache</a></li>
+    <li><a href="#receita">Receita de experimento</a></li>
+    <li><a href="#armadilhas">Armadilhas de validade</a></li>
+    <li><a href="#traces">Traces reais para calibrar</a></li>
+    <li><a href="#bib">Bibliografia</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="resumo">
+  <p class="eyebrow">Conclusão primeiro</p>
+  <h2>O que usar</h2>
+  <div class="lede">
+    <p>Quase todo gerador "de cache" que você encontra pronto (YCSB, memtier, CacheBench, <code>libCacheSim/data_gen.py</code>) parametriza <strong>popularidade</strong> — um α de Zipf — e deixa a stack distance emergir. Isso é o Modelo de Referência Independente (IRM), e ele produz localidade temporal <em class="term">errada</em> de propósito.</p>
+    <p>Para <strong>fixar a stack distance</strong> existem essencialmente duas rotas maduras:</p>
+    <ul>
+      <li><strong>TRAGEN / JEDI</strong> (UMass + Akamai) — os únicos geradores públicos, prontos e validados que recebem um descritor de stack distance (o <em class="term">footprint descriptor</em>) e emitem um trace com timestamp, id e tamanho de objeto. Use se você quer realismo de CDN sem ter o trace original.</li>
+      <li><strong>LRU Stack Model (LRUSM)</strong>, de Mattson (1970) e Turner &amp; Strecker (1977) — 40 linhas de código, controle analítico total sobre <em>P(sd)</em>. Use quando o experimento exige varrer a distribuição de stack distance como variável independente. Escrevi um implementado e testado para você: <a href="#receita">seção Receita</a>.</li>
+    </ul>
+    <p>Para <strong>varrer localidade temporal e popularidade como dois eixos separados</strong>, o desenho clássico é o <strong>ProWGen</strong>; a alternativa moderna e mais fiel é modelar processo por objeto (<strong>Shot Noise Model</strong> ou <strong>renewal clusterizado</strong>).</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="vocabulario">
+  <p class="eyebrow">Base</p>
+  <h2>Vocabulário exato, porque a literatura conflita</h2>
+  <p>Metade da confusão em papers de cache vem de quatro termos que às vezes são sinônimos e às vezes não. Fixe o seu uso antes de escrever a metodologia.</p>
+
+  <dl class="defs">
+    <dt>Reuse distance (distância de reúso)</dt>
+    <dd>Número de referências <strong>totais</strong> entre dois acessos consecutivos ao mesmo bloco. Em <code>a b b a</code>, a reuse distance do segundo <code>a</code> é 3.</dd>
+
+    <dt>Stack distance (distância de pilha) — <em>a que você quer controlar</em></dt>
+    <dd>Número de blocos <strong>distintos</strong> entre dois acessos consecutivos ao mesmo bloco. Em <code>a b b a</code>, é 2. É a profundidade do bloco na pilha LRU no momento do acesso. Boa parte da literatura de arquitetura (Ding &amp; Zhong, StatStack) chama isto de "reuse distance" — sempre verifique a definição operacional do paper.</dd>
+
+    <dt>IRR (Inter-Reference Recency), do LIRS</dt>
+    <dd>Jiang &amp; Zhang definem IRR como o número de <strong>páginas distintas</strong> acessadas entre as duas últimas referências a uma página — ou seja, <strong>IRR é exatamente a stack distance</strong> do último reúso. "Recency" é a contagem de páginas distintas acessadas <em>desde</em> a última referência, isto é, a profundidade atual na pilha. Consequência prática e útil: <strong>um gerador que controla P(sd) controla a distribuição de IRR por construção.</strong> Não é preciso um mecanismo separado.</dd>
+
+    <dt>Footprint / working set</dt>
+    <dd>Número de bytes ou objetos únicos em uma janela. O <em class="term">footprint descriptor</em> do Akamai é a distribuição conjunta de (bytes únicos, duração) sobre subsequências de reúso — uma stack distance ponderada por bytes e datada.</dd>
+  </dl>
+
+  <h3>Por que a stack distance é <em>a</em> variável</h3>
+  <p>Pelo algoritmo de pilha de Mattson et al. (1970), LRU tem a propriedade de inclusão, e daí sai o resultado que sustenta todo o resto:</p>
+  <pre><code>miss_ratio_LRU(C) = P(sd ≥ C)        hit_ratio_LRU(C) = P(sd &lt; C)</code></pre>
+  <p>A MRC inteira de LRU é a cauda da distribuição de stack distance. Portanto: <strong>dois traces com a mesma distribuição de stack distance têm a mesma MRC sob LRU, por construção</strong> — não por sorte. É exatamente esse teorema que TRAGEN transporta para objetos de tamanho variável, e é por isso que gerar a partir de <em>P(sd)</em> é o caminho certo para um experimento controlado.</p>
+  <div class="note">
+    <span class="tag">Limite do teorema</span>
+    <p>A garantia vale para LRU. Para FIFO, CLOCK, SLRU, ARC, LIRS, TinyLFU, S3-FIFO, SIEVE não há garantia — só evidência empírica. TRAGEN validou a semelhança para LRU, SLRU, FIFO, RANDOM, MARKERS, CLOCK e PLRU; políticas que consultam <strong>frequência</strong> continuam sensíveis à estrutura de popularidade, que num gerador LRUSM é emergente e não controlada.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="familias">
+  <p class="eyebrow">Modelagem</p>
+  <h2>Três famílias, e o que cada uma abre mão</h2>
+  <p>Você não escolhe livremente popularidade <em>e</em> stack distance. Fixado o número de objetos e o comprimento do trace, as duas estão acopladas: fixar uma faz a outra emergir. Toda a literatura de geração sintética se organiza em torno de qual das duas o modelo toma como primitiva.</p>
+
+  <figure>
+    <svg viewBox="0 0 760 250" role="img" aria-label="Diagrama comparando IRM, LRUSM e processo por objeto: o que cada modelo fixa e o que emerge.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--rule-strong)"/>
+        </marker>
+      </defs>
+
+      <!-- column 1 -->
+      <rect x="8" y="8" width="230" height="234" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="24" y="34" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.6" fill="var(--muted)">FAMÍLIA A</text>
+      <text x="24" y="58" font-family="Archivo, sans-serif" font-size="17" font-weight="600" fill="var(--ink)">IRM · Zipf</text>
+      <rect x="24" y="76" width="198" height="52" rx="3" fill="var(--accent-soft)" stroke="var(--accent)"/>
+      <text x="36" y="95" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--accent)">VOCÊ FIXA</text>
+      <text x="36" y="115" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink)">popularidade p(i) ∝ i⁻ᵅ</text>
+      <line x1="123" y1="132" x2="123" y2="158" stroke="var(--rule-strong)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="24" y="162" width="198" height="52" rx="3" fill="none" stroke="var(--rule)" stroke-dasharray="3 3"/>
+      <text x="36" y="181" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--muted)">EMERGE</text>
+      <text x="36" y="201" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink-2)">stack distance · IRR</text>
+      <text x="24" y="232" font-family="Source Serif 4, serif" font-size="11.5" fill="var(--muted)">YCSB · memtier · CacheBench</text>
+
+      <!-- column 2 -->
+      <rect x="265" y="8" width="230" height="234" rx="4" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+      <text x="281" y="34" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.6" fill="var(--muted)">FAMÍLIA B</text>
+      <text x="281" y="58" font-family="Archivo, sans-serif" font-size="17" font-weight="600" fill="var(--ink)">LRUSM · FD</text>
+      <rect x="281" y="76" width="198" height="52" rx="3" fill="var(--accent-soft)" stroke="var(--accent)"/>
+      <text x="293" y="95" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--accent)">VOCÊ FIXA</text>
+      <text x="293" y="115" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink)">stack distance P(sd)</text>
+      <line x1="380" y1="132" x2="380" y2="158" stroke="var(--rule-strong)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="281" y="162" width="198" height="52" rx="3" fill="none" stroke="var(--rule)" stroke-dasharray="3 3"/>
+      <text x="293" y="181" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--muted)">EMERGE</text>
+      <text x="293" y="201" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink-2)">popularidade</text>
+      <text x="281" y="232" font-family="Source Serif 4, serif" font-size="11.5" fill="var(--muted)">TRAGEN · JEDI · genwl.py</text>
+
+      <!-- column 3 -->
+      <rect x="522" y="8" width="230" height="234" rx="4" fill="var(--surface)" stroke="var(--rule)"/>
+      <text x="538" y="34" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="1.6" fill="var(--muted)">FAMÍLIA C</text>
+      <text x="538" y="58" font-family="Archivo, sans-serif" font-size="17" font-weight="600" fill="var(--ink)">Processo por objeto</text>
+      <rect x="538" y="76" width="198" height="52" rx="3" fill="var(--amber-soft)" stroke="var(--amber)"/>
+      <text x="550" y="95" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--amber)">VOCÊ FIXA</text>
+      <text x="550" y="115" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink)">λᵢ(t) · nascimento/morte</text>
+      <line x1="637" y1="132" x2="637" y2="158" stroke="var(--rule-strong)" stroke-width="1.4" marker-end="url(#ar)"/>
+      <rect x="538" y="162" width="198" height="52" rx="3" fill="none" stroke="var(--rule)" stroke-dasharray="3 3"/>
+      <text x="550" y="181" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="1.2" fill="var(--muted)">EMERGE</text>
+      <text x="550" y="201" font-family="Archivo, sans-serif" font-size="14" font-weight="600" fill="var(--ink-2)">ambas, e a não-estacionaridade</text>
+      <text x="538" y="232" font-family="Source Serif 4, serif" font-size="11.5" fill="var(--muted)">SNM · renewal clusterizado</text>
+    </svg>
+    <figcaption>A escolha da família é uma escolha de <em>qual variável é independente no seu experimento</em>. Para avaliar comportamento em função da stack distance, a Família B é a única que a coloca no eixo x.</figcaption>
+  </figure>
+
+  <h3>Família A — IRM com popularidade Zipf</h3>
+  <p>Cada requisição é sorteada i.i.d. de <em>p(i) ∝ i⁻ᵅ</em>. Simples, analiticamente tratável (aproximação de Che; Fricker–Robert–Roberts), e é o que praticamente todo benchmark de KV-store faz. O defeito é conhecido desde Denning: <strong>sem localidade temporal</strong>. Objetos populares reaparecem por serem populares, nunca por estarem "quentes agora". Traverso et al. mostraram que isso subestima sistematicamente a hit rate de caches reais e distorce a comparação entre políticas.</p>
+
+  <h3>Família B — LRUSM e footprint descriptors</h3>
+  <p>A cada passo, sorteie a profundidade <em>d</em> na pilha LRU de uma distribuição alvo <em>P(sd)</em> e referencie o objeto naquela profundidade, promovendo-o ao topo; com probabilidade <em>P(sd = ∞)</em>, emita um objeto inédito (o seu controle de <em>one-timers</em> / cold misses). Este é o modelo de Mattson operado ao contrário, formalizado para simulação por Turner &amp; Strecker (CACM, 1977), reencarnado como modelo Markov de dois estados por Hassan et al. (2007). TRAGEN e JEDI partem da mesma distribuição, mas trocam o mecanismo: em vez de sortear para trás ("quem está na profundidade <em>d</em>?"), eles agendam para frente ("este objeto volta daqui a <em>s</em> bytes") — o que elimina o viés de tamanho que o LRUSM sofre com objetos de tamanhos diferentes.</p>
+
+  <h3>Família C — processo estocástico por objeto</h3>
+  <p>Cada conteúdo tem seu próprio processo de chegada com intensidade variável no tempo. O <strong>Shot Noise Model</strong> (Traverso et al.) superpõe processos de Poisson com "pulsos" de popularidade que nascem e decaem; a variante de <strong>renewal clusterizado</strong> (Abad et al.) amostra tempos entre chegadas por objeto e usa clustering estatístico para reduzir a dimensionalidade. É a família mais fiel a tráfego real não-estacionário, e a única que reproduz naturalmente o efeito "conteúdo novo mata o cache". O custo: você perde o controle direto sobre <em>P(sd)</em>.</p>
+</section>
+
+<hr class="rule">
+
+<section id="catalogo">
+  <p class="eyebrow">Levantamento</p>
+  <h2>Catálogo de geradores</h2>
+  <p>Cada linha responde à pergunta que interessa: <strong>o que essa ferramenta deixa você <em>setar</em></strong>? A coluna "SD" marca controle direto sobre a distribuição de stack distance.</p>
+
+  <div class="scroller">
+  <table>
+    <thead>
+      <tr>
+        <th>Ferramenta</th>
+        <th>SD</th>
+        <th>Parâmetros expostos</th>
+        <th>Saída · disponibilidade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Família B — controle direto da stack distance</td></tr>
+      <tr>
+        <td class="name"><a href="https://github.com/UMass-LIDS/Tragen">TRAGEN</a><small>Sabnis &amp; Sitaraman, IMC 2021</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td>Footprint descriptor (dist. conjunta de bytes únicos × duração), 17+ classes de tráfego reais da Akamai (vídeo, web, imagens, downloads, mídia), volume por classe em req/s ou GBps, alvo RHR ou BHR, comprimento do trace. Mistura classes por convolução (FD calculus).</td>
+        <td><code>time,id,size(KB)</code>. CLI + GUI PyQt5. Python 3. Público.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://github.com/UMass-LIDS/Jedi">JEDI</a><small>Sabnis &amp; Sitaraman, IMC 2022</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td>Sucessor do TRAGEN. Usa o <em>popularity-size footprint descriptor</em> (pFD): acrescenta ao FD a fidelidade em nível de objeto — popularidade e tamanho por objeto, não só a MRC agregada.</td>
+        <td>Mesmo formato e CLI do TRAGEN. Público.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://github.com/ConnectedSystemsLab/SpaceGEN">SpaceGEN</a><small>StarCDN, SIGCOMM 2025</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td>pFD + <em>global popularity distribution</em> (GPD). Gera <strong>múltiplos traces correlacionados</strong> — o caso de vários servidores de borda vendo populações sobrepostas. pFDs pré-computados inclusos para web/vídeo/download.</td>
+        <td><code>time,id,size(KB)</code>. Python 3.9–3.11. Público.</td>
+      </tr>
+      <tr>
+        <td class="name">LRUSM clássico<small>Turner &amp; Strecker, CACM 1977</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td><em>P(sd)</em> arbitrária (Zipf, lognormal, exponencial, mistura, empírica), <em>P(sd = ∞)</em> para cold misses, tamanho da pilha. Controle analítico total.</td>
+        <td>Sem pacote canônico — é para implementar. <a href="#receita">Implementação testada abaixo</a>.</td>
+      </tr>
+      <tr>
+        <td class="name">Hybrid Markov<small>Hassan et al., ICCS 2007</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td>Perfila o trace real numa <em>stack distance string</em>, integra em CDF e regenera por inverse transform sampling; cadeia de Markov de 2 estados (referência nova / referência antiga) com escalonador FIFO. Mapeia endereços a linhas de cache, cobrindo localidade espacial.</td>
+        <td>Pseudocódigo completo no paper (Listings 1–3); sem código publicado.</td>
+      </tr>
+      <tr>
+        <td class="name">WEST / STM<small>HPCA 2012 · IISWC 2014</small></td>
+        <td><span class="pill yes">direto</span></td>
+        <td><em>Cloning</em> caixa-preta: perfila padrões de reuse distance de um workload proprietário e emite um clone estocástico com estatísticas de miss quase idênticas (&lt;0,5% de erro em 1000+ configurações). STM acrescenta localidade espacial (strides).</td>
+        <td>Sem código público. Vale como referência metodológica.</td>
+      </tr>
+
+      <tr class="grp"><td colspan="4">Família A — controle de popularidade (SD emergente)</td></tr>
+      <tr>
+        <td class="name"><a href="https://github.com/1a1a11a/libCacheSim">libCacheSim</a><small>Yang et al.</small></td>
+        <td><span class="pill no">emergente</span></td>
+        <td><code>scripts/data_gen.py</code>: <code>-m</code> objetos, <code>-n</code> requisições, <code>--alpha</code>, <code>--obj-size</code>, <code>--time-span</code>. API Python: <code>SyntheticReader(num_objects, num_of_req, alpha, dist="zipf")</code>. <strong>O valor real está no outro lado</strong>: simulador com 20+ políticas (LRU, ARC, LIRS, 2Q, TinyLFU, LRB, S3-FIFO, SIEVE, Belady), &gt;20M req/s, MRC por simulação direta, SHARDS ou mini-simulações, e <code>traceAnalyzer</code> para medir popularidade e reuse distance.</td>
+        <td>C/C++ com binding Python (<code>pip install libcachesim</code>). Público.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://github.com/brianfrankcooper/YCSB">YCSB</a></td>
+        <td><span class="pill no">emergente</span></td>
+        <td><code>ZipfianGenerator</code> (θ), <code>ScrambledZipfian</code>, <code>SkewedLatest</code>, <code>Hotspot</code>, <code>Exponential</code>, <code>Histogram</code>. Padrão de fato em KV-stores.</td>
+        <td>Java. Público. <strong>Cuidado:</strong> há relatos de <code>ScrambledZipfian</code> gerar skew menor que o configurado.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://github.com/facebook/CacheLib">CacheBench</a><small>CacheLib, OSDI 2020</small></td>
+        <td><span class="pill no">emergente</span></td>
+        <td>Config JSON: distribuição de popularidade discreta (você declara "X% dos objetos servem Y% das requisições"), pools de tamanho de chave/valor, mix de operações, replay de traces de produção.</td>
+        <td>C++. Público. Bom para medir <em>throughput</em>, não só hit rate.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://github.com/leverich/mutilate">mutilate</a> · <a href="https://github.com/XinShuYang/zipf_memtier">zipf_memtier</a></td>
+        <td><span class="pill no">emergente</span></td>
+        <td>Geradores de carga <em>open-loop</em> para memcached/Redis: distribuição de chaves, distribuição de tamanhos, tempos entre chegadas sensíveis a tempo, QPS alvo. <code>zipf_memtier</code> acrescenta Zipf ao memtier_benchmark.</td>
+        <td>C++. Público. Para experimentos <em>on-line</em> com latência de cauda.</td>
+      </tr>
+      <tr>
+        <td class="name"><a href="https://www.web-polygraph.org/">Web Polygraph</a></td>
+        <td><span class="pill part">indireto</span></td>
+        <td>Linguagem de configuração própria: hit ratio alvo, cacheabilidade, tamanhos de resposta, e um <strong>modelo de recorrência</strong> (fração de requisições repetidas) que é um controle grosseiro de localidade temporal.</td>
+        <td>C++. Público. Workloads padronizados prontos.</td>
+      </tr>
+      <tr>
+        <td class="name">gem5 TrafficGen</td>
+        <td><span class="pill no">emergente</span></td>
+        <td>Grafo probabilístico de estados LINEAR / RANDOM / TRACE / DRAM, faixa de endereços, proporção leitura/escrita. Localidade controlada indiretamente pela faixa de endereços vs. tamanho do cache.</td>
+        <td>Integrado ao gem5. Para hierarquia de memória, não para cache de objetos.</td>
+      </tr>
+
+      <tr class="grp"><td colspan="4">Localidade temporal como eixo separado</td></tr>
+      <tr>
+        <td class="name">ProWGen / WebTraff<small>Busari &amp; Williamson, Comp. Networks 2002</small></td>
+        <td><span class="pill part">indireto</span></td>
+        <td>Desenhado <em>exatamente</em> para análise de sensibilidade: varia <strong>uma característica por vez</strong> — inclinação Zipf, grau de localidade temporal (modelo de pilha LRU), fração de <em>one-timers</em>, cauda pesada da distribuição de tamanhos, e correlação tamanho×popularidade. WebTraff é a GUI.</td>
+        <td>C. Distribuição acadêmica (U. Calgary/Saskatchewan) — pode exigir contato com os autores.</td>
+      </tr>
+      <tr>
+        <td class="name">Shot Noise Model<small>Traverso et al., CCR 2013</small></td>
+        <td><span class="pill no">emergente</span></td>
+        <td>Por conteúdo: instante de publicação (Poisson), volume total de requisições, forma e largura do pulso de popularidade. Poucos parâmetros, tratável analiticamente e em simulação.</td>
+        <td>Modelo, não pacote — trivial de implementar. Amplamente usado em ICN/CDN.</td>
+      </tr>
+      <tr>
+        <td class="name">Renewal clusterizado<small>Abad et al., Perf. Eval. 2013</small></td>
+        <td><span class="pill no">emergente</span></td>
+        <td>Processos de renovação atrasados por objeto; clustering estatístico reduz a dimensão do modelo. Reproduz popularidade <em>e</em> localidade temporal por objeto; validado em HDFS (Yahoo!) e traces de animação.</td>
+        <td>Modelo publicado com gerador; ver o paper para o artefato.</td>
+      </tr>
+      <tr>
+        <td class="name">Geradores generativos<small>2023–2026</small></td>
+        <td><span class="pill part">implícito</span></td>
+        <td>GAN e difusão sobre traces de storage/kernel (<em>Synthetic Data Generation for Storage Trace Augmentation</em>, ACM TOS 2025; TraceSynth, 2026; <em>Memory Workload Synthesis Using Generative AI</em>, MEMSYS 2023). Alta fidelidade estatística, <strong>sem knob interpretável</strong> — ruim para experimento controlado, útil para aumentar dados escassos.</td>
+        <td>Maturidade e disponibilidade variáveis.</td>
+      </tr>
+    </tbody>
+    <caption>SD = controle direto sobre a distribuição de stack distance. "Indireto" = existe um parâmetro de localidade temporal, mas não a distribuição inteira.</caption>
+  </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="detalhes">
+  <p class="eyebrow">Aprofundamento</p>
+  <h2>Como TRAGEN de fato gera o trace</h2>
+  <p>Vale entender o algoritmo: ele usa a mesma matéria-prima do LRUSM (a distribuição de stack distance), mas com um mecanismo diferente — e o próprio paper mostra, na seção 5.3, que o LRUSM clássico falha com objetos de tamanhos variados. O guia <code>docs/tragen-por-dentro.html</code>, explica cada peça em detalhe. O <strong>footprint descriptor</strong> é a tripla ⟨λ, Pʳ(s,t), Pᵃ(s,t)⟩, onde λ é a taxa de tráfego, Pʳ é a probabilidade de uma subsequência <em>de reúso</em> conter <em>s</em> bytes únicos e durar <em>t</em> segundos, e Pᵃ o mesmo sobre todas as subsequências. O paper é explícito: <em>"o número de bytes únicos numa subsequência de reúso também é conhecido como stack distance"</em>. Daí o teorema herdado de Sundarrajan et al.:</p>
+  <pre><code>rHRC(s) = Σ_t Σ_{s' ≤ s} Pʳ(s', t)</code></pre>
+  <p>O gerador (Algoritmo 2 do paper) <strong>agenda para frente</strong>: a lista <em>C</em> guarda os objetos na ordem em que <em>serão</em> pedidos.</p>
+  <ol>
+    <li>Inicializa uma lista <em>C</em> com objetos de tamanhos amostrados de <em>SZ(z)</em> até somar o maior <em>s</em> finito de <em>P(s)</em>.</li>
+    <li>Emite o primeiro objeto de <em>C</em>.</li>
+    <li>Amostra uma stack distance <em>s</em> de <em>P(s)</em> (marginal do FD sobre <em>t</em>).</li>
+    <li>Se <em>s</em> é finito: remove o objeto e o reinsere na posição <em>j</em> = menor prefixo cuja soma de tamanhos ≥ <em>s</em>. Se <em>s</em> = ∞: descarta e cria um objeto novo no fim da lista.</li>
+    <li>Ao final, atribui timestamps a partir de λ.</li>
+  </ol>
+  <p>Duas escolhas fazem a diferença: (a) a posição é medida em <strong>bytes acumulados</strong>, não em contagem de objetos, o que permite tamanhos heterogêneos e o alvo BHR via <em>byte-weighted FD</em> — e, como o objeto emitido é sempre o da frente, a escolha não depende do tamanho, evitando o viés do LRUSM; (b) a lista <em>C</em> é implementada como folhas de uma B⁺-tree, dando O(N log m). O erro reportado contra os traces originais da Akamai é de ~1,5% em RHR e ~1% em BHR.</p>
+
+  <div class="note">
+    <span class="tag">Implicação para o seu experimento</span>
+    <p>Se você trabalha com objetos de tamanho uniforme (blocos, páginas, linhas de cache), a versão em contagem de objetos basta e é muito mais simples. Se você simula CDN ou cache de objetos com tamanhos heterogêneos, a ponderação por bytes é obrigatória — RHR e BHR divergem bastante e uma stack distance contada em objetos não prediz nenhuma das duas corretamente.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="amostragem">
+  <p class="eyebrow">O ponto que você levantou</p>
+  <h2>Amostragem de dados de cache</h2>
+  <p>Existe uma diferença que decide tudo neste tema: <strong>amostragem temporal</strong> (pegar um pedaço do trace) destrói stack distance, porque referências intermediárias somem e distâncias encolhem, além do problema de <em>cold start</em>. <strong>Amostragem espacial por hash</strong> preserva stack distance a menos de um fator de escala, porque a decisão é uma função determinística do identificador — se um objeto é amostrado, <em>todos</em> os seus acessos são. É por isso que a literatura moderna inteira usa hashing espacial.</p>
+
+  <h3>SHARDS — a técnica de referência</h3>
+  <p>Waldspurger et al. (FAST '15). A condição de amostragem é <code>hash(L) mod P &lt; T</code>, com taxa efetiva <em>R = T/P</em>. Cada amostra representa <em>1/R</em> localizações. Coloca-se esse filtro na frente de um algoritmo padrão de reuse distance e <strong>reescala-se a distância de saída por 1/R</strong>. Propriedades que importam para o desenho experimental:</p>
+  <ul>
+    <li><strong>Sem estado prévio</strong>: não exige conhecer o espaço de endereços nem a distribuição de acessos.</li>
+    <li><strong>Variante de tamanho fixo</strong> (<em>s<sub>max</sub></em>): em vez de fixar <em>R</em>, fixa-se o número máximo de amostras rastreadas; quando o conjunto enche, remove-se a amostra de maior hash e baixa-se <em>T</em>. Isso preserva a <em>propriedade de inclusão de subconjunto</em> — tudo amostrado depois teria sido amostrado antes — e faz o algoritmo rodar em espaço constante. Com <em>s<sub>max</sub></em> = 8K, o footprint total medido ficou abaixo de 1 MB.</li>
+    <li><strong>Correção ao baixar a taxa</strong>: os contadores de cada bucket do histograma são reescalados por <em>R<sub>novo</sub>/R<sub>velho</sub></em> = <em>T<sub>novo</sub>/T<sub>velho</sub></em>, sob a hipótese simplificadora de que as referências anteriores contribuíram igualmente para todos os buckets.</li>
+    <li>Taxas típicas ficam <strong>abaixo de 1%</strong>, com erro médio absoluto na MRC de poucos pontos percentuais.</li>
+  </ul>
+
+  <h3>Além de LRU: simulação em miniatura</h3>
+  <p>SHARDS resolve LRU (que tem propriedade de inclusão). Para políticas <em>sem</em> inclusão — ARC, LIRS, 2Q, LFU, LRFU, OPT — Waldspurger et al. (ATC '17, Best Paper) generalizaram: rode uma <strong>simulação em miniatura</strong>, isto é, um cache de verdade, de tamanho <em>R·C</em>, alimentado pela amostra espacial de taxa <em>R</em>. As MRCs em escala reduzida saem muito precisas com ordens de grandeza menos tempo e memória. É a base do suporte a MRC não-LRU do libCacheSim, e o <strong>Kosmo</strong> (FAST '24) reduz a memória em ~3,6× em média (até 36×) gerando simultaneamente MRCs para LFU, FIFO, 2Q, LRFU, LRU e MRU.</p>
+
+  <h3>Desenho de experimento de amostragem com carga controlada</h3>
+  <p>Aqui é onde carga sintética paga o investimento: com um trace LRUSM você conhece <em>P(sd)</em> <strong>de forma exata e por construção</strong>, então a MRC de LRU é ground truth analítico, não estimativa. Isso permite isolar o erro do estimador do erro do workload. Um desenho que se sustenta:</p>
+  <ol>
+    <li>Fixe uma família de <em>P(sd)</em> e varra um parâmetro de cauda (por exemplo β em <em>P(sd) ∝ (sd+1)⁻ᵝ</em>) — cauda pesada significa localidade fraca e reúso longo.</li>
+    <li>Varra <em>P(sd = ∞)</em> independentemente: essa é a fração de <em>one-timers</em>, e é o fator que mais castiga estimadores amostrados, porque objetos vistos uma vez só quase nunca entram na amostra.</li>
+    <li>Para cada carga, varra <em>R</em> ∈ {10⁻¹, 10⁻², 10⁻³, 10⁻⁴} e meça o erro (MAE sobre a MRC) contra o ground truth.</li>
+    <li>Repita com sementes diferentes para separar viés de variância — o viés é o que depende de <em>P(sd)</em>.</li>
+    <li>Cruze com política: LRU (com garantia) contra FIFO/ARC/LIRS/S3-FIFO em mini-simulação (sem garantia). A hipótese testável é que o erro de amostragem cresce onde a política depende de frequência e não de recência.</li>
+  </ol>
+  <p>O <code>genwl.py</code> abaixo já traz o filtro SHARDS embutido para exatamente esse loop.</p>
+</section>
+
+<hr class="rule">
+
+<section id="receita">
+  <p class="eyebrow">Prático</p>
+  <h2>Receita de experimento, com código</h2>
+  <p>Escrevi e testei um gerador/analisador LRUSM em Python puro, sem dependências. Está em <code>lib/genwl.py</code>. A pilha LRU usa uma árvore de Fenwick sobre slots, então <em>mover para o topo</em> e <em>ler na profundidade d</em> custam O(log n) — 100 mil requisições em menos de um segundo.</p>
+
+  <h3>Gerar com stack distance controlada</h3>
+  <pre><code># cauda pesada: P(sd) ∝ (sd+1)^-0.8, 2% de objetos inéditos
+python3 genwl.py gen --model lrusm --sd-dist zipf --sd-beta 0.8 \
+        --cold-prob 0.02 --sd-max 20000 --requests 100000 -o t_lrusm.txt
+
+# comparação IRM: mesma escala, popularidade Zipf(1.0), SD emergente
+python3 genwl.py gen --model irm --objects 20000 --alpha 1.0 \
+        --requests 100000 -o t_irm.txt</code></pre>
+  <p class="hint">Outras formas de <em>P(sd)</em>: <code>--sd-dist lognormal --sd-mu 6 --sd-sigma 1.5</code> (corpo unimodal em escala log, típico de workloads com working set definido), <code>--sd-dist exp --sd-beta 500</code> (localidade forte, cauda leve), <code>--sd-dist uniform</code> (pior caso para cache).</p>
+
+  <h3>Medir SD, MRC e o efeito da amostragem</h3>
+  <pre><code>python3 genwl.py analyze t_lrusm.txt --mrc-points 8
+python3 genwl.py analyze t_lrusm.txt --mrc-points 8 --shards 0.05</code></pre>
+  <p>A análise imprime o histograma de stack distance (com a massa em ∞ separada), a fração de <em>one-timers</em>, a MRC exata de LRU derivada de <em>P(sd ≥ C)</em>, e a MRC de FIFO por simulação. Com <code>--shards R</code>, o trace passa pelo filtro de hash espacial e os tamanhos de cache saem <strong>já reescalados por 1/R</strong>, exatamente como no SHARDS.</p>
+
+  <h3>Um resultado que justifica o esforço</h3>
+  <p>Rodei os dois traces acima — 100 mil requisições cada, escalas de objetos únicos comparáveis (16.612 e 13.223) — e medi a distância entre FIFO e LRU nos mesmos tamanhos de cache:</p>
+
+  <div class="scroller">
+  <table>
+    <thead>
+      <tr>
+        <th>Cache (objetos)</th>
+        <th class="num">LRUSM · LRU</th>
+        <th class="num">LRUSM · FIFO</th>
+        <th class="num">Δ</th>
+        <th class="num">IRM · LRU</th>
+        <th class="num">IRM · FIFO</th>
+        <th class="num">Δ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">32</td><td class="num">0,8282</td><td class="num">0,8291</td><td class="num">+0,0009</td><td class="num">0,7680</td><td class="num">0,8052</td><td class="num">+0,0372</td></tr>
+      <tr><td class="num">128</td><td class="num">0,7310</td><td class="num">0,7333</td><td class="num">+0,0023</td><td class="num">0,6197</td><td class="num">0,6656</td><td class="num">+0,0459</td></tr>
+      <tr><td class="num">512</td><td class="num">0,6030</td><td class="num">0,6084</td><td class="num">+0,0054</td><td class="num">0,4662</td><td class="num">0,5120</td><td class="num">+0,0457</td></tr>
+      <tr><td class="num">2048</td><td class="num">0,4342</td><td class="num">0,4429</td><td class="num">+0,0087</td><td class="num">0,3076</td><td class="num">0,3468</td><td class="num">+0,0392</td></tr>
+      <tr><td class="num">8192</td><td class="num">0,2337</td><td class="num">0,2448</td><td class="num">+0,0111</td><td class="num">0,1568</td><td class="num">0,1758</td><td class="num">+0,0190</td></tr>
+    </tbody>
+    <caption>Miss ratio. Δ = FIFO − LRU. Ilustração produzida pelo <code>genwl.py</code> com uma semente; não é um benchmark.</caption>
+  </table>
+  </div>
+
+  <p>No trace IRM, LRU bate FIFO por 4–5 pontos percentuais. No trace LRUSM de cauda pesada, a vantagem cai para <strong>menos de 1 ponto</strong>. Mesmo par de políticas, mesma escala, conclusão qualitativamente diferente — decidida inteiramente pelo modelo de carga. Se o seu paper compara políticas de despejo, a família do gerador é uma ameaça de primeira ordem à validade, e precisa aparecer na metodologia.</p>
+</section>
+
+<hr class="rule">
+
+<section id="armadilhas">
+  <p class="eyebrow">Metodologia</p>
+  <h2>Armadilhas de validade</h2>
+  <ul>
+    <li><strong>Zipf sozinho não é workload.</strong> IRM com α ajustado reproduz a popularidade e erra a localidade temporal. Se o experimento envolve recência, IRM é o <em>baseline degenerado</em>, não o realista.</li>
+    <li><strong>Popularidade e stack distance não são knobs independentes.</strong> Reporte qual das duas você fixou e qual mediu. Um gerador LRUSM produz uma popularidade emergente que pode não ser Zipf — meça, não assuma.</li>
+    <li><strong>A garantia de MRC vale para LRU.</strong> Para qualquer política sem propriedade de inclusão, casar <em>P(sd)</em> é uma heurística validada empiricamente, não um teorema. Diga isso no paper.</li>
+    <li><strong>Tamanho de objeto importa e muda a resposta.</strong> RHR e BHR divergem quando objetos pequenos têm localidade diferente dos grandes; é a motivação declarada do byte-weighted FD do TRAGEN. Contar stack distance em objetos quando os tamanhos são heterogêneos é um erro silencioso.</li>
+    <li><strong>Não-estacionaridade.</strong> LRUSM e IRM são estacionários. Tráfego real tem conteúdo nascendo e morrendo — é o que SNM e renewal clusterizado capturam, e o que faz cache real ter comportamento pior que o previsto.</li>
+    <li><strong>Amostragem temporal ≠ amostragem espacial.</strong> Cortar o trace por tempo enviesa stack distance para baixo e sofre cold start. Kessler, Hill &amp; Wood já mostravam nos anos 90 que superar o viés de cold start exige dezenas de milhões de referências consecutivas.</li>
+    <li><strong>Valide contra trace real antes de generalizar.</strong> O S3-FIFO foi avaliado em 6.594 traces de produção de 14 fontes, 856 bilhões de requisições. Esse é o padrão de comparação atual do campo; resultados só em sintético devem ser apresentados como análise de sensibilidade, não como evidência de superioridade.</li>
+  </ul>
+</section>
+
+<hr class="rule">
+
+<section id="traces">
+  <p class="eyebrow">Calibração</p>
+  <h2>Traces reais para ajustar o modelo</h2>
+  <p>Para que a carga sintética valha alguma coisa, o <em>P(sd)</em> alvo precisa vir de algum lugar. O caminho é: meça o histograma de stack distance de um trace real (com <code>libCacheSim traceAnalyzer</code>, PyMimircache ou o <code>analyze</code> do <code>genwl.py</code>), ajuste uma família paramétrica, e depois varra os parâmetros.</p>
+  <ul>
+    <li><a href="https://github.com/twitter/cache-trace">Twitter cache traces</a> — 54 clusters de cache em memória, produção, 2020. O paper de acompanhamento (Yang et al.) documenta que popularidade nem sempre é Zipf.</li>
+    <li><a href="https://github.com/cacheMon/cache_dataset">cacheMon/cache_dataset</a> — coleção agregada usada pelos papers do libCacheSim, incluindo clusters de CDN.</li>
+    <li><a href="http://iotta.snia.org/traces/block-io/388">SNIA IOTTA · MSR Cambridge</a> — traces de bloco, o padrão de fato em storage cache.</li>
+    <li>Traces de CDN da Wikimedia — 21 dias de <em>upload</em> (imagens) e <em>text</em> (pageviews), 2019.</li>
+    <li>Traces de I/O do CloudPhysics — os usados na validação do SHARDS.</li>
+  </ul>
+</section>
+
+<hr class="rule">
+
+<section id="bib">
+  <p class="eyebrow">Fontes</p>
+  <h2>Bibliografia</h2>
+
+  <h3>Fundamentos de stack distance</h3>
+  <ol class="refs">
+    <li>R. L. Mattson, J. Gecsei, D. R. Slutz, I. L. Traiger. <em>Evaluation techniques for storage hierarchies.</em> IBM Systems Journal 9(2), 1970. — algoritmos de pilha, propriedade de inclusão.</li>
+    <li>R. Turner, B. Strecker. <a href="https://dl.acm.org/doi/10.1145/359863.359868"><em>Use of the LRU stack depth distribution for simulation of paging behavior.</em></a> CACM 20(11), 1977. — a origem do gerador LRUSM.</li>
+    <li>E. G. Coffman, P. J. Denning. <em>Operating Systems Theory.</em> Prentice-Hall, 1973. — IRM e o LRU stack model.</li>
+    <li>C. Ding, Y. Zhong. <em>Predicting whole-program locality through reuse distance analysis.</em> PLDI 2003.</li>
+    <li>D. Byrne. <a href="https://arxiv.org/abs/1804.01972"><em>A Survey of Miss-Ratio Curve Construction Techniques.</em></a> arXiv:1804.01972, 2018. — taxonomia por métrica e estrutura de dados.</li>
+  </ol>
+
+  <h3>Geração sintética</h3>
+  <ol class="refs">
+    <li>A. Sabnis, R. K. Sitaraman. <a href="https://groups.cs.umass.edu/wp-content/uploads/sites/3/2021/10/imc2021-final270.pdf"><em>TRAGEN: A Synthetic Trace Generator for Realistic Cache Simulations.</em></a> ACM IMC 2021. · <a href="https://github.com/UMass-LIDS/Tragen">código</a></li>
+    <li>A. Sabnis, R. K. Sitaraman. <a href="https://dl.acm.org/doi/10.1145/3517745.3561466"><em>JEDI: model-driven trace generation for cache simulations.</em></a> ACM IMC 2022. · <a href="https://github.com/UMass-LIDS/Jedi">código</a></li>
+    <li>A. Sundarrajan, M. Feng, M. Kasbekar, R. K. Sitaraman. <a href="https://dl.acm.org/doi/10.1145/3143361.3143368"><em>Footprint Descriptors: Theory and Practice of Cache Provisioning in a Global CDN.</em></a> CoNEXT 2017.</li>
+    <li>X. Zheng et al. <a href="https://dl.acm.org/doi/10.1145/3718958.3754345"><em>StarCDN: Moving Content Delivery Networks to Space.</em></a> SIGCOMM 2025. · <a href="https://github.com/ConnectedSystemsLab/SpaceGEN">SpaceGEN</a></li>
+    <li>M. Busari, C. Williamson. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1389128601002857"><em>ProWGen: a synthetic workload generation tool for simulation evaluation of Web proxy caches.</em></a> Computer Networks 38(6), 2002.</li>
+    <li>R. Hassan, A. Harris, N. Topham, A. Efthymiou. <a href="https://groups.inf.ed.ac.uk/pasta/papers/ICCS07.pdf"><em>A Hybrid Markov Model for Accurate Memory Reference Generation.</em></a> ICCS 2007. — pseudocódigo completo do gerador LRUSM.</li>
+    <li>G. Balakrishnan, Y. Solihin. <a href="https://ieeexplore.ieee.org/document/6169042"><em>WEST: Cloning data cache behavior using Stochastic Traces.</em></a> HPCA 2012. · A. Awad, Y. Solihin. <em>STM: Cloning the spatial and temporal memory access behavior.</em> HPCA/IISWC 2014.</li>
+    <li>S. Traverso, M. Ahmed, M. Garetto, P. Giaccone, E. Leonardi, S. Niccolini. <a href="https://arxiv.org/pdf/1305.7114"><em>Temporal Locality in Today's Content Caching: Why it Matters and How to Model it.</em></a> ACM SIGCOMM CCR 43(5), 2013. — o Shot Noise Model.</li>
+    <li>C. L. Abad, M. Yuan, C. X. Cai, Y. Lu, N. Roberts, R. H. Campbell. <a href="https://assured-cloud-computing.illinois.edu/files/2014/03/Generating-Request-Streams-on-Big-Data-using-Clustered-Renewal-Processes.pdf"><em>Generating request streams on Big Data using clustered renewal processes.</em></a> Performance Evaluation 70(9), 2013.</li>
+    <li>L. Breslau, P. Cao, L. Fan, G. Phillips, S. Shenker. <em>Web caching and Zipf-like distributions: Evidence and implications.</em> INFOCOM 1999.</li>
+  </ol>
+
+  <h3>Amostragem e construção de MRC</h3>
+  <ol class="refs">
+    <li>C. A. Waldspurger, N. Park, A. Garthwaite, I. Ahmad. <a href="https://www.usenix.org/conference/fast15/technical-sessions/presentation/waldspurger"><em>Efficient MRC Construction with SHARDS.</em></a> FAST 2015. · <a href="https://waldspurger.org/carl/papers/shards-login-jun15.pdf">versão ;login:</a></li>
+    <li>C. A. Waldspurger, T. Saemundsson, I. Ahmad, N. Park. <a href="https://www.usenix.org/system/files/conference/atc17/atc17-waldspurger.pdf"><em>Cache Modeling and Optimization using Miniature Simulations.</em></a> USENIX ATC 2017 (Best Paper).</li>
+    <li>J. Wires, S. Ingram, Z. Drudi, N. J. A. Harvey, A. Warfield. <em>Characterizing Storage Workloads with Counter Stacks.</em> OSDI 2014.</li>
+    <li>X. Hu, X. Wang, L. Zhou, Y. Luo, C. Ding, Z. Wang. <em>Kinetic Modeling of Data Eviction in Cache (AET).</em> USENIX ATC 2016.</li>
+    <li>K. Shakiba, S. Sultan, M. Stumm. <a href="https://www.usenix.org/system/files/fast24-shakiba.pdf"><em>Kosmo: Efficient Online Miss Ratio Curve Generation for Eviction Policy Evaluation.</em></a> FAST 2024.</li>
+    <li>D. Carra, G. Neglia. <a href="https://www.usenix.org/system/files/atc20-carra_0.pdf"><em>Efficient Miss Ratio Curve Computation for Heterogeneous Content Popularity.</em></a> USENIX ATC 2020.</li>
+    <li>R. E. Kessler, M. D. Hill, D. A. Wood. <a href="https://pages.cs.wisc.edu/~markhill/papers/toc94_sampling.pdf"><em>A Comparison of Trace-Sampling Techniques for Multi-Megabyte Caches.</em></a> IEEE Trans. Computers, 1994.</li>
+  </ol>
+
+  <h3>Políticas, IRR e avaliação</h3>
+  <ol class="refs">
+    <li>S. Jiang, X. Zhang. <a href="https://ranger.uta.edu/~sjiang/pubs/papers/jiang02_LIRS.pdf"><em>LIRS: An Efficient Low Inter-reference Recency Set Replacement Policy.</em></a> SIGMETRICS 2002.</li>
+    <li>J. Yang, Y. Zhang, Z. Qiu, Y. Yue, K. V. Rashmi. <a href="https://dl.acm.org/doi/pdf/10.1145/3600006.3613147"><em>FIFO Queues are All You Need for Cache Eviction (S3-FIFO).</em></a> SOSP 2023.</li>
+    <li>Y. Zhang, J. Yang, Y. Yue, K. V. Rashmi. <a href="https://www.usenix.org/system/files/nsdi24-zhang-yazhuo.pdf"><em>SIEVE is Simpler than LRU.</em></a> NSDI 2024.</li>
+    <li>B. Berg et al. <a href="https://www.usenix.org/system/files/osdi20-berg.pdf"><em>The CacheLib Caching Engine.</em></a> OSDI 2020.</li>
+    <li>H. Che, Y. Tung, Z. Wang. <em>Hierarchical web caching systems: modeling, design and experimental results.</em> IEEE JSAC, 2002. · C. Fricker, P. Robert, J. Roberts. <a href="https://arxiv.org/pdf/1202.3974"><em>A versatile and accurate approximation for LRU cache performance.</em></a> ITC 2012.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Levantamento produzido em setembro de 2026 a partir de literatura publicada e repositórios públicos. Ferramentas marcadas como públicas foram verificadas nos repositórios citados; ProWGen/WebTraff e WEST/STM não têm distribuição pública confirmada. O <code>genwl.py</code> foi escrito e executado para este documento — os números da tabela de FIFO×LRU vêm de uma execução real com semente fixa.</p>
+</footer>
+
+</main>
+</div>
+</body>
+</html>
