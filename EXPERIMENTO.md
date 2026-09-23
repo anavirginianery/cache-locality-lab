@@ -29,12 +29,26 @@ stack distance —, não o comportamento de uma CDN ou de um servidor específic
 
 ### 2.1 Independentes (fatores manipulados)
 
-| Fator | Níveis | Onde entra |
+Nesta etapa — a geração das cargas — há **um fator só**:
+
+| Fator | Níveis |
+|---|---|
+| **Nível de stack distance** | baixa (β = 1,5), média (β = 1,0), alta (β = 0,5) |
+
+É o que define uma carga. Tudo o mais que varia depois — política de despejo, taxa de amostragem,
+tamanho do cache — não é propriedade da carga: são parâmetros de quem a consome.
+
+| Fator | Níveis | Onde é definido |
 |---|---|---|
-| **Nível de stack distance** | baixa (β = 1,5), média (β = 1,0), alta (β = 0,5) | fator principal, em todas as partes |
-| **Tamanho do cache** | 10, 30, 100, 300, 1.000, 3.000, 10.000 objetos | eixo das curvas |
-| **Política de despejo** | LRU, FIFO, LFU *(+ SIEVE, opcional)* | parte 2 |
-| **Taxa de amostragem** | 1 (exato), 0,1, 0,01, 0,001 | parte 3 |
+| Política de despejo | LRU, FIFO, LFU *(+ uma adaptativa, a decidir)* | desenho da parte 2 |
+| Taxa de amostragem | 1 (exato), 0,1, 0,01 | desenho da parte 3 |
+| Tamanho do cache | grade logarítmica, limitada a `d_max` | desenho das partes 2 e 3 |
+
+**O tamanho do cache não é fator desta etapa.** Ele é o eixo das curvas de resposta, e quem o
+escolhe é a simulação. A única amarra que a geração impõe é o teto: um cache maior que `d_max` já
+atende todo reúso possível, então medir além disso não acrescenta nada (seção 4.4). O campo
+`caches` do `cenarios.json` existe só para a conferência do gerador — é onde ela compara hit
+medido e hit teórico — e não define o experimento.
 
 ### 2.2 Dependentes (respostas medidas)
 
@@ -54,7 +68,7 @@ As duas últimas são derivadas da primeira. O hit rate é a única grandeza efe
 | Requisições por carga | 1.000.000 | seção 4.1 |
 | Aquecimento | 10.000 requisições (1% da carga), descartadas das medidas | seção 4.2 |
 | Objetos novos, P(∞) | 0,05 | seção 4.3 |
-| Maior stack distance, `d_max` | 10.000 | seção 4.4 |
+| Alcance do reúso, `d_max` | 10.000 | seção 4.4 |
 | Família da distribuição | lei de potência, P(d) ∝ (d+1)^−β | seção 4.5 |
 | Réplicas | 5 sementes por nível | seção 4.6 |
 
@@ -128,15 +142,27 @@ nenhum cache acerta. Duas razões para esse valor:
 Fica igual nos três níveis, para que a taxa de novidade não se confunda com o efeito da
 localidade.
 
-### 4.4 `d_max` = 10.000 e os tamanhos de cache
+### 4.4 `d_max` = 10.000: o alcance do reúso
 
-`d_max` é a maior stack distance possível: o alcance do reúso. Os tamanhos de cache vão de 10 a
-10.000 numa grade logarítmica de sete pontos, cobrindo de 0,1% a 100% desse alcance.
+**`d_max` é a maior stack distance que a distribuição pode sortear.** Na prática, é o tamanho da
+pilha com que o gerador começa: ele empilha `d_max` objetos e, a cada requisição, sorteia uma
+profundidade dentro dela. Nenhum reúso pode ser mais longo do que a pilha é funda.
 
-A grade é logarítmica porque a stack distance varia por ordens de grandeza; uma grade linear
-gastaria quase todos os pontos numa região onde nada muda. E o limite superior é `d_max` porque é
-ali que a curva encosta no teto: com um cache desse tamanho, todo reúso cabe, e o único miss que
-sobra é o compulsório. Medir além disso não acrescenta nada.
+Três consequências:
+
+- **Nenhum reúso passa de `d_max`.** Com 10.000, a maior distância possível entre dois pedidos ao
+  mesmo objeto é de 9.999 objetos distintos no meio.
+- **A curva de hit rate encosta no teto em C = `d_max`.** Com um cache desse tamanho, todo reúso
+  cabe, e o único miss que sobra é o compulsório. É por isso que ele limita a grade de caches que
+  a simulação vai varrer: medir acima disso não acrescenta informação.
+- **Não é o tamanho do acervo.** Objetos novos entram o tempo todo, à taxa de P(∞) por requisição,
+  e ficam. No piloto de 1 milhão, as cargas terminaram com 50 a 57 mil objetos distintos, com
+  `d_max` de 10.000. `d_max` limita o **alcance do reúso**, não a quantidade de objetos.
+
+**Como escolher:** `d_max` precisa ser pelo menos tão grande quanto o maior cache que se pretende
+estudar — senão a curva satura antes do fim da grade e a parte alta dela não diz nada. O custo de
+aumentá-lo é o aquecimento (uma linha de trace por objeto da pilha) e a memória. Com 10.000, o
+aquecimento é 1% de uma carga de 1 milhão.
 
 ### 4.5 A família: lei de potência
 
@@ -165,8 +191,32 @@ darem respostas distintas.
 
 ### 4.6 Cinco réplicas, com blocos pareados
 
-Cada nível é gerado com 5 sementes: 7, 17, 27, 37, 47. Os valores em si são arbitrários; o que
-importa é serem fixos, registrados e distintos.
+**Uma réplica é a mesma configuração rodada de novo com outra semente.** Os parâmetros são
+idênticos — mesmo β, mesmo `d_max`, mesmo P(∞), mesmo tamanho —, mas os sorteios são outros, então
+sai um trace diferente que obedece à mesma distribuição. É o equivalente a repetir uma medição:
+mostra quanto do resultado é o efeito procurado e quanto é acaso.
+
+Cinco réplicas do cenário de SD média, com 200 mil requisições cada:
+
+| Semente | SD mediana | Objetos distintos | Hit com cache 100 | Hit com cache 1.000 |
+|---|---|---|---|---|
+| 7 | 74 | 15.295 | 0,5046 | 0,7274 |
+| 17 | 72 | 15.345 | 0,5059 | 0,7287 |
+| 27 | 74 | 15.472 | 0,5029 | 0,7245 |
+| 37 | 73 | 15.308 | 0,5040 | 0,7269 |
+| 47 | 74 | 15.363 | 0,5040 | 0,7272 |
+| **média** | | | **0,5043** | **0,7269** |
+| **faixa** | | | 0,5029 a 0,5059 | 0,7245 a 0,7287 |
+
+A amplitude é de 0,003 no cache de 100 e 0,004 no de 1.000. Esse é o tamanho do acaso nesta
+configuração: **uma diferença menor que isso entre duas condições não significa nada**. Com 1
+milhão de requisições em vez de 200 mil, a amplitude cai por volta da metade.
+
+Sem réplicas, cada número seria uma medição só, sem como saber se uma diferença de 0,002 entre
+dois níveis é efeito ou sorte. Com cinco, reporta-se média e faixa.
+
+As sementes escolhidas — 7, 17, 27, 37, 47 — são arbitrárias; o que importa é serem fixas,
+registradas e distintas.
 
 **A réplica *r* usa a mesma semente nos três níveis.** É um desenho pareado: a comparação entre
 níveis não carrega ruído de amostragem diferente, o que reduz a variância da diferença — a
@@ -223,8 +273,8 @@ parecido entre os níveis, ou se não guardar relação com 1/R.
 
 - **Unidade de observação:** um hit rate por (nível, tamanho de cache, política, taxa de
   amostragem, réplica).
-- **Execuções:** 3 níveis × 5 réplicas = 15 cargas de 1 milhão. Sobre elas, 3 políticas × 7
-  tamanhos para a parte 2, e 3 taxas × 7 tamanhos para a parte 3.
+- **Execuções desta etapa:** 3 níveis × 5 réplicas = 15 cargas de 1 milhão. As partes 2 e 3
+  consomem essas mesmas 15 cargas, cada uma com a sua grade de tamanhos de cache.
 - **Agregação:** média das 5 réplicas, acompanhada da faixa (mínimo e máximo). Nunca o valor de
   uma semente sozinha.
 - **Referência:** para LRU, o hit rate teórico calculado da distribuição serve de gabarito; o erro
@@ -260,13 +310,16 @@ parecido entre os níveis, ou se não guardar relação com 1/R.
 
 As cargas entram no repositório como cinco fases, uma por semente, cada uma com os três níveis:
 
-| Fase | Apelido | Semente | Requisições | Caches |
+| Fase | Apelido | Semente | Requisições | Níveis |
 |---|---|---|---|---|
-| f03 | exp-s7 | 7 | 1.000.000 | 10, 30, 100, 300, 1.000, 3.000, 10.000 |
+| f03 | exp-s7 | 7 | 1.000.000 | β 1,5 / 1,0 / 0,5 |
 | f04 | exp-s17 | 17 | " | " |
 | f05 | exp-s27 | 27 | " | " |
 | f06 | exp-s37 | 37 | " | " |
 | f07 | exp-s47 | 47 | " | " |
+
+O campo `caches` de cada fase fica com a grade de conferência (10, 100, 1.000, 10.000), que serve
+para o pipeline comparar hit medido e hit teórico — não é a grade do experimento.
 
 ```bash
 cd geracao
@@ -288,10 +341,10 @@ relatório.
 
 1. **Quarta política.** LRU, FIFO e LFU cobrem três princípios distintos (recência com promoção,
    ordem de chegada, frequência). Vale acrescentar uma adaptativa — ARC, 2Q ou SIEVE? SIEVE é a
-   mais simples de implementar corretamente; ARC é a mais citada.
+   mais simples de implementar corretamente; ARC é a mais citada. *Decisão da parte 2.*
 2. **Taxa de amostragem mais baixa.** Com R = 0,001 sobre 1 milhão de requisições, a amostra tem
    cerca de mil requisições — pouco para uma curva estável. Ou se aceita o ruído como parte do
-   resultado, ou o piso fica em 0,01.
+   resultado, ou o piso fica em 0,01. *Decisão da parte 3.*
 3. **Número de réplicas.** Cinco é o suficiente para média e faixa. Se a variação entre sementes
    acabar sendo da mesma ordem dos efeitos procurados, será preciso subir para 10 ou 20 — o custo
    é linear e baixo.
