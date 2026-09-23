@@ -1,0 +1,85 @@
+{
+  "fase": "f01",
+  "apelido": "linha-de-base",
+  "descricao": "Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil",
+  "gerado_em": "2026-09-23T11:02:45",
+  "codigo": {
+    "commit": "c9bc478",
+    "limpo": false
+  },
+  "comum": {
+    "dmax": 10000,
+    "inf": 0.05,
+    "requisicoes": 50000,
+    "semente": 7,
+    "caches": [
+      10,
+      100,
+      1000,
+      10000
+    ],
+    "tolerancia": 0.02
+  },
+  "cenarios": [
+    {
+      "nome": "baixa",
+      "rotulo": "SD baixa",
+      "sufixo": "baixa-b150",
+      "beta": 1.5,
+      "arquivos": {
+        "dist": "dist/sd_f01_baixa-b150.txt",
+        "carga": "cargas/carga_f01_baixa-b150.txt"
+      },
+      "resultado": {
+        "sd_mediana": 1,
+        "sd_p90": 49,
+        "sd_p99": 1749,
+        "footprint_1000req": 138.1,
+        "objetos_distintos": 3118,
+        "p_inf_medido": 0.0484,
+        "erro_max_hrc": 0.0052,
+        "confere": true
+      }
+    },
+    {
+      "nome": "media",
+      "rotulo": "SD media",
+      "sufixo": "media-b100",
+      "beta": 1.0,
+      "arquivos": {
+        "dist": "dist/sd_f01_media-b100.txt",
+        "carga": "cargas/carga_f01_media-b100.txt"
+      },
+      "resultado": {
+        "sd_mediana": 72,
+        "sd_p90": 3713,
+        "sd_p99": 9003,
+        "footprint_1000req": 430.9,
+        "objetos_distintos": 7125,
+        "p_inf_medido": 0.0484,
+        "erro_max_hrc": 0.0057,
+        "confere": true
+      }
+    },
+    {
+      "nome": "alta",
+      "rotulo": "SD alta",
+      "sufixo": "alta-b050",
+      "beta": 0.5,
+      "arquivos": {
+        "dist": "dist/sd_f01_alta-b050.txt",
+        "carga": "cargas/carga_f01_alta-b050.txt"
+      },
+      "resultado": {
+        "sd_mediana": 2510,
+        "sd_p90": 8091,
+        "sd_p99": 9788,
+        "footprint_1000req": 818.3,
+        "objetos_distintos": 10170,
+        "p_inf_medido": 0.0484,
+        "erro_max_hrc": 0.0021,
+        "confere": true
+      }
+    }
+  ]
+}

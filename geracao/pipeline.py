@@ -1,24 +1,36 @@
 #!/usr/bin/env python3
 """
-pipeline.py - as tres etapas da geracao de carga do experimento.
+pipeline.py - as tres etapas da geracao de carga, organizadas por FASE.
 
-    1. distribuicao   lei de potencia P(d) ~ (d+1)^-beta  ->  dist/sd_<cenario>.txt
-    2. carga          LRU Stack Model le a distribuicao   ->  cargas/carga_<cenario>.txt
-    3. conferencia    mede a carga e compara com a teoria ->  analise/*.csv, *.svg, relatorio.html
+Uma fase e uma rodada de experimentacao: tudo o que e comum aos cenarios daquela rodada
+(dmax, inf, requisicoes, semente, caches) mora no cenarios.json da fase. O que varia entre
+os cenarios - hoje o beta - aparece no nome dos arquivos.
+
+    fases/f01-linha-de-base/
+      cenarios.json     a configuracao desta fase (fonte da verdade)
+      manifesto.json    o que foi rodado, quando, em que commit, e como saiu
+      dist/             sd_f01_baixa-b150.txt
+      cargas/           carga_f01_baixa-b150.txt
+      analise/          medidas_f01.csv ... relatorio_f01.html
+
+    1. distribuicao   lei de potencia P(d) ~ (d+1)^-beta  ->  dist/
+    2. carga          LRU Stack Model le a distribuicao   ->  cargas/
+    3. conferencia    mede a carga e compara com a teoria ->  analise/
 
 A curva usada nas analises e a de HIT RATE: hit(C) = fracao das requisicoes atendidas por um
-cache LRU de C objetos. O miss e o complemento, 1 - hit.
-
-Tudo que a etapa 3 mede tem um valor teorico calculado direto da distribuicao,
-entao o relatorio nao mostra so "o que deu": mostra "o que deveria dar" ao lado.
+cache LRU de C objetos. O miss e o complemento, 1 - hit. Tudo que a etapa 3 mede tem um valor
+teorico calculado direto da distribuicao, entao o relatorio nao mostra so "o que deu": mostra
+"o que deveria dar" ao lado.
 
 Uso:
-    python3 pipeline.py                        # roda tudo com cenarios.json
-    python3 pipeline.py --requisicoes 500000   # carga maior, mesma configuracao
-    python3 pipeline.py --config outro.json
-    python3 pipeline.py --so-analise           # nao regera nada, so remede e redesenha
+    python3 pipeline.py --nova-fase dmax-100k   # cria a fase a partir do modelo e para
+    python3 pipeline.py --fase f02              # roda a fase (aceita id ou nome da pasta)
+    python3 pipeline.py --fase f02 --so-analise # nao regera nada, so remede e redesenha
+    python3 pipeline.py --fases                 # lista as fases ja rodadas
+
+O beta entra no nome como inteiro de tres digitos, multiplicado por 100: beta 1,5 -> b150.
 """
-import argparse, bisect, contextlib, csv, io, json, math, os, random, sys
+import argparse, bisect, contextlib, csv, io, json, math, os, random, re, shutil, subprocess, sys
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -27,30 +39,148 @@ sys.path.insert(0, os.path.join(os.path.dirname(AQUI), "lib"))   # genwl.py e mk
 import genwl
 import mkps
 
-DIST, CARGAS, ANALISE = (os.path.join(AQUI, d) for d in ("dist", "cargas", "analise"))
+FASES = os.path.join(AQUI, "fases")
+MODELO = os.path.join(AQUI, "cenarios.json")
+COMUNS = ("dmax", "inf", "requisicoes", "semente", "caches", "tolerancia")
 CORES = ["#63BDB5", "#2E9B95", "#08595C"]          # rampa ordinal: baixa -> alta
 CORES_ESC = ["#16706C", "#2FA8A2", "#7FD6CF"]      # a mesma rampa no tema escuro
 
 
+# --------------------------------------------------------------- fases
+def sufixo(cen):
+    """Nome curto do cenario, com o parametro que varia: baixa-b150 (beta 1,5)."""
+    return "%s-b%03d" % (cen["nome"], round(cen["beta"] * 100))
+
+
+def id_da_pasta(pasta):
+    return pasta.split("-")[0]
+
+
+def lista_fases():
+    if not os.path.isdir(FASES):
+        return []
+    return sorted(d for d in os.listdir(FASES)
+                  if os.path.isdir(os.path.join(FASES, d)) and re.match(r"^f\d+", d))
+
+
+def nova_fase(apelido):
+    if not re.match(r"^[a-z0-9][a-z0-9-]*$", apelido):
+        raise SystemExit("apelido so com minusculas, numeros e hifen; recebi %r" % apelido)
+    usados = [int(id_da_pasta(d)[1:]) for d in lista_fases()]
+    fid = "f%02d" % (max(usados) + 1 if usados else 1)
+    pasta = os.path.join(FASES, "%s-%s" % (fid, apelido))
+    for sub_ in ("dist", "cargas", "analise"):
+        os.makedirs(os.path.join(pasta, sub_), exist_ok=True)
+    destino = os.path.join(pasta, "cenarios.json")
+    if not os.path.exists(destino):
+        shutil.copy(MODELO, destino)
+    print("fase criada: %s" % os.path.relpath(pasta, AQUI))
+    print("  1. edite   %s" % os.path.relpath(destino, AQUI))
+    print("  2. rode    python3 pipeline.py --fase %s" % fid)
+    return pasta
+
+
+def acha_fase(arg):
+    fases = lista_fases()
+    if not fases:
+        raise SystemExit("nenhuma fase ainda; crie uma com --nova-fase <apelido>")
+    if arg in fases:
+        return os.path.join(FASES, arg)
+    iguais = [d for d in fases if id_da_pasta(d) == arg]
+    if len(iguais) == 1:
+        return os.path.join(FASES, iguais[0])
+    if len(iguais) > 1:
+        raise SystemExit("mais de uma fase com o id %s: %s" % (arg, ", ".join(iguais)))
+    raise SystemExit("fase %r nao encontrada. Fases: %s" % (arg, ", ".join(fases)))
+
+
+def assinatura(cfg):
+    """O que define a fase: os parametros comuns e a lista de cenarios."""
+    return {"comum": {k: cfg[k] for k in COMUNS},
+            "cenarios": [{"nome": c["nome"], "beta": c["beta"], "rotulo": c["rotulo"]}
+                         for c in cfg["cenarios"]]}
+
+
+def info_git():
+    def roda(*args):
+        try:
+            r = subprocess.run(args, cwd=AQUI, capture_output=True, text=True, timeout=10)
+            return r.stdout.strip() if r.returncode == 0 else ""
+        except Exception:
+            return ""
+    commit = roda("git", "rev-parse", "--short", "HEAD")
+    if not commit:
+        return {"commit": None, "limpo": None}
+    return {"commit": commit, "limpo": roda("git", "status", "--porcelain") == ""}
+
+
+def escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos):
+    man = {
+        "fase": fid, "apelido": apelido,
+        "descricao": cfg.get("descricao", ""),
+        "gerado_em": datetime.now().isoformat(timespec="seconds"),
+        "codigo": info_git(),
+        "comum": assinatura(cfg)["comum"],
+        "cenarios": [{
+            "nome": r["nome"], "rotulo": r["rotulo"], "sufixo": sufixo(r), "beta": r["beta"],
+            "arquivos": arquivos[r["nome"]],
+            "resultado": {"sd_mediana": r["p50"], "sd_p90": r["p90"], "sd_p99": r["p99"],
+                          "footprint_1000req": round(r["fp_1k"], 1) if r["fp_1k"] else None,
+                          "objetos_distintos": r["distintos"],
+                          "p_inf_medido": round(r["p_inf_medido"], 4),
+                          "erro_max_hrc": round(r["erro_max"], 4), "confere": r["confere"]},
+        } for r in res],
+    }
+    with open(os.path.join(pasta, "manifesto.json"), "w") as fh:
+        json.dump(man, fh, indent=2, ensure_ascii=False)
+    return man
+
+
+def escreve_index():
+    """Uma linha por fase, lida dos manifestos."""
+    os.makedirs(FASES, exist_ok=True)
+    linhas = []
+    for d in lista_fases():
+        cam = os.path.join(FASES, d, "manifesto.json")
+        if not os.path.exists(cam):
+            continue
+        m = json.load(open(cam))
+        c = m["comum"]
+        betas = " / ".join(str(x["beta"]).replace(".", ",") for x in m["cenarios"])
+        erro = max(x["resultado"]["erro_max_hrc"] for x in m["cenarios"])
+        ok = all(x["resultado"]["confere"] for x in m["cenarios"])
+        linhas.append("| [%s](%s/) | %s | %s | %s | %s | %s | %s | %s | %s | %s |" % (
+            m["fase"], d, m["apelido"], m["gerado_em"][:10],
+            format(c["dmax"], ",").replace(",", "."), str(c["inf"]).replace(".", ","),
+            format(c["requisicoes"], ",").replace(",", "."), c["semente"],
+            betas, str(round(erro, 4)).replace(".", ","), "sim" if ok else "**NAO**"))
+    txt = ["# Fases de experimentacao", "",
+           "Gerado por `pipeline.py`. Cada fase e uma rodada com parametros comuns proprios;",
+           "os detalhes de cada uma estao no `manifesto.json` dentro da pasta.", "",
+           "| Fase | Apelido | Data | dmax | inf | Requisicoes | Semente | Betas | Erro max | Confere |",
+           "|---|---|---|---|---|---|---|---|---|---|"] + linhas + [""]
+    with open(os.path.join(FASES, "INDEX.md"), "w") as fh:
+        fh.write("\n".join(txt))
+
+
 # --------------------------------------------------------------- etapa 1
-def etapa_distribuicao(cfg, cen):
-    """Escreve a lista de stack distance do cenario e devolve (caminho, pmf, p_inf)."""
+def etapa_distribuicao(cfg, cen, caminho, fid):
+    """Escreve a lista de stack distance do cenario e devolve (pmf, p_inf)."""
     args = SimpleNamespace(beta=cen["beta"], dmax=cfg["dmax"], inf=cfg["inf"])
     pmf, p_inf, cab = mkps.c_potencia(args)
-    caminho = os.path.join(DIST, "sd_%s.txt" % cen["nome"])
-    mkps.escreve(caminho, pmf, p_inf, cab + ["cenario: %s (%s)" % (cen["nome"], cen["rotulo"])])
-    return caminho, pmf, p_inf
+    mkps.escreve(caminho, pmf, p_inf,
+                 cab + ["fase: %s" % fid, "cenario: %s (%s)" % (cen["nome"], cen["rotulo"])])
+    return pmf, p_inf
 
 
 # --------------------------------------------------------------- etapa 2
-def etapa_carga(cfg, cen, sd_path):
-    """Gera o trace a partir da lista de SD. Devolve (caminho, linhas de aquecimento)."""
+def etapa_carga(cfg, cen, sd_path, caminho):
+    """Gera o trace a partir da lista de SD. Devolve as linhas de aquecimento."""
     pmf, _ = genwl.load_sd_file(sd_path)
     prefixo = len(pmf)                              # --emit-warmup escreve uma linha por objeto
     args = SimpleNamespace(sd_file=sd_path, requests=cfg["requisicoes"], seed=cfg["semente"],
                            emit_warmup=True, sd_dist="zipf", sd_max=cfg["dmax"],
                            sd_beta=cen["beta"], sd_mu=6.0, sd_sigma=1.5, cold_prob=cfg["inf"])
-    caminho = os.path.join(CARGAS, "carga_%s.txt" % cen["nome"])
     buf = []
     with open(caminho, "w") as fh:
         def out(o):
@@ -61,7 +191,7 @@ def etapa_carga(cfg, cen, sd_path):
             genwl.gen_lrusm(args, out)
         if buf:
             fh.write("\n".join(buf) + "\n")
-    return caminho, prefixo
+    return prefixo
 
 
 # --------------------------------------------------------------- etapa 3
@@ -151,12 +281,16 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
 
 
 # --------------------------------------------------------------- saidas
-def grava_csvs(cfg, res):
-    def w(nome, cab, linhas):
-        with open(os.path.join(ANALISE, nome), "w", newline="") as fh:
-            c = csv.writer(fh); c.writerow(cab); c.writerows(linhas)
+def grava_csvs(cfg, res, analise, fid):
+    escritos = []
 
-    w("medidas.csv",
+    def w(nome, cab, linhas):
+        arq = os.path.join(analise, "%s_%s.csv" % (nome, fid))
+        with open(arq, "w", newline="") as fh:
+            c = csv.writer(fh); c.writerow(cab); c.writerows(linhas)
+        escritos.append(os.path.basename(arq))
+
+    w("medidas",
       ["cenario", "rotulo", "beta", "dmax", "p_inf_alvo", "requisicoes", "aquecimento", "reusos",
        "p_inf_medido", "sd_p25", "sd_p50", "sd_p75", "sd_p90", "sd_p99", "objetos_distintos",
        "footprint_1000req", "erro_max_hrc", "confere"],
@@ -165,22 +299,23 @@ def grava_csvs(cfg, res):
         r["distintos"], round(r["fp_1k"], 1) if r["fp_1k"] else "", round(r["erro_max"], 4),
         "sim" if r["confere"] else "NAO"] for r in res])
 
-    w("hrc.csv", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro"],
+    w("hrc", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro"],
       [[r["nome"], C, round(t, 5), round(m, 5), round(m - t, 5)] for r in res for C, t, m in r["hrc"]])
 
-    w("sd_cdf.csv", ["cenario", "d", "P(d<x)_teorico", "P(d<x)_medido"],
+    w("sd_cdf", ["cenario", "d", "P(d<x)_teorico", "P(d<x)_medido"],
       [[r["nome"], x, round(t, 5), round(m, 5)] for r in res for x, t, m in r["cdf"]])
 
-    w("sd_histograma.csv", ["cenario", "faixa_de", "faixa_ate", "reusos", "fracao"],
+    w("sd_histograma", ["cenario", "faixa_de", "faixa_ate", "reusos", "fracao"],
       [[r["nome"], a, b, c, round(f, 5)] for r in res for a, b, c, f in r["hist"]])
 
-    w("footprint.csv", ["cenario", "janela_requisicoes", "objetos_distintos_media", "fracao_da_janela"],
+    w("footprint", ["cenario", "janela_requisicoes", "objetos_distintos_media", "fracao_da_janela"],
       [[r["nome"], j, round(m, 1), round(f, 4)] for r in res for j, m, f in r["fp"]])
 
-    w("conferencia.csv", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro",
-                          "fracao_reusos_que_cabem", "fracao_reusos_que_nao_cabem"],
+    w("conferencia", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro",
+                      "fracao_reusos_que_cabem", "fracao_reusos_que_nao_cabem"],
       [[r["nome"], C, round(t, 5), round(m, 5), round(m - t, 5), round(f, 5), round(1 - f, 5)]
        for r in res for C, t, m, f in r["tabela"]])
+    return escritos
 
 
 # --------------------------------------------------------------- graficos
@@ -305,7 +440,7 @@ def n_br(v, casas=0):
     return ("-" if neg else "") + ".".join(grupos) + ("," + dec if dec else "")
 
 
-def grava_relatorio(cfg, res, svgs):
+def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
     linhas_res, linhas_conf = [], []
     for i, r in enumerate(res):
         linhas_res.append(
@@ -328,6 +463,7 @@ def grava_relatorio(cfg, res, svgs):
     cores_claro = "".join("--c%d:%s;" % (i, CORES[i % 3]) for i in range(len(res)))
     cores_escuro = "".join("--c%d:%s;" % (i, CORES_ESC[i % 3]) for i in range(len(res)))
     ctx = dict(data=datetime.now().strftime("%d/%m/%Y %H:%M"), legenda=legenda,
+               fase=fid, apelido=apelido, descricao=cfg.get("descricao", ""),
                cores_claro=cores_claro, cores_escuro=cores_escuro,
                dmax=n_br(cfg["dmax"]), inf=n_br(cfg["inf"] * 100, 1), req=n_br(cfg["requisicoes"]),
                semente=cfg["semente"], tol=n_br(cfg["tolerancia"], 3),
@@ -336,62 +472,102 @@ def grava_relatorio(cfg, res, svgs):
         modelo = fh.read()
     for chave, valor in ctx.items():
         modelo = modelo.replace("{{%s}}" % chave, str(valor))
-    saida = os.path.join(ANALISE, "relatorio.html")
+    saida = os.path.join(analise, "relatorio_%s.html" % fid)
     with open(saida, "w") as fh:
         fh.write(modelo)
     return saida
 
 
 # --------------------------------------------------------------- main
-def main():
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--config", default=os.path.join(AQUI, "cenarios.json"))
-    ap.add_argument("--requisicoes", type=int, help="sobrescreve o valor do arquivo de configuracao")
-    ap.add_argument("--so-analise", action="store_true", help="nao regera distribuicoes nem cargas")
-    a = ap.parse_args()
-    cfg = json.load(open(a.config))
-    if a.requisicoes:
-        cfg["requisicoes"] = a.requisicoes
-    for d in (DIST, CARGAS, ANALISE):
+def roda_fase(pasta, so_analise, refazer):
+    fid, apelido = id_da_pasta(os.path.basename(pasta)), os.path.basename(pasta).split("-", 1)[-1]
+    cfg = json.load(open(os.path.join(pasta, "cenarios.json")))
+    dist, cargas, analise = (os.path.join(pasta, d) for d in ("dist", "cargas", "analise"))
+    for d in (dist, cargas, analise):
         os.makedirs(d, exist_ok=True)
 
-    res = []
+    man_path = os.path.join(pasta, "manifesto.json")
+    if os.path.exists(man_path) and not refazer and not so_analise:
+        antigo = json.load(open(man_path))
+        atual = assinatura(cfg)
+        if antigo.get("comum") != atual["comum"] or \
+           [{k: c[k] for k in ("nome", "beta", "rotulo")} for c in antigo.get("cenarios", [])] != atual["cenarios"]:
+            raise SystemExit(
+                "o cenarios.json da fase %s mudou desde a ultima rodada.\n"
+                "Rode com --refazer para sobrescrever esta fase, ou crie outra com --nova-fase." % fid)
+
+    print("== fase %s (%s) -- %s" % (fid, apelido, cfg.get("descricao", "sem descricao")))
+    res, arquivos = [], {}
     for cen in cfg["cenarios"]:
-        print("== cenario %s (beta = %s)" % (cen["nome"], cen["beta"]))
-        sd_path = os.path.join(DIST, "sd_%s.txt" % cen["nome"])
-        if a.so_analise:
+        suf = sufixo(cen)
+        sd_path = os.path.join(dist, "sd_%s_%s.txt" % (fid, suf))
+        carga_path = os.path.join(cargas, "carga_%s_%s.txt" % (fid, suf))
+        print("   cenario %s (beta = %s)" % (suf, cen["beta"]))
+        if so_analise:
             pmf, p_inf = genwl.load_sd_file(sd_path)
-        else:
-            sd_path, pmf, p_inf = etapa_distribuicao(cfg, cen)
-            print("   1. distribuicao ->", os.path.relpath(sd_path, AQUI))
-        carga_path = os.path.join(CARGAS, "carga_%s.txt" % cen["nome"])
-        if a.so_analise:
             prefixo = len(pmf)
         else:
-            carga_path, prefixo = etapa_carga(cfg, cen, sd_path)
-            print("   2. carga        ->", os.path.relpath(carga_path, AQUI))
+            pmf, p_inf = etapa_distribuicao(cfg, cen, sd_path, fid)
+            print("      1. distribuicao ->", os.path.relpath(sd_path, pasta))
+            prefixo = etapa_carga(cfg, cen, sd_path, carga_path)
+            print("      2. carga        ->", os.path.relpath(carga_path, pasta))
         r = etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo)
-        print("   3. conferencia  -> mediana da SD %d | footprint em 1.000 req %s | erro max na HRC %.4f | %s"
+        print("      3. conferencia  -> mediana da SD %d | footprint em 1.000 req %s | "
+              "erro max na HRC %.4f | %s"
               % (r["p50"], ("%.0f" % r["fp_1k"]) if r["fp_1k"] else "-", r["erro_max"],
                  "confere" if r["confere"] else "NAO CONFERE"))
         res.append(r)
+        arquivos[cen["nome"]] = {"dist": os.path.relpath(sd_path, pasta),
+                                 "carga": os.path.relpath(carga_path, pasta)}
 
-    grava_csvs(cfg, res)
-    svgs = {"svg_hrc": svg_linhas(res, "hrc", "Curva de hit rate", "hit rate", "tamanho do cache (objetos)", cfg["dmax"]),
-            "svg_cdf": svg_linhas(res, "cdf", "Acumulada da stack distance", "% dos reúsos com SD menor que x",
-                                  "stack distance x", cfg["dmax"]),
-            "svg_fp": svg_loglog(res, "fp", "Footprint", "objetos distintos", "tamanho da janela (requisições)"),
+    grava_csvs(cfg, res, analise, fid)
+    svgs = {"svg_hrc": svg_linhas(res, "hrc", "Curva de hit rate", "hit rate",
+                                  "tamanho do cache (objetos)", cfg["dmax"]),
+            "svg_cdf": svg_linhas(res, "cdf", "Acumulada da stack distance",
+                                  "% dos reúsos com SD menor que x", "stack distance x", cfg["dmax"]),
+            "svg_fp": svg_loglog(res, "fp", "Footprint", "objetos distintos",
+                                 "tamanho da janela (requisições)"),
             "svg_hist": svg_barras(res)}
-    for nome, conteudo in (("hrc.svg", svgs["svg_hrc"]), ("sd_cdf.svg", svgs["svg_cdf"]),
-                           ("footprint.svg", svgs["svg_fp"]), ("sd_histograma.svg", svgs["svg_hist"])):
-        with open(os.path.join(ANALISE, nome), "w") as fh:
+    for nome, conteudo in (("hrc", svgs["svg_hrc"]), ("sd_cdf", svgs["svg_cdf"]),
+                           ("footprint", svgs["svg_fp"]), ("sd_histograma", svgs["svg_hist"])):
+        with open(os.path.join(analise, "%s_%s.svg" % (nome, fid)), "w") as fh:
             fh.write(conteudo.replace("var(--rule-strong)", "#B4C3C1").replace("var(--rule)", "#D3DDDB")
                      .replace("var(--muted)", "#5E7174").replace("var(--ink-2)", "#3A4A4C")
                      .replace("var(--c0)", CORES[0]).replace("var(--c1)", CORES[1]).replace("var(--c2)", CORES[2]))
-    rel = grava_relatorio(cfg, res, svgs)
-    print("\nanalise em", os.path.relpath(ANALISE, AQUI), "| relatorio:", os.path.relpath(rel, AQUI))
+    rel = grava_relatorio(cfg, res, svgs, analise, fid, apelido)
+    escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos)
+    escreve_index()
+    print("\nanalise em %s | relatorio: %s" % (os.path.relpath(analise, AQUI),
+                                               os.path.relpath(rel, AQUI)))
+    print("indice das fases:", os.path.relpath(os.path.join(FASES, "INDEX.md"), AQUI))
     if not all(r["confere"] for r in res):
-        sys.exit("ALGUM CENARIO NAO CONFERE - veja analise/conferencia.csv")
+        sys.exit("ALGUM CENARIO NAO CONFERE - veja analise/conferencia_%s.csv" % fid)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--fase", help="id (f02) ou nome da pasta da fase a rodar")
+    ap.add_argument("--nova-fase", metavar="APELIDO",
+                    help="cria uma fase nova a partir de cenarios.json e para, para voce editar")
+    ap.add_argument("--fases", action="store_true", help="lista as fases ja rodadas")
+    ap.add_argument("--so-analise", action="store_true", help="nao regera distribuicoes nem cargas")
+    ap.add_argument("--refazer", action="store_true",
+                    help="sobrescreve a fase mesmo que a configuracao tenha mudado")
+    a = ap.parse_args()
+
+    if a.nova_fase:
+        nova_fase(a.nova_fase)
+        return
+    if a.fases:
+        escreve_index()
+        caminho = os.path.join(FASES, "INDEX.md")
+        print(open(caminho).read() if os.path.exists(caminho) else "nenhuma fase ainda")
+        return
+    if not a.fase:
+        fases = lista_fases()
+        raise SystemExit("informe a fase: --fase <id>. Fases: %s"
+                         % (", ".join(fases) if fases else "nenhuma; crie com --nova-fase <apelido>"))
+    roda_fase(acha_fase(a.fase), a.so_analise, a.refazer)
 
 
 if __name__ == "__main__":

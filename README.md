@@ -26,19 +26,23 @@ que é um documento vivo e cresce junto com o experimento.
 | **Simulação** — políticas de despejo sobre as cargas geradas | [`simulacao/`](simulacao/) | a fazer |
 | **Amostragem** — SHARDS e simulação em miniatura | [`amostragem/`](amostragem/) | a fazer |
 
-Cada parte segue o mesmo padrão: um arquivo de configuração em JSON, um `pipeline.py` que roda
-de ponta a ponta, e uma pasta de saída com CSVs, gráficos em SVG e um relatório em HTML.
+Cada parte segue o mesmo padrão: o trabalho é organizado em **fases** — rodadas de experimentação
+com parâmetros próprios —, cada fase tem seu `cenarios.json`, e um `pipeline.py` roda de ponta a
+ponta gerando CSVs, gráficos em SVG e um relatório em HTML. O id da fase entra no nome de todo
+arquivo produzido, e o `manifesto.json` de cada fase registra os parâmetros usados, o commit do
+código e o resumo dos resultados.
 
 ## Rodando a geração
 
 ```bash
 cd geracao
-python3 pipeline.py                       # 50.000 requisições por cenário (validação, segundos)
-python3 pipeline.py --requisicoes 500000  # tamanho do experimento
+python3 pipeline.py --fases             # lista as fases já rodadas
+python3 pipeline.py --fase f01          # roda a fase f01 (a linha de base)
+python3 pipeline.py --nova-fase 500k    # cria a fase seguinte para você configurar
 ```
 
-O resultado principal é `geracao/analise/relatorio.html`. Não há dependências além do Python 3 —
-nem numpy, nem pacote nenhum.
+O resultado principal é o `relatorio_<fase>.html` dentro de `fases/<fase>/analise/`. Não há
+dependências além do Python 3 — nem numpy, nem pacote nenhum.
 
 O pipeline roda três etapas encadeadas:
 
@@ -48,8 +52,8 @@ distribuição de SD   →   carga (trace)   →   conferência
 ```
 
 A conferência compara cada medida da carga gerada com o valor teórico calculado diretamente da
-distribuição. Nos três cenários atuais, o erro máximo entre hit rate medido e teórico é de 0,006
-com 50 mil requisições e 0,001 com 500 mil.
+distribuição. Na fase `f01`, o erro máximo entre hit rate medido e teórico é de 0,006 com 50 mil
+requisições; com 500 mil, cai para 0,001.
 
 ## Estrutura
 
@@ -60,11 +64,16 @@ com 50 mil requisições e 0,001 com 500 mil.
 │   ├── genwl.py          gerador de carga (LRU Stack Model) e medidas de stack distance
 │   └── mkps.py           construtor da distribuição de stack distance
 ├── geracao/              parte 1 — ver geracao/README.md
-│   ├── cenarios.json     a configuração dos cenários
+│   ├── cenarios.json     modelo de configuração, copiado para cada fase nova
 │   ├── pipeline.py
-│   ├── dist/             as distribuições de SD (versionadas)
-│   ├── cargas/           os traces (fora do versionamento: grandes e reprodutíveis)
-│   └── analise/          CSVs, SVGs e o relatório
+│   └── fases/
+│       ├── INDEX.md      uma linha por fase
+│       └── f01-linha-de-base/
+│           ├── cenarios.json   a configuração desta fase
+│           ├── manifesto.json  parâmetros, commit e resumo dos resultados
+│           ├── dist/     as distribuições de SD (versionadas)
+│           ├── cargas/   os traces (fora do versionamento: grandes e reprodutíveis)
+│           └── analise/  CSVs, SVGs e o relatório
 ├── simulacao/            parte 2
 ├── amostragem/           parte 3
 └── docs/                 material de estudo
@@ -73,8 +82,12 @@ com 50 mil requisições e 0,001 com 500 mil.
     └── tragen_mini.py                    reimplementação didática do núcleo do TRAGEN
 ```
 
-Os traces não são versionados porque a semente está fixa em `cenarios.json`: a mesma configuração
-gera exatamente as mesmas cargas. O que entra no repositório são as distribuições e as análises.
+Os traces não são versionados porque a semente está fixa no `cenarios.json` de cada fase: a mesma
+configuração gera exatamente as mesmas cargas. O que entra no repositório são as configurações, os
+manifestos, as distribuições e as análises.
+
+Os nomes carregam a fase e o que varia dentro dela: `carga_f01_alta-b050.txt` é a carga do cenário
+`alta` da fase `f01`, com β = 0,5 (escrito como inteiro ×100, para não ter ponto no meio do nome).
 
 ## As ferramentas de `lib/`
 

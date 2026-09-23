@@ -1,6 +1,5 @@
 {
-  "_comentario": "Modelo de configuracao. Copiado para dentro de cada fase por --nova-fase; a copia de dentro da fase e a fonte da verdade.",
-  "descricao": "descreva em uma frase o objetivo desta fase",
+  "descricao": "Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil",
   "dmax": 10000,
   "inf": 0.05,
   "requisicoes": 50000,

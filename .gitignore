@@ -1,7 +1,7 @@
 # traces gerados: grandes e reprodutiveis pela semente do cenario
-geracao/cargas/*.txt
-simulacao/cargas/*.txt
-amostragem/cargas/*.txt
+geracao/fases/*/cargas/*.txt
+simulacao/fases/*/cargas/*.txt
+amostragem/fases/*/cargas/*.txt
 
 __pycache__/
 *.pyc

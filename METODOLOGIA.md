@@ -2,7 +2,7 @@
 
 *Documento de trabalho. Cresce conforme o experimento avança; cada seção descreve uma parte
 já construída e testada. Os números citados vêm das execuções reais registradas em
-`geracao/analise/`.*
+`geracao/fases/f01-linha-de-base/analise/`.*
 
 **Seções prontas:** 1 a 8.
 **Seções previstas:** amostragem de cache (SHARDS, simulação em miniatura); políticas de despejo
@@ -190,10 +190,17 @@ por si só: pode ser versionada, publicada junto com o experimento, comparada co
 real, e — o ponto mais importante — **permite calcular o resultado esperado antes de gerar uma
 única requisição**.
 
-Um comando roda tudo:
+O trabalho é organizado em **fases**: cada fase é uma rodada de experimentação com seus próprios
+parâmetros comuns (`dmax`, `inf`, `requisicoes`, `semente`, `caches`), e o que varia entre os
+cenários daquela fase — hoje o β — entra no nome dos arquivos. Assim, `carga_f01_alta-b050.txt` é
+a carga do cenário de SD alta (β = 0,5) da fase `f01`. Cada fase registra num `manifesto.json` os
+parâmetros usados, o commit do código e o resumo dos resultados, de modo que uma rodada antiga
+continua identificável meses depois.
+
+Os números desta seção e das seguintes vêm da fase `f01-linha-de-base`. Um comando roda tudo:
 
 ```bash
-cd geracao && python3 pipeline.py
+cd geracao && python3 pipeline.py --fase f01
 ```
 
 ---
@@ -372,9 +379,11 @@ admissão, ou para métricas de tempo.
 
 ```bash
 cd geracao
-python3 pipeline.py                      # 50.000 requisições por cenário (validação)
-python3 pipeline.py --requisicoes 500000 # tamanho do experimento
+python3 pipeline.py --fase f01           # a linha de base, 50.000 requisições por cenário
+python3 pipeline.py --nova-fase 500k     # cria a fase seguinte; edite o cenarios.json dela
+python3 pipeline.py --fase f02
 ```
 
-Os cenários ficam em `geracao/cenarios.json`; os detalhes de cada arquivo produzido estão em
-`geracao/README.md`. A semente é fixa: a mesma configuração gera exatamente a mesma carga.
+A configuração de cada fase fica em `geracao/fases/<fase>/cenarios.json`; os detalhes de cada
+arquivo produzido estão em `geracao/README.md`. A semente é fixa: a mesma configuração gera
+exatamente a mesma carga.

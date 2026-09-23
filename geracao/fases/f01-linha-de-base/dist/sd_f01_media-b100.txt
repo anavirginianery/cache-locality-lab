@@ -1,4 +1,5 @@
 # potencia: beta=1 dmax=10000 inf=0.05
+# fase: f01
 # cenario: media (SD media)
 # d = objetos distintos entre dois pedidos ao mesmo objeto
 0 0.09706152827

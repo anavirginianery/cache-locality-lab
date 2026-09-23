@@ -35,6 +35,7 @@ h2{font-family:Archivo,sans-serif;font-weight:600;font-size:20px;letter-spacing:
 p{margin:0 0 14px;max-width:68ch}
 .meta{font-family:ui-monospace,"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
   display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 24px}
+.descricao{font-size:17px;color:var(--ink-2);margin:0 0 12px;max-width:68ch}
 .hint{font-size:13.5px;color:var(--muted);max-width:68ch}
 .legendas{display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 10px;font-size:13.5px;color:var(--ink-2);
   font-family:Archivo,sans-serif}
@@ -64,9 +65,10 @@ footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;
 <body>
 <div class="wrap">
 
-<h1>Conferência das cargas geradas</h1>
+<h1>Fase f01 — linha-de-base</h1>
+<p class="descricao">Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil</p>
 <div class="meta">
-  <span>gerado em 23/09/2026 10:31</span>
+  <span>gerado em 23/09/2026 11:02</span>
   <span>50.000 requisições por cenário</span>
   <span>d<sub>max</sub> = 10.000</span>
   <span>objetos novos = 5,0%</span>
@@ -361,10 +363,13 @@ O mesmo valor de stack distance é alto para um cache pequeno e baixo para um gr
 cabem, está em <code>conferencia.csv</code>.</p>
 
 <footer>
-<p>Gerado por <code>geracao/pipeline.py</code>. Os números deste relatório também estão em
-<code>analise/medidas.csv</code>, <code>analise/hrc.csv</code>, <code>analise/sd_cdf.csv</code>,
-<code>analise/sd_histograma.csv</code>, <code>analise/footprint.csv</code> e <code>analise/conferencia.csv</code>. Os gráficos estão soltos em
-<code>analise/*.svg</code>, prontos para entrar em um documento.</p>
+<p>Gerado por <code>geracao/pipeline.py</code> — fase <strong>f01</strong>. Os números deste relatório
+também estão nos CSVs de <code>analise/</code>, todos com o id da fase no nome:
+<code>medidas_f01.csv</code>, <code>hrc_f01.csv</code>, <code>sd_cdf_f01.csv</code>,
+<code>sd_histograma_f01.csv</code>, <code>footprint_f01.csv</code> e
+<code>conferencia_f01.csv</code>. Os gráficos estão soltos em <code>analise/*_f01.svg</code>,
+prontos para entrar em um documento. A configuração completa e o resumo dos resultados estão no
+<code>manifesto.json</code> da fase.</p>
 </footer>
 
 </div>
