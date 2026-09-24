@@ -70,7 +70,7 @@ As duas últimas são derivadas da primeira. O hit rate é a única grandeza efe
 | Objetos novos, P(∞) | 0,05 | seção 4.3 |
 | Alcance do reúso, `d_max` | 10.000 | seção 4.4 |
 | Família da distribuição | lei de potência, P(d) ∝ (d+1)^−β | seção 4.5 |
-| Réplicas | 5 sementes por nível | seção 4.6 |
+| Semente | 7 — uma carga por nível, sem réplicas | seção 4.6 |
 
 ---
 
@@ -118,8 +118,8 @@ Três considerações:
 - **Peso do aquecimento.** O prefixo de 10.000 requisições é 1% da carga, então o regime
   transitório não domina nenhuma medida.
 - **Custo.** Medido no piloto: gerar e conferir os três cenários com 1 milhão levou **33,7
-  segundos** e produziu 17 MB de traces. Com 5 réplicas, são cerca de 3 minutos e 85 MB — barato
-  o suficiente para refazer o experimento inteiro sempre que algo mudar.
+  segundos** e produziu 17 MB de traces — barato o suficiente para refazer o experimento inteiro
+  sempre que algo mudar.
 
 ### 4.2 Aquecimento de 10.000 requisições
 
@@ -189,43 +189,29 @@ As medianas ficam separadas por cerca de duas ordens de grandeza entre níveis v
 cai numa região diferente da grade de caches — que é exatamente a condição para os três níveis
 darem respostas distintas.
 
-### 4.6 Cinco réplicas, com blocos pareados
+### 4.6 Uma carga por nível, sem réplicas
 
-**Uma réplica é a mesma configuração rodada de novo com outra semente.** Os parâmetros são
-idênticos — mesmo β, mesmo `d_max`, mesmo P(∞), mesmo tamanho —, mas os sorteios são outros, então
-sai um trace diferente que obedece à mesma distribuição. É o equivalente a repetir uma medição:
-mostra quanto do resultado é o efeito procurado e quanto é acaso.
+Cada nível é gerado uma vez, com a semente 7. **Não há réplicas**, e a razão é específica deste
+experimento: para LRU, a curva de hit rate é conhecida **analiticamente** a partir da distribuição
+de stack distance. O desvio de uma carga em relação ao seu valor esperado não precisa ser estimado
+por repetição — ele é medido contra a verdade, a cada rodada, pela conferência do pipeline.
 
-Cinco réplicas do cenário de SD média, com 200 mil requisições cada:
+E é pequeno. No piloto de 1 milhão de requisições, o erro máximo contra a teoria ficou entre
+0,0006 e 0,0008, coerente com o desvio esperado de uma proporção nesse tamanho de amostra
+(0,5/√n = 0,0005). As diferenças que o experimento quer mostrar são de outra ordem de grandeza:
+com um cache de 100 objetos, o hit rate vai de 0,88 no nível baixo a 0,50 no médio e 0,09 no alto.
 
-| Semente | SD mediana | Objetos distintos | Hit com cache 100 | Hit com cache 1.000 |
-|---|---|---|---|---|
-| 7 | 74 | 15.295 | 0,5046 | 0,7274 |
-| 17 | 72 | 15.345 | 0,5059 | 0,7287 |
-| 27 | 74 | 15.472 | 0,5029 | 0,7245 |
-| 37 | 73 | 15.308 | 0,5040 | 0,7269 |
-| 47 | 74 | 15.363 | 0,5040 | 0,7272 |
-| **média** | | | **0,5043** | **0,7269** |
-| **faixa** | | | 0,5029 a 0,5059 | 0,7245 a 0,7287 |
+Com o efeito sendo cerca de mil vezes maior que o ruído, replicar a carga confirmaria o que a
+teoria já estabelece, ao custo de multiplicar por cinco todo o trabalho a jusante.
 
-A amplitude é de 0,003 no cache de 100 e 0,004 no de 1.000. Esse é o tamanho do acaso nesta
-configuração: **uma diferença menor que isso entre duas condições não significa nada**. Com 1
-milhão de requisições em vez de 200 mil, a amplitude cai por volta da metade.
+**Onde a replicação continua necessária: na parte 3.** O estimador por amostragem introduz uma
+variação que não tem fórmula fechada — ela depende da taxa R e de quais objetos o hash sorteou.
+Mas a replicação que responde a isso é **da amostragem, não da carga**: as mesmas três cargas são
+re-amostradas com sementes de hash diferentes. Não gera trace nenhum a mais e isola a variação do
+estimador, que é justamente o objeto daquela parte, em vez de misturá-la com a variação da carga.
 
-Sem réplicas, cada número seria uma medição só, sem como saber se uma diferença de 0,002 entre
-dois níveis é efeito ou sorte. Com cinco, reporta-se média e faixa.
-
-As sementes escolhidas — 7, 17, 27, 37, 47 — são arbitrárias; o que importa é serem fixas,
-registradas e distintas.
-
-**A réplica *r* usa a mesma semente nos três níveis.** É um desenho pareado: a comparação entre
-níveis não carrega ruído de amostragem diferente, o que reduz a variância da diferença — a
-técnica conhecida como *common random numbers*. Em troca, as concordâncias dentro de uma réplica
-não são independentes entre si, e isso precisa aparecer quando os resultados forem reportados.
-
-Cinco réplicas não dão poder estatístico para um teste formal; dão o suficiente para reportar
-**média e faixa** em vez de um número solitário, e para flagrar se algum efeito observado cabe
-dentro da variação entre sementes.
+Acrescentar réplicas de carga depois, se algum resultado ficar perto do ruído, é uma fase nova por
+semente — um comando cada.
 
 ---
 
@@ -271,12 +257,12 @@ parecido entre os níveis, ou se não guardar relação com 1/R.
 
 ## 6. Como medir e reportar
 
-- **Unidade de observação:** um hit rate por (nível, tamanho de cache, política, taxa de
-  amostragem, réplica).
-- **Execuções desta etapa:** 3 níveis × 5 réplicas = 15 cargas de 1 milhão. As partes 2 e 3
-  consomem essas mesmas 15 cargas, cada uma com a sua grade de tamanhos de cache.
-- **Agregação:** média das 5 réplicas, acompanhada da faixa (mínimo e máximo). Nunca o valor de
-  uma semente sozinha.
+- **Unidade de observação:** um hit rate por (nível, tamanho de cache, política) na parte 2; e
+  por (nível, tamanho de cache, taxa de amostragem, semente de amostragem) na parte 3.
+- **Execuções desta etapa:** 3 cargas de 1 milhão, uma por nível. As partes 2 e 3 consomem essas
+  mesmas três cargas, cada uma com a sua grade de tamanhos de cache.
+- **Agregação:** na parte 2 não há o que agregar — uma carga por nível, com o valor teórico ao
+  lado como referência. Na parte 3, média e faixa sobre as sementes de amostragem.
 - **Referência:** para LRU, o hit rate teórico calculado da distribuição serve de gabarito; o erro
   contra ele mede o instrumento, não o resultado. Para as demais políticas não há gabarito, só
   simulação.
@@ -300,26 +286,25 @@ parecido entre os níveis, ou se não guardar relação com 1/R.
   Políticas adaptativas têm menos do que explorar aqui do que teriam em tráfego real.
 - **Garantia teórica só para LRU.** O gabarito analítico existe para LRU; para as demais
   políticas, os números vêm de simulação e carregam o que a simulação carrega.
-- **Réplicas pareadas.** As comparações entre níveis são pareadas, e as concordâncias dentro de
-  uma réplica não são independentes.
+- **Uma carga por nível.** Sem réplicas, uma anomalia daquele sorteio específico não apareceria
+  como discrepância entre cargas. O que a detecta é a conferência contra a curva teórica, que é
+  uma checagem mais forte para LRU — mas não cobriria políticas sem teoria, se o escopo crescer.
 - **Tamanho unitário.** Não vale para hit rate por byte nem para políticas cientes de tamanho.
 
 ---
 
 ## 8. Plano de execução
 
-As cargas entram no repositório como cinco fases, uma por semente, cada uma com os três níveis:
+As cargas entram no repositório como **uma fase**, com os três níveis:
 
 | Fase | Apelido | Semente | Requisições | Níveis |
 |---|---|---|---|---|
-| f03 | exp-s7 | 7 | 1.000.000 | β 1,5 / 1,0 / 0,5 |
-| f04 | exp-s17 | 17 | " | " |
-| f05 | exp-s27 | 27 | " | " |
-| f06 | exp-s37 | 37 | " | " |
-| f07 | exp-s47 | 47 | " | " |
+| f03 | experimento | 7 | 1.000.000 | β 1,5 / 1,0 / 0,5 |
 
-O campo `caches` de cada fase fica com a grade de conferência (10, 100, 1.000, 10.000), que serve
-para o pipeline comparar hit medido e hit teórico — não é a grade do experimento.
+O campo `caches` dessa fase fica com a grade de conferência (1, 10, 100, 1.000, 10.000), que serve
+para o pipeline comparar hit medido e hit teórico — não é a grade do experimento, que as partes 2
+e 3 definem. O valor 1 está ali porque a carga de SD baixa já sobe muito cedo: com um cache de 10
+objetos ela está em 0,73, então a região onde ela se diferencia fica abaixo disso.
 
 ```bash
 cd geracao
@@ -327,9 +312,9 @@ python3 pipeline.py --nova-fase exp-s7    # e assim por diante
 python3 pipeline.py --fase f03
 ```
 
-Uma fase por semente é o que o pipeline de hoje suporta sem mudança: a semente é parâmetro da
-fase. A alternativa seria aceitar uma lista de sementes e gerar 15 cenários numa fase só, o que
-exigiria pôr a semente no nome dos arquivos (`carga_f03_baixa-b150-s17.txt`).
+Se em algum momento forem necessárias réplicas de carga, cada uma entra como uma fase nova — a
+semente é parâmetro da fase, então `f04-exp-s17`, `f05-exp-s27` e assim por diante, sem mudança
+no pipeline.
 
 Depois disso, as partes 2 e 3 consomem essas 15 cargas: `simulacao/` roda as políticas,
 `amostragem/` roda os estimadores, cada uma com o mesmo padrão de configuração, pipeline e
@@ -345,6 +330,6 @@ relatório.
 2. **Taxa de amostragem mais baixa.** Com R = 0,001 sobre 1 milhão de requisições, a amostra tem
    cerca de mil requisições — pouco para uma curva estável. Ou se aceita o ruído como parte do
    resultado, ou o piso fica em 0,01. *Decisão da parte 3.*
-3. **Número de réplicas.** Cinco é o suficiente para média e faixa. Se a variação entre sementes
-   acabar sendo da mesma ordem dos efeitos procurados, será preciso subir para 10 ou 20 — o custo
-   é linear e baixo.
+3. **Quantas sementes de amostragem** na parte 3. O mesmo raciocínio de sempre: o suficiente para
+   a média ficar estável e a faixa ser informativa. Como cada re-amostragem é barata, começar com
+   dez e conferir se a faixa encolhe. *Decisão da parte 3.*

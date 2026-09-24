@@ -1,0 +1,32 @@
+{
+  "descricao": "Experimento: tres niveis de stack distance com 1 milhao de requisicoes",
+  "dmax": 10000,
+  "inf": 0.05,
+  "requisicoes": 1000000,
+  "semente": 7,
+  "caches": [
+    1,
+    10,
+    100,
+    1000,
+    10000
+  ],
+  "tolerancia_sigmas": 5,
+  "cenarios": [
+    {
+      "nome": "baixa",
+      "beta": 1.5,
+      "rotulo": "SD baixa"
+    },
+    {
+      "nome": "media",
+      "beta": 1.0,
+      "rotulo": "SD media"
+    },
+    {
+      "nome": "alta",
+      "beta": 0.5,
+      "rotulo": "SD alta"
+    }
+  ]
+}

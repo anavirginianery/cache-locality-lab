@@ -1,0 +1,4 @@
+cenario,rotulo,beta,dmax,p_inf_alvo,requisicoes,aquecimento,reusos,p_inf_medido,sd_p25,sd_p50,sd_p75,sd_p90,sd_p99,objetos_distintos,footprint_1000req,erro_max_hrc_curva,erro_max_hrc_caches,limite,confere
+baixa,SD baixa,1.5,10000,0.05,1000000,10000,950484,0.04952,0,1,8,51,1916,50489,139.6,0.00058,0.00048,0.00250,sim
+media,SD media,1.0,10000,0.05,1000000,10000,950484,0.04952,5,74,870,3769,9075,54852,435.0,0.00074,0.00074,0.00250,sim
+alta,SD alta,0.5,10000,0.05,1000000,10000,950484,0.04952,649,2536,5661,8119,9804,57264,819.1,0.00075,0.00069,0.00250,sim
