@@ -57,7 +57,8 @@ distribuição de SD   →   carga (trace)   →   conferência
 
 A conferência compara a curva medida com a curva teórica calculada diretamente da distribuição,
 ponto a ponto, e o limite aceito acompanha o tamanho da carga. Na fase `f01` (50 mil requisições)
-o erro máximo é 0,0068 contra um limite de 0,0112; na `f02` (500 mil), 0,0010 contra 0,0035.
+o erro máximo é 0,0072 contra um limite de 0,0112; na `f02` (500 mil), 0,0009 contra 0,0035;
+na `f03` (1 milhão), 0,0008 contra 0,0025.
 
 ## Estrutura
 

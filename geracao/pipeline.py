@@ -30,7 +30,7 @@ Uso:
 
 O beta entra no nome como inteiro de tres digitos, multiplicado por 100: beta 1,5 -> b150.
 """
-import argparse, bisect, contextlib, csv, hashlib, io, json, math, os, random, re, shutil, subprocess, sys
+import argparse, bisect, contextlib, csv, hashlib, io, json, math, os, re, shutil, subprocess, sys
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -285,23 +285,53 @@ def teoria(pmf, p_inf):
     return hit, cdf
 
 
-def medir_footprint(ev, semente, dmax):
-    """Footprint: quantos objetos distintos aparecem numa janela de n requisicoes.
-    Media sobre janelas sorteadas ao acaso (semente fixa, entao e reprodutivel)."""
-    rnd = random.Random(semente)
-    n_tot = len(ev)
-    janelas, j = [], 10
-    while j <= min(n_tot // 2, 20 * dmax):
-        janelas.append(j)
-        j = j * 3 if str(j)[0] == "1" else int(round(j * 10 / 3))
-    saida = []
-    for j in janelas:
-        amostras = max(30, min(150, 2000000 // j))
-        tot = sum(len(set(ev[i:i + j])) for i in
-                  (rnd.randrange(0, n_tot - j) for _ in range(amostras)))
-        media = tot / amostras
-        saida.append((j, media, media / j))
-    return saida
+def curva_footprint(ev):
+    """Footprint exato: fp(w) = objetos distintos numa janela de w requisicoes, em media
+    sobre TODAS as janelas de tamanho w do trace (nao sobre uma amostra delas).
+
+    A conta e feita pelo avesso, como em Xiang et al. (ASPLOS 2013): uma janela deixa de
+    ver um objeto exatamente quando cabe inteira dentro de um intervalo em que ele nao
+    aparece. Um intervalo de L posicoes acomoda L - w + 1 janelas de tamanho w, entao
+
+        fp(w) = m - (soma de max(0, L - w + 1) sobre todos os intervalos) / (n - w + 1)
+
+    com m = objetos distintos da carga inteira. Os intervalos de cada objeto sao o trecho
+    antes da estreia dele, os buracos entre acessos consecutivos e o trecho depois do
+    ultimo acesso. Com o histograma desses L e duas somas de sufixo, cada fp(w) sai em
+    tempo logaritmico, para qualquer w de 1 ate n.
+
+    Duas consequencias uteis: fp(1) = 1 e fp(n) = m. O extremo direito da curva e o numero
+    de objetos distintos da carga -- o footprint tem um valor unico so quando a janela e a
+    carga inteira. E, por nao amostrar nada, a medida nao depende de semente.
+
+    Devolve (fp, m)."""
+    n = len(ev)
+    ultimo, lacunas = {}, {}
+    for p, o in enumerate(ev):
+        L = p - ultimo.get(o, -1) - 1
+        if L:
+            lacunas[L] = lacunas.get(L, 0) + 1
+        ultimo[o] = p
+    for p in ultimo.values():
+        L = n - 1 - p
+        if L:
+            lacunas[L] = lacunas.get(L, 0) + 1
+    m = len(ultimo)
+    tam = sorted(lacunas)
+    quantas = [0] * (len(tam) + 1)     # quantos intervalos com L >= tam[k]
+    soma_L = [0] * (len(tam) + 1)      # e a soma dos L deles
+    for k in range(len(tam) - 1, -1, -1):
+        quantas[k] = quantas[k + 1] + lacunas[tam[k]]
+        soma_L[k] = soma_L[k + 1] + lacunas[tam[k]] * tam[k]
+
+    def fp(w):
+        if not 1 <= w <= n:
+            raise ValueError("janela fora do trace: %r" % w)
+        k = bisect.bisect_left(tam, w)
+        cegas = soma_L[k] - (w - 1) * quantas[k]   # janelas que nao veem um dado objeto
+        return m - cegas / (n - w + 1)
+
+    return fp, m
 
 
 def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
@@ -322,7 +352,10 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
         return bisect.bisect_left(fin, x) / r
 
     pct = lambda q: fin[min(r - 1, int(q * (r - 1)))]
-    grade = grade_log(cfg["dmax"])
+    # a grade vai ate o tamanho da carga: assim da para ver a curva chegar ao teto 1 - P(inf)
+    # e ficar plana, em vez de cortar em d_max sem mostrar o que acontece depois. d_max entra
+    # na marra porque e o joelho da curva -- nenhum reuso passa dele.
+    grade = sorted(set(grade_log(cfg["requisicoes"])) | {cfg["dmax"]})
     linhas_hrc = [(C, t_hit(C), m_hit(C)) for C in grade]
     linhas_cdf = [(x, t_cdf(x), m_cdf(x)) for x in grade]
     tabela = [(C, t_hit(C), m_hit(C), m_cdf(C)) for C in cfg["caches"]]
@@ -345,8 +378,13 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
         lim = prox
 
     ev = trace[prefixo:]
-    fp = medir_footprint(ev, cfg["semente"], cfg["dmax"])
-    fp_1k = next((m for j, m, _ in fp if j == 1000), None)
+    fp_de, distintos = curva_footprint(ev)
+    # grade log de janelas, com as decadas redondas garantidas para dar pontos de referencia
+    # legiveis, e a carga inteira no extremo direito: fp(n) e o numero de objetos distintos.
+    decadas = {10 ** k for k in range(len(str(len(ev))))}     # 1, 10, 100, ... <= len(ev)
+    janelas = sorted(set(grade_log(len(ev), 25)) | decadas)
+    fp = [(j, fp_de(j), fp_de(j) / j) for j in janelas]
+    fp_1k = fp_de(1000)
 
     return {
         "nome": cen["nome"], "rotulo": cen["rotulo"], "beta": cen["beta"],
@@ -354,7 +392,7 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
         "requisicoes": n, "prefixo": prefixo, "reusos": r,
         "p_inf_teorico": p_inf, "p_inf_medido": frios / n,
         "p25": pct(.25), "p50": pct(.50), "p75": pct(.75), "p90": pct(.90), "p99": pct(.99),
-        "distintos": len(set(ev)),
+        "distintos": distintos,
         "hrc": linhas_hrc, "cdf": linhas_cdf, "tabela": tabela, "hist": hist,
         "erro_max": erro, "erro_caches": erro_caches, "limite": limite,
         "confere": erro <= limite,
@@ -401,8 +439,11 @@ def grava_csvs(cfg, res, analise, fid):
 
 
 # --------------------------------------------------------------- graficos
-def svg_linhas(res, chave, titulo, ylab, xlab, xmax, w=640, h=330):
-    """Uma linha por cenario (medido) com marcadores nos valores teoricos."""
+def svg_linhas(res, chave, titulo, ylab, xlab, xmax, marca=None, rotulo_marca="", w=640, h=330):
+    """Uma linha por cenario (medido) com marcadores nos valores teoricos.
+
+    'marca' desenha uma vertical tracejada num x de referencia (aqui, d_max), para explicar
+    por que a curva fica plana dali para a direita."""
     M = {"l": 62, "r": 18, "t": 16, "b": 46}
     lx = math.log10(xmax)
     sx = lambda g: M["l"] + (math.log10(max(g, 1)) / lx) * (w - M["l"] - M["r"])
@@ -423,6 +464,11 @@ def svg_linhas(res, chave, titulo, ylab, xlab, xmax, w=640, h=330):
     p.append('<line class="ax" x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f"/>' % (M["l"], sy(0), w - M["r"], sy(0)))
     p.append('<text class="lb" x="%.1f" y="%.1f" text-anchor="middle">%s</text>' % (w / 2, h - 8, xlab))
     p.append('<text class="lb" transform="translate(14,%.1f) rotate(-90)" text-anchor="middle">%s</text>' % (h / 2, ylab))
+    if marca and 1 <= marca <= xmax:
+        p.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="var(--rule-strong)" '
+                 'stroke-width="1" stroke-dasharray="4 3"/>' % (sx(marca), M["t"] + 4, sx(marca), sy(0)))
+        p.append('<text class="tk" x="%.1f" y="%.1f" text-anchor="middle">%s</text>'
+                 % (sx(marca), M["t"] - 3, rotulo_marca))
     for i, r in enumerate(res):
         dados = r[chave]
         d = "".join(("L" if k else "M") + "%.1f,%.1f" % (sx(x), sy(m)) for k, (x, _, m) in enumerate(dados))
@@ -548,6 +594,7 @@ def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
                fase=fid, apelido=apelido, descricao=cfg.get("descricao", ""),
                cores_claro=cores_claro, cores_escuro=cores_escuro,
                dmax=n_br(cfg["dmax"]), inf=n_br(cfg["inf"] * 100, 1), req=n_br(cfg["requisicoes"]),
+               teto=n_br((1 - cfg["inf"]) * 100, 1) + "%",
                semente=cfg["semente"],
                tol="%s σ (%s nesta carga)" % (n_br(cfg["tolerancia_sigmas"], 0),
                                               n_br(res[0]["limite"], 4)),
@@ -617,9 +664,11 @@ def roda_fase(pasta, so_analise, refazer):
 
     grava_csvs(cfg, res, analise, fid)
     svgs = {"svg_hrc": svg_linhas(res, "hrc", "Curva de hit rate", "hit rate",
-                                  "tamanho do cache (objetos)", cfg["dmax"]),
+                                  "tamanho do cache (objetos)", cfg["requisicoes"],
+                                  cfg["dmax"], "d máx"),
             "svg_cdf": svg_linhas(res, "cdf", "Acumulada da stack distance",
-                                  "% dos reúsos com SD menor que x", "stack distance x", cfg["dmax"]),
+                                  "% dos reúsos com SD menor que x", "stack distance x",
+                                  cfg["requisicoes"], cfg["dmax"], "d máx"),
             "svg_fp": svg_loglog(res, "fp", "Footprint", "objetos distintos",
                                  "tamanho da janela (requisições)"),
             "svg_hist": svg_barras(res)}

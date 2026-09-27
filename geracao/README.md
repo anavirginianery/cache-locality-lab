@@ -161,7 +161,7 @@ análises usam a curva de hit rate.)
 | `.../analise/hrc_*.csv` | Curva de hit rate, teórica e medida, ponto a ponto. |
 | `.../analise/sd_cdf_*.csv` | Acumulada da SD, teórica e medida. |
 | `.../analise/sd_histograma_*.csv` | Quantos reúsos em cada faixa de SD. A primeira faixa é só o d = 0, que costuma ser a moda; as seguintes dobram (1, 2, 4, 8, …). As frações somam 1. |
-| `.../analise/footprint_*.csv` | Footprint: objetos distintos por janela de N requisições, em média. |
+| `.../analise/footprint_*.csv` | Footprint: objetos distintos por janela de N requisições, em média — valor exato, sobre todas as janelas daquele tamanho. A janela vai de 1 requisição até a carga inteira. |
 | `.../analise/conferencia_*.csv` | Hit teórico × medido em cada tamanho de cache, e a fração de reúsos que cabem (e que não cabem) nele. |
 | `.../analise/*.svg` | Os quatro gráficos soltos, prontos para entrar em um documento. |
 | `.../analise/relatorio_*.html` | Tudo junto, para leitura. |
@@ -172,7 +172,7 @@ análises usam a curva de hit rate.)
 |---|---|
 | `descricao` | Uma frase sobre o objetivo da fase. Aparece no relatório e no manifesto. |
 | `dmax` | Maior stack distance possível. Define a escala: nenhum reúso passa disso. |
-| `inf` | Fração das requisições que são objetos novos. Igual em todos os cenários da fase, para não misturar novidade com localidade. |
+| `inf` | É o P(∞): a fração **do total de requisições** (não dos reúsos, nem dos objetos) que pede um objeto nunca visto antes. Com `inf` = 0,05 numa carga de 1 milhão, cerca de 50 mil requisições são estreias e 950 mil são reúsos. Como estreia nunca é acerto, o teto da curva de hit rate é 1 − `inf`. No arquivo de distribuição ele aparece como a linha `inf`, e as linhas finitas somam 1 − `inf`. Igual em todos os cenários da fase, para não misturar novidade com localidade. |
 | `requisicoes` | Tamanho da carga, sem contar o aquecimento. |
 | `semente` | Fixa o sorteio: a mesma semente gera exatamente a mesma carga. Os cenários da fase compartilham a semente — desenho pareado, bom para comparar cenários, mas as conferências deles não são independentes entre si. |
 | `caches` | Tamanhos de cache usados na conferência e no relatório. Coloque aqui os tamanhos do seu experimento. |
@@ -201,16 +201,25 @@ python3 pipeline.py --fase f01 --so-analise
 - **Reúsos que cabem** — a fração que aquele tamanho de cache consegue atender. A fração
   complementar, dos que não cabem, é o número para dizer "esta carga tem stack distance alta
   **para um cache de C objetos**".
-- **Erro** — hit medido menos hit teórico, tomado sobre **toda a curva** (40 tamanhos de cache),
-  não só sobre os da tabela. Perto de zero significa que a carga reproduz a distribuição pedida;
-  é a conferência do gerador, não um resultado do experimento. Com 50 mil requisições fica em
-  0,0068; com 500 mil, em 0,0010. O limite aceito é `tolerancia_sigmas × 0,5/√n`, então aperta
-  conforme a carga cresce.
-- **Objetos distintos** — quantos objetos diferentes apareceram. Não é um parâmetro: emerge do
-  nível de stack distance (quanto maior a SD, mais objetos ficam ativos).
-- **Footprint** — quantos objetos distintos aparecem numa janela de N requisições. Também emerge
-  da stack distance: a SD de um reúso é, por definição, a contagem de objetos distintos na janela
-  entre dois pedidos ao mesmo objeto.
+- **Erro** — hit medido menos hit teórico, tomado sobre **toda a curva** (44 tamanhos de cache
+  entre 1 objeto e o tamanho da carga), não só sobre os da tabela. Perto de zero significa que a
+  carga reproduz a distribuição pedida; é a conferência do gerador, não um resultado do
+  experimento. Com 50 mil requisições fica em 0,0072; com 500 mil, em 0,0009; com 1 milhão, em
+  0,0008. O limite aceito é `tolerancia_sigmas × 0,5/√n`, então aperta conforme a carga cresce.
+- **Objetos distintos** — quantos objetos diferentes apareceram na carga inteira. Não é um
+  parâmetro: emerge do nível de stack distance (quanto maior a SD, mais objetos ficam ativos) e da
+  taxa de objetos novos. É também o ponto final da curva de footprint — veja abaixo.
+- **Footprint** — quantos objetos distintos aparecem numa janela de N requisições, em média sobre
+  **todas** as janelas daquele tamanho (valor exato, não amostrado, e portanto sem semente).
+  Também emerge da stack distance: a SD de um reúso é, por definição, a contagem de objetos
+  distintos na janela entre dois pedidos ao mesmo objeto.
+
+  A curva vai de uma janela de 1 requisição até a carga inteira, e os dois extremos são forçados:
+  `fp(1) = 1` e `fp(n) =` objetos distintos da carga. Esse extremo direito é o "footprint em um
+  número só" da carga; o meio da curva é onde os cenários se separam. Na `f03`, numa janela de
+  1.000 requisições os três estão em 140 / 435 / 819 objetos, mas na carga inteira quase empatam
+  (50.489 / 54.852 / 57.264), porque aí o total é dominado pelos ~50 mil objetos novos que entram
+  a uma taxa de `inf` por requisição.
 
 ## As ferramentas
 

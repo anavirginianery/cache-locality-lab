@@ -101,13 +101,17 @@ nos tamanhos de cache da tabela; o erro mostrado é o maior deles. O limite acei
 <div class="legendas">{{legenda}}</div>
 <div class="fig">{{svg_hrc}}</div>
 <p class="hint">Quanto mais alta a curva, melhor o cache se sai. A carga de SD alta precisa de um cache muito maior para
-chegar ao mesmo hit rate das outras. O teto de todas é 1 − P(∞): objeto novo nunca pode ser acerto.</p>
+chegar ao mesmo hit rate das outras. O eixo vai até o tamanho da carga, {{req}} requisições, para mostrar a curva
+inteira: das três, nenhuma passa de 1 − P(∞) = {{teto}}, porque objeto novo nunca pode ser acerto. Da vertical
+tracejada (d<sub>max</sub> = {{dmax}}) para a direita a curva é plana — nenhum reúso tem stack distance maior que
+d<sub>max</sub>, então aumentar o cache além disso não acerta nada novo.</p>
 
 <h2>Acumulada da stack distance</h2>
 <div class="legendas">{{legenda}}</div>
 <div class="fig">{{svg_cdf}}</div>
 <p class="hint">Lê-se assim: no ponto x, a curva diz qual porcentagem dos reúsos tem stack distance menor que x — ou seja,
-quantos reúsos caberiam num cache de x objetos.</p>
+quantos reúsos caberiam num cache de x objetos. O eixo vai até o tamanho da carga; as três chegam a 100% em
+d<sub>max</sub> = {{dmax}} e ficam lá, que é a mesma informação do trecho plano da curva de hit rate.</p>
 
 <h2>Distribuição da stack distance</h2>
 <div class="legendas">{{legenda}}</div>
@@ -118,9 +122,14 @@ quantos reúsos caberiam num cache de x objetos.</p>
 <div class="legendas">{{legenda}}</div>
 <div class="fig">{{svg_fp}}</div>
 <p class="hint">Quantos objetos distintos aparecem numa janela de N requisições — os dois eixos em escala log.
-O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance de um reúso é,
-por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos longos
-significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos diferentes.</p>
+O valor é exato, não amostrado: é a média sobre <em>todas</em> as janelas daquele tamanho, então não depende de semente.
+A janela vai de 1 requisição até a carga inteira. Nos dois extremos a curva é forçada: em 1 requisição o footprint é 1
+objeto, e na janela do tamanho da carga ele é exatamente o <strong>número de objetos distintos</strong> da tabela acima.
+É esse o "footprint em um número só" da carga — o resto da curva é o caminho entre os dois extremos, e é ali que os
+cenários se separam. O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance
+de um reúso é, por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos
+longos significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos
+diferentes.</p>
 
 <h2>Conferência em cada tamanho de cache</h2>
 <div class="scroller">

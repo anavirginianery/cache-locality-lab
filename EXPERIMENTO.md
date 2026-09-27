@@ -130,7 +130,11 @@ escolhido, é uma consequência.
 ### 4.3 Objetos novos: P(∞) = 0,05
 
 Cinco por cento das requisições são para objetos nunca vistos — os *misses compulsórios*, que
-nenhum cache acerta. Duas razões para esse valor:
+nenhum cache acerta. A porcentagem é **sobre o total de requisições**, não sobre os reúsos nem
+sobre os objetos: numa carga de 1 milhão, cerca de 50 mil requisições são a estreia de um objeto e
+as outras 950 mil são reúsos de algo que já passou. No gerador esse é o parâmetro `inf`, o P(∞) da
+distribuição — a probabilidade de sortear "distância infinita", isto é, de ir buscar um objeto que
+nunca esteve na pilha. Duas razões para esse valor:
 
 - **Ancoragem empírica.** Nos modelos de tráfego real distribuídos com o TRAGEN, essa fração vai
   de 4% (downloads) a 42% (mídia social). O valor escolhido fica na ponta baixa dessa faixa: é o

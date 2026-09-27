@@ -234,10 +234,19 @@ Resultados com 50.000 requisições por cenário:
 
 As curvas crescem com o tamanho do cache e saturam em 1 − P(∞) = 0,95.
 
-A conferência é feita sobre **toda a curva** — 40 tamanhos de cache, não só os quatro da tabela —,
+O eixo dos tamanhos de cache vai de 1 objeto até o **tamanho da carga** — na `f03`, 1 milhão. Não é
+para propor caches desse tamanho: é para a curva aparecer inteira. Ela tem um joelho em `d_max` e é
+plana dali para a direita, porque nenhum reúso tem stack distance maior que `d_max`; cache nenhum,
+por maior que seja, acerta o que nunca é pedido de novo. O patamar é o teto 1 − P(∞), e vê-lo na
+figura evita a leitura errada de que a curva continuaria subindo fora do quadro. O mesmo vale para
+a acumulada da stack distance, que chega a 100% em `d_max` e fica lá.
+
+A conferência é feita sobre **toda a curva** — 44 tamanhos de cache espaçados em escala log entre
+1 objeto e o tamanho da carga, não só os da tabela —,
 e o limite aceito acompanha o tamanho da carga: o desvio esperado de uma proporção é 0,5/√n, e o
-critério é cinco desses desvios. Na fase `f01`, o erro máximo é 0,0068 contra um limite de 0,0112;
-na `f02`, com dez vezes mais requisições, cai para 0,0010 contra um limite de 0,0035. É ruído
+critério é cinco desses desvios. Na fase `f01`, o erro máximo é 0,0072 contra um limite de 0,0112;
+na `f02`, com dez vezes mais requisições, cai para 0,0009 contra um limite de 0,0035, e na `f03`,
+com 1 milhão, para 0,0008 contra 0,0025. É ruído
 amostral, e diminui como esperado ao aumentar a carga.
 
 Duas ressalvas sobre o que essa conferência prova e o que não prova. **Primeira:** os três
@@ -271,18 +280,51 @@ alta para os caches estudados".
 
 ## 7. Footprint: o que emerge junto
 
-O **footprint** de uma janela é o número de objetos distintos que aparecem nela. Medido nas cargas
-geradas, em média, sobre janelas sorteadas ao acaso:
+O **footprint** de uma janela é o número de objetos distintos que aparecem nela. Aqui ele é medido
+de forma **exata**: não sobre uma amostra de janelas, mas sobre *todas* as janelas daquele tamanho
+que existem no trace. A conta é feita pelo avesso, como em Xiang et al. (ASPLOS 2013) — uma janela
+deixa de ver um objeto exatamente quando cabe inteira dentro de um intervalo em que ele não
+aparece, e um intervalo de L posições acomoda L − w + 1 janelas de tamanho w:
+
+```
+fp(w) = m − ( Σ máx(0, L − w + 1) ) / (n − w + 1)
+```
+
+com `m` = objetos distintos da carga, `n` = tamanho da carga, e a soma correndo sobre os intervalos
+sem acesso de todos os objetos (o trecho antes da estreia de cada um, os buracos entre acessos
+consecutivos e o trecho depois do último acesso). O histograma desses L sai em uma passada pelo
+trace, então a curva inteira é barata — e, por não amostrar nada, a medida não depende de semente.
+
+Medido assim na fase `f03`, com 1 milhão de requisições por cenário (entre parênteses, a fração da
+janela):
 
 | Objetos distintos em uma janela de… | SD baixa | SD média | SD alta |
 |---|---|---|---|
-| 100 requisições | 26 | 62 | 95 |
-| 1.000 requisições | 138 | 431 | 818 |
-| 10.000 requisições | 813 | 2.522 | 5.061 |
+| 100 requisições | 26 (26%) | 63 (63%) | 94 (94%) |
+| 1.000 requisições | 140 (14%) | 435 (44%) | 819 (82%) |
+| 10.000 requisições | 835 (8%) | 2.560 (26%) | 5.085 (51%) |
+| 100.000 requisições | 5.860 (6%) | 10.305 (10%) | 12.708 (13%) |
+| 1.000.000 — a carga inteira | 50.489 (5%) | 54.852 (5%) | 57.264 (6%) |
 
-Em fração da janela, a leitura fica mais clara: numa janela de 100 requisições, 26% das
-requisições da carga de SD baixa são para objetos distintos, contra 95% na carga de SD alta.
-Na carga de SD alta, quase tudo o que passa é objeto diferente.
+A fração da janela torna a leitura direta: numa janela de 100 requisições, 26% do que passa na
+carga de SD baixa são objetos distintos, contra 94% na de SD alta — ali quase tudo o que passa é
+objeto diferente.
+
+### O footprint em um número só
+
+A curva tem dois extremos forçados. Em `w = 1`, fp = 1: uma requisição toca um objeto. Em `w = n`,
+fp = `m`: a janela do tamanho da carga **é** a carga, e o número de objetos distintos nela é o
+número de objetos distintos da carga. Esse extremo direito é a resposta para "qual é o footprint
+desta carga, em um número só" — é a última linha da tabela, e é a mesma coluna "objetos distintos"
+que o relatório já trazia. Todo o resto da curva é o caminho entre os dois extremos.
+
+A mesma tabela mostra por que esse número único, sozinho, diz pouco sobre localidade: na janela da
+carga inteira os três cenários quase empatam (50, 55 e 57 mil objetos), enquanto numa janela de
+1.000 requisições estão separados por um fator de seis. O empate no extremo tem explicação: com
+P(∞) = 5% e 1 milhão de requisições, cerca de 50 mil objetos entram na carga como estreia, e esse
+termo domina a soma qualquer que seja a localidade. A localidade decide quantos objetos ficam
+**ativos ao mesmo tempo**, não quantos existem ao todo. Por isso o footprint é reportado como
+curva, com o número único no extremo dela.
 
 **O footprint não é um parâmetro do gerador — ele emerge da distribuição de stack distance.** E
 não por acaso: a stack distance de um reúso é, por definição, a contagem de objetos distintos na
@@ -296,17 +338,13 @@ Três consequências para o desenho experimental:
    pequeno". Mexer em β move as duas juntas.
 2. **`d_max` limita a parte de reúso do footprint, não o footprint.** O acervo não é fechado:
    cada objeto novo entra em definitivo, a uma taxa de P(∞) por requisição, então o footprint
-   cresce sem teto — em janelas grandes, aproximadamente P(∞)·n. Na carga de SD alta da fase
-   `f02`, uma janela de 100 mil requisições toca cerca de 12,7 mil objetos distintos, acima do
-   `d_max` de 10.000; e a própria `f01` registra 10.170 objetos distintos com o mesmo `d_max`. O
-   que achata a curva na faixa medida é a janela ainda ser pequena diante do acervo de reúso, não
-   um teto.
+   cresce sem teto — em janelas grandes, aproximadamente P(∞)·w. Na `f03`, uma janela de 100 mil
+   requisições já toca de 5,9 mil a 12,7 mil objetos distintos, e a carga inteira passa de 50 mil,
+   muito acima do `d_max` de 10.000. O que achata a curva nas janelas médias é a janela ainda ser
+   pequena diante do acervo de reúso, não um teto.
 3. **O footprint deve ser reportado como medida, não como parâmetro.** Se for levantada a questão
    "a diferença observada veio da stack distance ou do footprint?", a resposta honesta é que se
    trata da mesma mudança descrita de dois modos.
-
-O mesmo vale para o número de objetos distintos da carga inteira: 3.118 na carga de SD baixa,
-7.125 na média e 10.170 na alta, com o mesmo `d_max` e o mesmo P(∞) nas três.
 
 ---
 
@@ -392,6 +430,9 @@ admissão, ou para métricas de tempo.
   behavior.* Communications of the ACM, 20(11), 1977.
 - S. Jiang, X. Zhang. *LIRS: An efficient low inter-reference recency set replacement policy to
   improve buffer cache performance.* ACM SIGMETRICS, 2002.
+- X. Xiang, B. Bao, C. Ding, Y. Gao. *Linear-time modeling of program working set in shared cache.*
+  PACT, 2011; e X. Xiang, C. Ding, H. Luo, B. Bao. *HOTL: A higher order theory of locality.*
+  ASPLOS, 2013. — o cálculo exato do footprint médio por janela usado na seção 7.
 - A. Sundarrajan, M. Feng, M. Kasbekar, R. K. Sitaraman. *Footprint descriptors: Theory and
   practice of cache provisioning in a global CDN.* ACM CoNEXT, 2017.
 - A. Sabnis, R. K. Sitaraman. *TRAGEN: A synthetic trace generator for realistic cache

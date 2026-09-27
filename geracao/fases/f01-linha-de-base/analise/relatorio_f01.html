@@ -68,7 +68,7 @@ footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;
 <h1>Fase f01 — linha-de-base</h1>
 <p class="descricao">Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil</p>
 <div class="meta">
-  <span>gerado em 23/09/2026 11:54</span>
+  <span>gerado em 27/09/2026 12:01</span>
   <span>50.000 requisições por cenário</span>
   <span>d<sub>max</sub> = 10.000</span>
   <span>objetos novos = 5,0%</span>
@@ -90,8 +90,8 @@ quem é reúso e cuja stack distance cabe no cache.</p>
   <th class="n">objetos distintos</th><th>conferência</th></tr></thead>
   <tbody>
 <tr><td><span class='pt' style='background:var(--c0)'></span>SD baixa</td><td class='n'>1,5</td><td class='n'>1</td><td class='n'>49</td><td class='n'>1.749</td><td class='n'>138</td><td class='n'>4,8%</td><td class='n'>3.118</td><td class='ok'>confere (erro 0,0067)</td></tr>
-<tr><td><span class='pt' style='background:var(--c1)'></span>SD media</td><td class='n'>1,0</td><td class='n'>72</td><td class='n'>3.713</td><td class='n'>9.003</td><td class='n'>431</td><td class='n'>4,8%</td><td class='n'>7.125</td><td class='ok'>confere (erro 0,0068)</td></tr>
-<tr><td><span class='pt' style='background:var(--c2)'></span>SD alta</td><td class='n'>0,5</td><td class='n'>2.510</td><td class='n'>8.091</td><td class='n'>9.788</td><td class='n'>818</td><td class='n'>4,8%</td><td class='n'>10.170</td><td class='ok'>confere (erro 0,0064)</td></tr>
+<tr><td><span class='pt' style='background:var(--c1)'></span>SD media</td><td class='n'>1,0</td><td class='n'>72</td><td class='n'>3.713</td><td class='n'>9.003</td><td class='n'>431</td><td class='n'>4,8%</td><td class='n'>7.125</td><td class='ok'>confere (erro 0,0072)</td></tr>
+<tr><td><span class='pt' style='background:var(--c2)'></span>SD alta</td><td class='n'>0,5</td><td class='n'>2.510</td><td class='n'>8.091</td><td class='n'>9.788</td><td class='n'>818</td><td class='n'>4,8%</td><td class='n'>10.170</td><td class='ok'>confere (erro 0,0066)</td></tr>
   </tbody>
 </table>
 </div>
@@ -114,49 +114,57 @@ nos tamanhos de cache da tabela; o erro mostrado é o maior deles. O limite acei
 <line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
 <text class="tk" x="54.0" y="20.0" text-anchor="end">100%</text>
 <text class="tk" x="62.0" y="302.0" text-anchor="start">1</text>
-<text class="tk" x="202.0" y="302.0" text-anchor="middle">10</text>
-<text class="tk" x="342.0" y="302.0" text-anchor="middle">100</text>
-<text class="tk" x="482.0" y="302.0" text-anchor="middle">1.000</text>
-<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<text class="tk" x="181.2" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="300.4" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="419.5" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="538.7" y="302.0" text-anchor="end">10.000</text>
 <line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
 <text class="lb" x="320.0" y="322.0" text-anchor="middle">tamanho do cache (objetos)</text>
 <text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">hit rate</text>
-<path d="M62.0,185.0L104.1,149.7L128.8,130.8L146.3,118.4L170.9,102.8L180.3,97.3L195.6,89.6L207.8,83.9L218.0,79.6L230.6,74.6L244.1,69.8L257.7,65.5L270.8,61.8L283.2,58.5L296.1,55.2L309.9,52.3L322.9,49.8L335.6,47.5L348.3,45.5L361.6,43.5L374.6,41.7L387.7,40.2L400.6,38.8L413.7,37.5L426.6,36.4L439.7,35.4L452.7,34.6L465.7,33.9L478.8,33.2L491.8,32.5L504.8,32.0L517.8,31.5L530.8,31.0L543.9,30.7L556.9,30.3L569.9,29.9L582.9,29.6L596.0,29.4L609.0,29.2L622.0,29.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<line x1="538.7" y1="20.0" x2="538.7" y2="284.0" stroke="var(--rule-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="tk" x="538.7" y="13.0" text-anchor="middle">d máx</text>
+<path d="M62.0,185.0L97.9,149.7L118.9,130.8L133.8,118.4L145.3,109.7L154.7,102.8L162.7,97.3L181.2,86.6L190.6,81.6L205.5,74.6L217.1,69.8L230.6,64.8L244.5,60.1L257.9,56.2L270.3,52.9L283.3,50.0L296.6,47.2L309.4,44.8L322.4,42.6L335.4,40.7L348.6,39.0L361.5,37.5L374.5,36.2L387.5,35.1L400.6,34.2L413.6,33.3L426.7,32.6L439.7,31.9L452.7,31.4L465.7,30.8L478.7,30.4L491.8,30.0L504.8,29.6L517.8,29.4L530.8,29.1L538.7,29.0L543.9,29.0L556.9,29.0L569.9,29.0L582.9,29.0L596.0,29.0L609.0,29.0L622.0,29.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="185.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="170.9" cy="104.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="218.0" cy="80.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="270.8" cy="62.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="322.9" cy="50.3" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="374.6" cy="42.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="426.6" cy="37.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="478.8" cy="33.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="530.8" cy="31.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="582.9" cy="30.1" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<path d="M62.0,257.7L104.1,244.4L128.8,235.8L146.3,229.4L170.9,219.8L180.3,216.0L195.6,210.0L207.8,204.9L218.0,200.5L230.6,195.4L244.1,189.4L257.7,183.9L270.8,178.1L283.2,173.2L296.1,167.5L309.9,161.6L322.9,156.3L335.6,150.4L348.3,144.9L361.6,139.3L374.6,133.8L387.7,128.2L400.6,122.6L413.7,117.1L426.6,111.6L439.7,105.7L452.7,100.1L465.7,94.4L478.8,89.3L491.8,83.7L504.8,78.2L517.8,72.8L530.8,67.5L543.9,62.2L556.9,56.5L569.9,51.0L582.9,45.6L596.0,39.9L609.0,34.3L622.0,29.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="145.3" cy="111.1" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="190.6" cy="83.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="244.5" cy="60.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="296.6" cy="47.7" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="348.6" cy="39.7" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="400.6" cy="34.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="452.7" cy="31.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="504.8" cy="30.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="543.9" cy="29.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="596.0" cy="29.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<path d="M62.0,257.7L97.9,244.4L118.9,235.8L133.8,229.4L145.3,224.0L154.7,219.8L162.7,216.0L181.2,207.4L190.6,202.7L205.5,195.4L217.1,189.4L230.6,182.9L244.5,175.7L257.9,169.1L270.3,163.0L283.3,156.7L296.6,149.5L309.4,143.1L322.4,136.8L335.4,130.0L348.6,123.4L361.5,117.0L374.5,110.5L387.5,103.7L400.6,96.9L413.6,90.6L426.7,84.2L439.7,77.8L452.7,71.5L465.7,65.2L478.7,58.9L491.8,52.4L504.8,46.0L517.8,39.1L530.8,32.7L538.7,29.0L543.9,29.0L556.9,29.0L569.9,29.0L582.9,29.0L596.0,29.0L609.0,29.0L622.0,29.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="258.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="170.9" cy="220.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="218.0" cy="201.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="270.8" cy="179.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="322.9" cy="157.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="374.6" cy="135.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="426.6" cy="113.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="478.8" cy="90.7" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="530.8" cy="68.4" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="582.9" cy="46.1" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<path d="M62.0,282.6L104.1,281.7L128.8,281.0L146.3,280.3L170.9,279.2L180.3,278.8L195.6,277.9L207.8,277.0L218.0,276.3L230.6,275.3L244.1,274.0L257.7,272.7L270.8,271.4L283.2,269.9L296.1,268.1L309.9,265.9L322.9,263.7L335.6,261.3L348.3,258.5L361.6,255.4L374.6,251.9L387.7,248.0L400.6,243.7L413.7,238.8L426.6,234.1L439.7,228.3L452.7,221.6L465.7,214.4L478.8,206.4L491.8,197.3L504.8,187.2L517.8,175.8L530.8,163.7L543.9,149.6L556.9,134.5L569.9,117.4L582.9,98.2L596.0,77.6L609.0,54.7L622.0,29.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="145.3" cy="224.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="190.6" cy="203.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="244.5" cy="176.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="296.6" cy="150.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="348.6" cy="124.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="400.6" cy="98.8" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="452.7" cy="72.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="504.8" cy="46.4" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="543.9" cy="29.4" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="596.0" cy="29.4" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<path d="M62.0,282.6L97.9,281.7L118.9,281.0L133.8,280.3L145.3,279.6L154.7,279.2L162.7,278.8L181.2,277.4L190.6,276.7L205.5,275.3L217.1,274.0L230.6,272.5L244.5,270.6L257.9,268.7L270.3,266.4L283.3,263.9L296.6,260.8L309.4,257.6L322.4,253.8L335.4,249.4L348.6,244.3L361.5,238.8L374.5,232.9L387.5,225.8L400.6,217.9L413.6,208.8L426.7,198.2L439.7,186.5L452.7,173.3L465.7,158.3L478.7,140.7L491.8,121.4L504.8,99.3L517.8,75.1L530.8,47.6L538.7,29.0L543.9,29.0L556.9,29.0L569.9,29.0L582.9,29.0L596.0,29.0L609.0,29.0L622.0,29.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="282.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="170.9" cy="279.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="218.0" cy="276.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="270.8" cy="271.5" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="322.9" cy="263.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="374.6" cy="252.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="426.6" cy="234.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="478.8" cy="206.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="530.8" cy="164.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="582.9" cy="99.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="145.3" cy="279.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="190.6" cy="276.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="244.5" cy="270.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="296.6" cy="261.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="348.6" cy="245.0" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="400.6" cy="218.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="452.7" cy="174.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="504.8" cy="101.0" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="543.9" cy="29.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="596.0" cy="29.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
 </svg></div>
 <p class="hint">Quanto mais alta a curva, melhor o cache se sai. A carga de SD alta precisa de um cache muito maior para
-chegar ao mesmo hit rate das outras. O teto de todas é 1 − P(∞): objeto novo nunca pode ser acerto.</p>
+chegar ao mesmo hit rate das outras. O eixo vai até o tamanho da carga, 50.000 requisições, para mostrar a curva
+inteira: das três, nenhuma passa de 1 − P(∞) = 95,0%, porque objeto novo nunca pode ser acerto. Da vertical
+tracejada (d<sub>max</sub> = 10.000) para a direita a curva é plana — nenhum reúso tem stack distance maior que
+d<sub>max</sub>, então aumentar o cache além disso não acerta nada novo.</p>
 
 <h2>Acumulada da stack distance</h2>
 <div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
@@ -173,49 +181,55 @@ chegar ao mesmo hit rate das outras. O teto de todas é 1 − P(∞): objeto nov
 <line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
 <text class="tk" x="54.0" y="20.0" text-anchor="end">100%</text>
 <text class="tk" x="62.0" y="302.0" text-anchor="start">1</text>
-<text class="tk" x="202.0" y="302.0" text-anchor="middle">10</text>
-<text class="tk" x="342.0" y="302.0" text-anchor="middle">100</text>
-<text class="tk" x="482.0" y="302.0" text-anchor="middle">1.000</text>
-<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<text class="tk" x="181.2" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="300.4" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="419.5" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="538.7" y="302.0" text-anchor="end">10.000</text>
 <line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
 <text class="lb" x="320.0" y="322.0" text-anchor="middle">stack distance x</text>
 <text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">% dos reúsos com SD menor que x</text>
-<path d="M62.0,179.9L104.1,142.8L128.8,123.0L146.3,109.9L170.9,93.5L180.3,87.8L195.6,79.7L207.8,73.7L218.0,69.2L230.6,64.0L244.1,58.9L257.7,54.3L270.8,50.5L283.2,47.0L296.1,43.6L309.9,40.5L322.9,37.9L335.6,35.5L348.3,33.4L361.6,31.2L374.6,29.4L387.7,27.8L400.6,26.3L413.7,25.0L426.6,23.8L439.7,22.7L452.7,21.9L465.7,21.1L478.8,20.4L491.8,19.7L504.8,19.2L517.8,18.6L530.8,18.1L543.9,17.8L556.9,17.4L569.9,17.0L582.9,16.7L596.0,16.4L609.0,16.2L622.0,16.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<line x1="538.7" y1="20.0" x2="538.7" y2="284.0" stroke="var(--rule-strong)" stroke-width="1" stroke-dasharray="4 3"/>
+<text class="tk" x="538.7" y="13.0" text-anchor="middle">d máx</text>
+<path d="M62.0,179.9L97.9,142.8L118.9,123.0L133.8,109.9L145.3,100.9L154.7,93.5L162.7,87.8L181.2,76.6L190.6,71.3L205.5,64.0L217.1,58.9L230.6,53.7L244.5,48.7L257.9,44.6L270.3,41.1L283.3,38.1L296.6,35.2L309.4,32.6L322.4,30.3L335.4,28.3L348.6,26.5L361.5,25.0L374.5,23.6L387.5,22.4L400.6,21.5L413.6,20.6L426.7,19.8L439.7,19.1L452.7,18.5L465.7,18.0L478.7,17.5L491.8,17.1L504.8,16.7L517.8,16.4L530.8,16.1L538.7,16.0L543.9,16.0L556.9,16.0L569.9,16.0L582.9,16.0L596.0,16.0L609.0,16.0L622.0,16.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="180.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="170.9" cy="95.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="218.0" cy="70.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="270.8" cy="50.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="322.9" cy="38.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="374.6" cy="29.7" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="426.6" cy="24.2" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="478.8" cy="20.6" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="530.8" cy="18.3" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<circle cx="582.9" cy="16.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
-<path d="M62.0,256.4L104.1,242.4L128.8,233.4L146.3,226.7L170.9,216.6L180.3,212.6L195.6,206.3L207.8,200.9L218.0,196.3L230.6,190.9L244.1,184.6L257.7,178.8L270.8,172.7L283.2,167.5L296.1,161.6L309.9,155.4L322.9,149.8L335.6,143.6L348.3,137.8L361.6,131.9L374.6,126.2L387.7,120.3L400.6,114.4L413.7,108.6L426.6,102.8L439.7,96.6L452.7,90.8L465.7,84.8L478.8,79.4L491.8,73.5L504.8,67.7L517.8,62.1L530.8,56.4L543.9,50.9L556.9,45.0L569.9,39.2L582.9,33.5L596.0,27.5L609.0,21.5L622.0,16.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="145.3" cy="102.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="190.6" cy="72.4" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="244.5" cy="49.1" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="296.6" cy="35.3" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="348.6" cy="26.9" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="400.6" cy="21.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="452.7" cy="18.7" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="504.8" cy="16.8" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="543.9" cy="16.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<circle cx="596.0" cy="16.0" r="3.4" fill="none" stroke="var(--c0)" stroke-width="1.6"/>
+<path d="M62.0,256.4L97.9,242.4L118.9,233.4L133.8,226.7L145.3,221.0L154.7,216.6L162.7,212.6L181.2,203.5L190.6,198.5L205.5,190.9L217.1,184.6L230.6,177.7L244.5,170.2L257.9,163.3L270.3,156.8L283.3,150.2L296.6,142.7L309.4,135.9L322.4,129.3L335.4,122.2L348.6,115.2L361.5,108.5L374.5,101.6L387.5,94.5L400.6,87.3L413.6,80.8L426.7,74.1L439.7,67.3L452.7,60.7L465.7,54.1L478.7,47.4L491.8,40.6L504.8,33.8L517.8,26.7L530.8,19.9L538.7,16.0L543.9,16.0L556.9,16.0L569.9,16.0L582.9,16.0L596.0,16.0L609.0,16.0L622.0,16.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="256.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="170.9" cy="216.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="218.0" cy="196.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="270.8" cy="173.7" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="322.9" cy="150.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="374.6" cy="127.3" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="426.6" cy="104.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="478.8" cy="80.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="530.8" cy="57.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<circle cx="582.9" cy="33.6" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
-<path d="M62.0,282.6L104.1,281.6L128.8,280.9L146.3,280.1L170.9,279.0L180.3,278.5L195.6,277.6L207.8,276.6L218.0,275.9L230.6,274.8L244.1,273.5L257.7,272.2L270.8,270.7L283.2,269.2L296.1,267.3L309.9,265.0L322.9,262.6L335.6,260.1L348.3,257.2L361.6,253.9L374.6,250.3L387.7,246.2L400.6,241.6L413.7,236.5L426.6,231.5L439.7,225.4L452.7,218.4L465.7,210.9L478.8,202.4L491.8,192.9L504.8,182.2L517.8,170.3L530.8,157.5L543.9,142.7L556.9,126.9L569.9,108.9L582.9,88.7L596.0,67.1L609.0,43.1L622.0,16.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="145.3" cy="221.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="190.6" cy="199.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="244.5" cy="171.2" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="296.6" cy="143.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="348.6" cy="116.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="400.6" cy="89.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="452.7" cy="61.5" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="504.8" cy="33.9" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="543.9" cy="16.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<circle cx="596.0" cy="16.0" r="3.4" fill="none" stroke="var(--c1)" stroke-width="1.6"/>
+<path d="M62.0,282.6L97.9,281.6L118.9,280.9L133.8,280.1L145.3,279.4L154.7,279.0L162.7,278.5L181.2,277.0L190.6,276.3L205.5,274.8L217.1,273.5L230.6,271.9L244.5,270.0L257.9,267.9L270.3,265.5L283.3,262.8L296.6,259.7L309.4,256.3L322.4,252.2L335.4,247.7L348.6,242.3L361.5,236.5L374.5,230.3L387.5,222.9L400.6,214.5L413.6,205.0L426.7,193.8L439.7,181.5L452.7,167.6L465.7,151.9L478.7,133.4L491.8,113.1L504.8,89.9L517.8,64.5L530.8,35.5L538.7,16.0L543.9,16.0L556.9,16.0L569.9,16.0L582.9,16.0L596.0,16.0L609.0,16.0L622.0,16.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
 <circle cx="62.0" cy="282.7" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="170.9" cy="279.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="218.0" cy="276.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="270.8" cy="270.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="322.9" cy="262.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="374.6" cy="250.6" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="426.6" cy="231.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="478.8" cy="202.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="530.8" cy="158.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
-<circle cx="582.9" cy="90.2" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="145.3" cy="279.6" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="190.6" cy="276.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="244.5" cy="270.1" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="296.6" cy="259.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="348.6" cy="242.9" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="400.6" cy="214.8" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="452.7" cy="168.3" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="504.8" cy="91.4" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="543.9" cy="16.0" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
+<circle cx="596.0" cy="16.0" r="3.4" fill="none" stroke="var(--c2)" stroke-width="1.6"/>
 </svg></div>
 <p class="hint">Lê-se assim: no ponto x, a curva diz qual porcentagem dos reúsos tem stack distance menor que x — ou seja,
-quantos reúsos caberiam num cache de x objetos.</p>
+quantos reúsos caberiam num cache de x objetos. O eixo vai até o tamanho da carga; as três chegam a 100% em
+d<sub>max</sub> = 10.000 e ficam lá, que é a mesma informação do trecho plano da curva de hit rate.</p>
 
 <h2>Distribuição da stack distance</h2>
 <div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
@@ -296,50 +310,118 @@ quantos reúsos caberiam num cache de x objetos.</p>
 <style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
 <line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
 <text class="tk" x="54.0" y="288.0" text-anchor="end">1</text>
-<line class="gx" x1="62.0" y1="217.0" x2="622.0" y2="217.0"/>
-<text class="tk" x="54.0" y="221.0" text-anchor="end">10</text>
-<line class="gx" x1="62.0" y1="150.0" x2="622.0" y2="150.0"/>
-<text class="tk" x="54.0" y="154.0" text-anchor="end">100</text>
-<line class="gx" x1="62.0" y1="83.0" x2="622.0" y2="83.0"/>
-<text class="tk" x="54.0" y="87.0" text-anchor="end">1.000</text>
+<line class="gx" x1="62.0" y1="230.4" x2="622.0" y2="230.4"/>
+<text class="tk" x="54.0" y="234.4" text-anchor="end">10</text>
+<line class="gx" x1="62.0" y1="176.8" x2="622.0" y2="176.8"/>
+<text class="tk" x="54.0" y="180.8" text-anchor="end">100</text>
+<line class="gx" x1="62.0" y1="123.2" x2="622.0" y2="123.2"/>
+<text class="tk" x="54.0" y="127.2" text-anchor="end">1.000</text>
+<line class="gx" x1="62.0" y1="69.6" x2="622.0" y2="69.6"/>
+<text class="tk" x="54.0" y="73.6" text-anchor="end">10.000</text>
 <line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
-<text class="tk" x="54.0" y="20.0" text-anchor="end">10.000</text>
-<text class="tk" x="62.0" y="302.0" text-anchor="middle">10</text>
-<text class="tk" x="248.7" y="302.0" text-anchor="middle">100</text>
-<text class="tk" x="435.3" y="302.0" text-anchor="middle">1.000</text>
-<text class="tk" x="622.0" y="302.0" text-anchor="end">10.000</text>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">100.000</text>
+<text class="tk" x="62.0" y="302.0" text-anchor="middle">1</text>
+<text class="tk" x="181.2" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="300.4" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="419.5" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="538.7" y="302.0" text-anchor="end">10.000</text>
 <line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
 <text class="lb" x="320.0" y="322.0" text-anchor="middle">tamanho da janela (requisições)</text>
 <text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">objetos distintos</text>
-<path d="M62.0,235.8L151.1,213.9L248.7,189.4L337.7,166.3L435.3,140.6L524.4,116.6L622.0,89.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
-<circle cx="62.0" cy="235.8" r="3" fill="var(--c0)"/>
-<circle cx="151.1" cy="213.9" r="3" fill="var(--c0)"/>
-<circle cx="248.7" cy="189.4" r="3" fill="var(--c0)"/>
-<circle cx="337.7" cy="166.3" r="3" fill="var(--c0)"/>
-<circle cx="435.3" cy="140.6" r="3" fill="var(--c0)"/>
-<circle cx="524.4" cy="116.6" r="3" fill="var(--c0)"/>
-<circle cx="622.0" cy="89.0" r="3" fill="var(--c0)"/>
-<path d="M62.0,222.4L151.1,194.2L248.7,163.9L337.7,136.4L435.3,107.5L524.4,82.2L622.0,56.1" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
-<circle cx="62.0" cy="222.4" r="3" fill="var(--c1)"/>
-<circle cx="151.1" cy="194.2" r="3" fill="var(--c1)"/>
-<circle cx="248.7" cy="163.9" r="3" fill="var(--c1)"/>
-<circle cx="337.7" cy="136.4" r="3" fill="var(--c1)"/>
-<circle cx="435.3" cy="107.5" r="3" fill="var(--c1)"/>
-<circle cx="524.4" cy="82.2" r="3" fill="var(--c1)"/>
-<circle cx="622.0" cy="56.1" r="3" fill="var(--c1)"/>
-<path d="M62.0,217.4L151.1,185.9L248.7,151.6L337.7,121.1L435.3,88.8L524.4,61.5L622.0,35.8" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
-<circle cx="62.0" cy="217.4" r="3" fill="var(--c2)"/>
-<circle cx="151.1" cy="185.9" r="3" fill="var(--c2)"/>
-<circle cx="248.7" cy="151.6" r="3" fill="var(--c2)"/>
-<circle cx="337.7" cy="121.1" r="3" fill="var(--c2)"/>
-<circle cx="435.3" cy="88.8" r="3" fill="var(--c2)"/>
-<circle cx="524.4" cy="61.5" r="3" fill="var(--c2)"/>
-<circle cx="622.0" cy="35.8" r="3" fill="var(--c2)"/>
+<path d="M62.0,284.0L97.9,272.6L133.8,261.1L154.7,254.4L181.2,246.1L202.2,239.5L224.3,232.5L248.9,224.8L272.2,217.4L295.5,209.9L300.4,208.4L318.5,202.5L342.1,194.9L365.3,187.3L388.7,179.6L412.0,171.9L419.5,169.4L435.3,164.0L458.7,156.1L482.0,148.1L505.3,140.0L528.7,131.7L538.7,128.0L552.0,123.2L575.3,114.6L598.7,105.9L622.0,96.7" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="284.0" r="3" fill="var(--c0)"/>
+<circle cx="97.9" cy="272.6" r="3" fill="var(--c0)"/>
+<circle cx="133.8" cy="261.1" r="3" fill="var(--c0)"/>
+<circle cx="154.7" cy="254.4" r="3" fill="var(--c0)"/>
+<circle cx="181.2" cy="246.1" r="3" fill="var(--c0)"/>
+<circle cx="202.2" cy="239.5" r="3" fill="var(--c0)"/>
+<circle cx="224.3" cy="232.5" r="3" fill="var(--c0)"/>
+<circle cx="248.9" cy="224.8" r="3" fill="var(--c0)"/>
+<circle cx="272.2" cy="217.4" r="3" fill="var(--c0)"/>
+<circle cx="295.5" cy="209.9" r="3" fill="var(--c0)"/>
+<circle cx="300.4" cy="208.4" r="3" fill="var(--c0)"/>
+<circle cx="318.5" cy="202.5" r="3" fill="var(--c0)"/>
+<circle cx="342.1" cy="194.9" r="3" fill="var(--c0)"/>
+<circle cx="365.3" cy="187.3" r="3" fill="var(--c0)"/>
+<circle cx="388.7" cy="179.6" r="3" fill="var(--c0)"/>
+<circle cx="412.0" cy="171.9" r="3" fill="var(--c0)"/>
+<circle cx="419.5" cy="169.4" r="3" fill="var(--c0)"/>
+<circle cx="435.3" cy="164.0" r="3" fill="var(--c0)"/>
+<circle cx="458.7" cy="156.1" r="3" fill="var(--c0)"/>
+<circle cx="482.0" cy="148.1" r="3" fill="var(--c0)"/>
+<circle cx="505.3" cy="140.0" r="3" fill="var(--c0)"/>
+<circle cx="528.7" cy="131.7" r="3" fill="var(--c0)"/>
+<circle cx="538.7" cy="128.0" r="3" fill="var(--c0)"/>
+<circle cx="552.0" cy="123.2" r="3" fill="var(--c0)"/>
+<circle cx="575.3" cy="114.6" r="3" fill="var(--c0)"/>
+<circle cx="598.7" cy="105.9" r="3" fill="var(--c0)"/>
+<circle cx="622.0" cy="96.7" r="3" fill="var(--c0)"/>
+<path d="M62.0,284.0L97.9,269.0L133.8,254.3L154.7,245.7L181.2,235.0L202.2,226.5L224.3,217.7L248.9,207.9L272.2,198.8L295.5,189.7L300.4,187.8L318.5,180.8L342.1,171.7L365.3,162.9L388.7,154.2L412.0,145.5L419.5,142.8L435.3,137.1L458.7,128.7L482.0,120.6L505.3,112.6L528.7,104.9L538.7,101.7L552.0,97.5L575.3,90.3L598.7,83.7L622.0,77.5" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="284.0" r="3" fill="var(--c1)"/>
+<circle cx="97.9" cy="269.0" r="3" fill="var(--c1)"/>
+<circle cx="133.8" cy="254.3" r="3" fill="var(--c1)"/>
+<circle cx="154.7" cy="245.7" r="3" fill="var(--c1)"/>
+<circle cx="181.2" cy="235.0" r="3" fill="var(--c1)"/>
+<circle cx="202.2" cy="226.5" r="3" fill="var(--c1)"/>
+<circle cx="224.3" cy="217.7" r="3" fill="var(--c1)"/>
+<circle cx="248.9" cy="207.9" r="3" fill="var(--c1)"/>
+<circle cx="272.2" cy="198.8" r="3" fill="var(--c1)"/>
+<circle cx="295.5" cy="189.7" r="3" fill="var(--c1)"/>
+<circle cx="300.4" cy="187.8" r="3" fill="var(--c1)"/>
+<circle cx="318.5" cy="180.8" r="3" fill="var(--c1)"/>
+<circle cx="342.1" cy="171.7" r="3" fill="var(--c1)"/>
+<circle cx="365.3" cy="162.9" r="3" fill="var(--c1)"/>
+<circle cx="388.7" cy="154.2" r="3" fill="var(--c1)"/>
+<circle cx="412.0" cy="145.5" r="3" fill="var(--c1)"/>
+<circle cx="419.5" cy="142.8" r="3" fill="var(--c1)"/>
+<circle cx="435.3" cy="137.1" r="3" fill="var(--c1)"/>
+<circle cx="458.7" cy="128.7" r="3" fill="var(--c1)"/>
+<circle cx="482.0" cy="120.6" r="3" fill="var(--c1)"/>
+<circle cx="505.3" cy="112.6" r="3" fill="var(--c1)"/>
+<circle cx="528.7" cy="104.9" r="3" fill="var(--c1)"/>
+<circle cx="538.7" cy="101.7" r="3" fill="var(--c1)"/>
+<circle cx="552.0" cy="97.5" r="3" fill="var(--c1)"/>
+<circle cx="575.3" cy="90.3" r="3" fill="var(--c1)"/>
+<circle cx="598.7" cy="83.7" r="3" fill="var(--c1)"/>
+<circle cx="622.0" cy="77.5" r="3" fill="var(--c1)"/>
+<path d="M62.0,284.0L97.9,267.9L133.8,251.9L154.7,242.5L181.2,230.7L202.2,221.4L224.3,211.6L248.9,200.7L272.2,190.5L295.5,180.3L300.4,178.1L318.5,170.3L342.1,160.1L365.3,150.3L388.7,140.5L412.0,130.9L419.5,127.9L435.3,121.6L458.7,112.6L482.0,103.9L505.3,95.9L528.7,88.4L538.7,85.5L552.0,81.8L575.3,76.3L598.7,72.1L622.0,69.2" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="284.0" r="3" fill="var(--c2)"/>
+<circle cx="97.9" cy="267.9" r="3" fill="var(--c2)"/>
+<circle cx="133.8" cy="251.9" r="3" fill="var(--c2)"/>
+<circle cx="154.7" cy="242.5" r="3" fill="var(--c2)"/>
+<circle cx="181.2" cy="230.7" r="3" fill="var(--c2)"/>
+<circle cx="202.2" cy="221.4" r="3" fill="var(--c2)"/>
+<circle cx="224.3" cy="211.6" r="3" fill="var(--c2)"/>
+<circle cx="248.9" cy="200.7" r="3" fill="var(--c2)"/>
+<circle cx="272.2" cy="190.5" r="3" fill="var(--c2)"/>
+<circle cx="295.5" cy="180.3" r="3" fill="var(--c2)"/>
+<circle cx="300.4" cy="178.1" r="3" fill="var(--c2)"/>
+<circle cx="318.5" cy="170.3" r="3" fill="var(--c2)"/>
+<circle cx="342.1" cy="160.1" r="3" fill="var(--c2)"/>
+<circle cx="365.3" cy="150.3" r="3" fill="var(--c2)"/>
+<circle cx="388.7" cy="140.5" r="3" fill="var(--c2)"/>
+<circle cx="412.0" cy="130.9" r="3" fill="var(--c2)"/>
+<circle cx="419.5" cy="127.9" r="3" fill="var(--c2)"/>
+<circle cx="435.3" cy="121.6" r="3" fill="var(--c2)"/>
+<circle cx="458.7" cy="112.6" r="3" fill="var(--c2)"/>
+<circle cx="482.0" cy="103.9" r="3" fill="var(--c2)"/>
+<circle cx="505.3" cy="95.9" r="3" fill="var(--c2)"/>
+<circle cx="528.7" cy="88.4" r="3" fill="var(--c2)"/>
+<circle cx="538.7" cy="85.5" r="3" fill="var(--c2)"/>
+<circle cx="552.0" cy="81.8" r="3" fill="var(--c2)"/>
+<circle cx="575.3" cy="76.3" r="3" fill="var(--c2)"/>
+<circle cx="598.7" cy="72.1" r="3" fill="var(--c2)"/>
+<circle cx="622.0" cy="69.2" r="3" fill="var(--c2)"/>
 </svg></div>
 <p class="hint">Quantos objetos distintos aparecem numa janela de N requisições — os dois eixos em escala log.
-O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance de um reúso é,
-por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos longos
-significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos diferentes.</p>
+O valor é exato, não amostrado: é a média sobre <em>todas</em> as janelas daquele tamanho, então não depende de semente.
+A janela vai de 1 requisição até a carga inteira. Nos dois extremos a curva é forçada: em 1 requisição o footprint é 1
+objeto, e na janela do tamanho da carga ele é exatamente o <strong>número de objetos distintos</strong> da tabela acima.
+É esse o "footprint em um número só" da carga — o resto da curva é o caminho entre os dois extremos, e é ali que os
+cenários se separam. O footprint não é um parâmetro do gerador: ele emerge do nível de stack distance. A stack distance
+de um reúso é, por definição, a contagem de objetos distintos na janela entre dois pedidos ao mesmo objeto; então reúsos
+longos significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos
+diferentes.</p>
 
 <h2>Conferência em cada tamanho de cache</h2>
 <div class="scroller">
