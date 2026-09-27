@@ -32,6 +32,8 @@ body{background:var(--paper);color:var(--ink);
 h1{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:clamp(26px,4vw,38px);
   line-height:1.05;letter-spacing:-.02em;margin:0 0 10px}
 h2{font-family:Archivo,sans-serif;font-weight:600;font-size:20px;letter-spacing:-.01em;margin:40px 0 8px}
+h3{font-family:Archivo,sans-serif;font-weight:600;font-size:14px;letter-spacing:.02em;margin:26px 0 6px;
+  color:var(--ink-2)}
 p{margin:0 0 14px;max-width:68ch}
 .meta{font-family:ui-monospace,"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
   display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 24px}
@@ -68,7 +70,7 @@ footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;
 <h1>Fase f01 — linha-de-base</h1>
 <p class="descricao">Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil</p>
 <div class="meta">
-  <span>gerado em 27/09/2026 12:32</span>
+  <span>gerado em 27/09/2026 16:39</span>
   <span>50.000 requisições por cenário</span>
   <span>d<sub>max</sub> = 10.000</span>
   <span>objetos novos = 5,0%</span>
@@ -424,6 +426,40 @@ longos significam janelas com muitos objetos distintos. As duas curvas descrevem
 diferentes.</p>
 
 <h2>Frequência por objeto</h2>
+<p>Quantas vezes cada objeto foi pedido. A contagem é feita no trace já sem o prefixo de aquecimento — só as
+50.000 requisições da carga entram — e sem correção de borda: um objeto que nasce perto do fim não teve tempo de ser
+pedido de novo e conta como "um pedido só".</p>
+
+<h3>O que é rank</h3>
+<p>Rank é a posição no ranking de mais pedido, e só isso. Conta-se quantas vezes cada objeto aparece, ordena-se do
+maior para o menor, e numera-se a lista. Num trace de brinquedo com 12 requisições —
+<code>A B A C A B D A E B A C</code> — fica assim:</p>
+<div class="scroller">
+<table>
+  <thead><tr><th class="n">Rank</th><th>Objeto</th><th class="n">Pedidos</th>
+  <th class="n">Acumulado das requisições</th></tr></thead>
+  <tbody>
+  <tr><td class="n">1</td><td>A</td><td class="n">5</td><td class="n">5/12 = 42%</td></tr>
+  <tr><td class="n">2</td><td>B</td><td class="n">3</td><td class="n">8/12 = 67%</td></tr>
+  <tr><td class="n">3</td><td>C</td><td class="n">2</td><td class="n">10/12 = 83%</td></tr>
+  <tr><td class="n">4</td><td>D</td><td class="n">1</td><td class="n">11/12 = 92%</td></tr>
+  <tr><td class="n">5</td><td>E</td><td class="n">1</td><td class="n">12/12 = 100%</td></tr>
+  </tbody>
+</table>
+</div>
+<p>O nome do objeto é descartado de propósito: o rank 1 é "o mais pedido, seja ele quem for". Qual objeto ficou em
+primeiro é sorteio; o que interessa é o <strong>formato da lista ordenada</strong> — se o primeiro colocado tem muito
+mais pedidos que o centésimo, ou se todos têm quase a mesma coisa. A última coluna é a acumulada, e é dela que sai a
+leitura "os dois objetos mais pedidos respondem por 67% de todas as requisições".</p>
+
+<h3>Como o gráfico é montado</h3>
+<p>É a tabela acima virada em pontos: <strong>x = rank</strong> (1, 2, 3, … até o último objeto) e
+<strong>y = quantos pedidos aquele objeto recebeu</strong>. Os dois eixos em escala log, porque o rank vai a dezenas de
+milhares enquanto os pedidos ficam na casa das centenas — em escala linear tudo se amontoaria num canto do quadro.</p>
+<p>A escala log dá de brinde o teste visual que a literatura usa desde sempre: se a popularidade seguir Zipf (pedidos
+proporcionais a rank<sup>−α</sup>), a curva vira uma <strong>reta</strong>, e a inclinação dela é o α. Reta inclinada
+significa popularidade concentrada em poucos objetos; curva horizontal significa que todos os objetos valem mais ou
+menos o mesmo.</p>
 <div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
 <div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Frequência por objeto">
 <style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
@@ -532,6 +568,12 @@ diferentes.</p>
 <circle cx="602.7" cy="241.4" r="3" fill="var(--c2)"/>
 <circle cx="622.0" cy="284.0" r="3" fill="var(--c2)"/>
 </svg></div>
+<p class="hint">A curva daqui é quase horizontal no meio e despenca só no finalzinho, nos objetos que nasceram perto do
+fim da carga. Não há trecho reto — por isso esta análise não reporta um expoente α: não existe inclinação para medir.
+Quem quiser o mesmo dado pelo outro ângulo — quantos objetos receberam 1, 2, 3–4, 5–8… pedidos — encontra em
+<code>frequencia_hist_f01.csv</code>; a curva ponto a ponto está em <code>frequencia_f01.csv</code>.</p>
+
+<h3>Os números</h3>
 <div class="scroller">
 <table>
   <thead><tr><th>Cenário</th><th class="n">Objetos distintos</th><th class="n">Requisições por objeto (média)</th>
@@ -544,21 +586,31 @@ diferentes.</p>
   </tbody>
 </table>
 </div>
-<p class="hint">Quantas vezes cada objeto foi pedido, do mais pedido ao menos pedido — a contagem é feita no trace já sem
-o aquecimento, sem correção de borda (objetos que nascem no fim da carga têm menos tempo de serem pedidos de novo).
-A <strong>média</strong> tem uma referência analítica: um objeto novo nasce a cada 1/P(∞) = 20 requisições,
-então é esse o número de pedidos por objeto <em>quando a carga é grande diante da pilha de aquecimento</em>. Os objetos
-da pilha inicial que são tocados entram na conta sem terem nascido na carga e puxam a média para baixo — quanto menor a
-carga, mais. O resto da distribuição é <strong>medida, não
-conferência</strong>: a popularidade não é um parâmetro do gerador — o que se sorteia é a <em>profundidade</em> na
-pilha, nunca o objeto.</p>
-<p class="hint">Vale ler a tabela com atenção, porque ela mostra um limite do modelo. Os cenários têm stack distance e
-footprint muito diferentes, mas popularidade quase igual: β move as duas primeiras e quase não move esta. E a
-distribuição não tem cauda de Zipf — ela se concentra em torno da média. Duas referências para calibrar a última
-coluna: se todos os objetos fossem pedidos o mesmo tanto, os 10% mais pedidos levariam 10% das requisições; num trace
-real, com popularidade Zipf-like de expoente entre 0,8 e 1,0, levariam de 60% a 80%. O LRU Stack Model reproduz a
-distribuição de stack distance, não a de popularidade — o que basta para LRU, cuja curva depende só da stack distance,
-mas não para políticas guiadas por frequência.</p>
+<p class="hint"><strong>A média</strong> é o único número desta seção com referência analítica: um objeto novo nasce a
+cada 1/P(∞) = 20 requisições, então é esse o número de pedidos por objeto quando a carga é grande diante da
+pilha de aquecimento. Os objetos da pilha inicial que são tocados entram no denominador sem terem nascido na carga, e
+puxam a média para baixo — quanto menor a carga, mais.</p>
+<p class="hint"><strong>A última coluna</strong> se lê comparando com dois extremos conhecidos. Tome os 10% de objetos
+mais pedidos e some os pedidos deles:</p>
+<div class="scroller">
+<table>
+  <thead><tr><th>Se a popularidade fosse…</th><th class="n">os 10% mais pedidos levariam</th></tr></thead>
+  <tbody>
+  <tr><td>todos os objetos pedidos o mesmo tanto</td><td class="n">10%</td></tr>
+  <tr><td>Zipf-like, como em tráfego real (α entre 0,8 e 1,0)</td><td class="n">60% a 80%</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="hint">A tabela acima diz onde estas cargas caem entre os dois. E vale reparar em uma coisa: os cenários têm
+stack distance e footprint bem diferentes, mas popularidade quase igual — β move as duas primeiras e quase não move
+esta.</p>
+<p class="hint"><strong>Esta seção é medida, não conferência.</strong> Todo outro número do relatório tem um valor
+teórico ao lado, calculado da distribuição sem simular nada; a frequência não tem, porque o gerador nunca escolhe
+objetos por popularidade — o que ele sorteia é a <em>profundidade</em> na pilha. A popularidade é o que sai, não o que
+foi pedido. É um limite conhecido do LRU Stack Model, e ele é bem delimitado: para o <strong>LRU</strong> não muda
+nada, porque a curva de hit rate depende só da stack distance, que a conferência mostra reproduzida; já para políticas
+guiadas por <strong>frequência</strong> (LFU e parentes) muda tudo, porque sem cauda de popularidade não há campeão
+que valha a pena guardar, e a comparação diria mais sobre o gerador do que sobre a política.</p>
 
 <h2>Conferência em cada tamanho de cache</h2>
 <div class="scroller">

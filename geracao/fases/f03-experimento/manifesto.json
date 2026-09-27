@@ -2,10 +2,10 @@
   "fase": "f03",
   "apelido": "experimento",
   "descricao": "Experimento: tres niveis de stack distance com 1 milhao de requisicoes",
-  "gerado_em": "2026-09-27T12:33:18",
+  "gerado_em": "2026-09-27T16:40:08",
   "modo": "so-analise",
   "codigo": {
-    "commit": "3f2a115",
+    "commit": "38d69d9",
     "limpo": false,
     "git_disponivel": true,
     "hash_arquivos": "cf3f6bbaff42",

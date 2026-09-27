@@ -344,6 +344,13 @@ A contagem de requisições por objeto — feita no trace já sem o aquecimento,
 | Objetos pedidos **uma vez só** | 5,0% | 5,3% | 5,7% |
 | Requisições nos 10% mais pedidos | 32,7% | 31,9% | 31,6% |
 
+Além da tabela, a análise guarda a distribuição inteira em duas formas. A **curva rank × pedidos**
+ordena os objetos do mais pedido para o menos pedido e registra quantos pedidos recebeu o objeto de
+cada posição — rank 1 é o campeão, seja ele qual for, porque a identidade do objeto é sorteio e não
+interessa. Desenhada em log-log, essa curva é o teste visual clássico de Zipf: popularidade
+Zipf-like (pedidos ∝ rank^−α) aparece como uma reta de inclinação α. A segunda forma é o
+histograma, o mesmo dado pelo outro ângulo — quantos objetos receberam 1, 2, 3–4, 5–8… pedidos.
+
 A **média** tem referência analítica: um objeto novo nasce a cada 1/P(∞) = 20 requisições, logo
 cada objeto rende 20 pedidos em média — desde que a carga seja grande diante da pilha de
 aquecimento. Os objetos da pilha inicial que são tocados entram na conta sem terem nascido ali e
@@ -359,7 +366,11 @@ footprint de 140, 435 e 819 objetos em 1.000 requisições — mas popularidade 
 referências para ler a última linha: se todos os objetos fossem pedidos o mesmo tanto, os 10% mais
 pedidos levariam 10% das requisições; num trace real, com popularidade Zipf-like de expoente entre
 0,8 e 1,0, levariam de 60% a 80%. As cargas ficam em 32%, isto é, muito mais planas que tráfego
-real e só um pouco mais concentradas que o caso uniforme.
+real e só um pouco mais concentradas que o caso uniforme. Na curva rank × pedidos isso aparece como
+ausência de trecho reto — a curva é quase horizontal no miolo e só despenca no fim —, e é por isso
+que não se reporta um α aqui: não há inclinação para medir. O histograma diz o mesmo de outro jeito:
+no cenário de SD baixa, 25,6% dos objetos receberam entre 16 e 31 pedidos, bem em cima da média de
+19,8, e apenas 0,1% passou de 127.
 
 Isso não é defeito de implementação, é a natureza do LRU Stack Model: nele a popularidade de um
 objeto é passageira — ele nasce no topo, é reusado enquanto está raso e some quando afunda. Não

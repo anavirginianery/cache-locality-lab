@@ -162,7 +162,7 @@ análises usam a curva de hit rate.)
 | `.../analise/sd_cdf_*.csv` | Acumulada da SD, teórica e medida. |
 | `.../analise/sd_histograma_*.csv` | Quantos reúsos em cada faixa de SD. A primeira faixa é só o d = 0, que costuma ser a moda; as seguintes dobram (1, 2, 4, 8, …). As frações somam 1. |
 | `.../analise/footprint_*.csv` | Footprint: objetos distintos por janela de N requisições, em média — valor exato, sobre todas as janelas daquele tamanho. A janela vai de 1 requisição até a carga inteira. |
-| `.../analise/frequencia_*.csv` | Quantas requisições recebeu o objeto de cada rank, do mais pedido ao menos pedido, e a fração acumulada das requisições. |
+| `.../analise/frequencia_*.csv` | Curva rank × pedidos: os objetos ordenados do mais pedido para o menos pedido (rank 1 é o campeão, seja ele qual for), quantos pedidos recebeu o de cada posição, e a fração acumulada das requisições — "os N mais pedidos respondem por X% de tudo". |
 | `.../analise/frequencia_hist_*.csv` | Quantos objetos receberam 1, 2, 3–4, 5–8… requisições. As frações somam 1. |
 | `.../analise/conferencia_*.csv` | Hit teórico × medido em cada tamanho de cache, e a fração de reúsos que cabem (e que não cabem) nele. |
 | `.../analise/*.svg` | Os cinco gráficos soltos, prontos para entrar em um documento. |

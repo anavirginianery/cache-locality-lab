@@ -2,10 +2,10 @@
   "fase": "f01",
   "apelido": "linha-de-base",
   "descricao": "Linha de base: tres niveis de stack distance por lei de potencia, dmax 10 mil",
-  "gerado_em": "2026-09-27T12:32:56",
+  "gerado_em": "2026-09-27T16:39:46",
   "modo": "so-analise",
   "codigo": {
-    "commit": "3f2a115",
+    "commit": "38d69d9",
     "limpo": false,
     "git_disponivel": true,
     "hash_arquivos": "cf3f6bbaff42",
