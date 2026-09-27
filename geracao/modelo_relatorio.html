@@ -131,6 +131,35 @@ de um reúso é, por definição, a contagem de objetos distintos na janela entr
 longos significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos
 diferentes.</p>
 
+<h2>Frequência por objeto</h2>
+<div class="legendas">{{legenda}}</div>
+<div class="fig">{{svg_freq}}</div>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">Objetos distintos</th><th class="n">Requisições por objeto (média)</th>
+  <th class="n">Objeto mais pedido</th><th class="n">Objetos com 1 pedido só</th>
+  <th class="n">Requisições nos 10% mais pedidos</th></tr></thead>
+  <tbody>
+{{linhas_freq}}
+  </tbody>
+</table>
+</div>
+<p class="hint">Quantas vezes cada objeto foi pedido, do mais pedido ao menos pedido — a contagem é feita no trace já sem
+o aquecimento, sem correção de borda (objetos que nascem no fim da carga têm menos tempo de serem pedidos de novo).
+A <strong>média</strong> tem uma referência analítica: um objeto novo nasce a cada 1/P(∞) = {{media_ref}} requisições,
+então é esse o número de pedidos por objeto <em>quando a carga é grande diante da pilha de aquecimento</em>. Os objetos
+da pilha inicial que são tocados entram na conta sem terem nascido na carga e puxam a média para baixo — quanto menor a
+carga, mais. O resto da distribuição é <strong>medida, não
+conferência</strong>: a popularidade não é um parâmetro do gerador — o que se sorteia é a <em>profundidade</em> na
+pilha, nunca o objeto.</p>
+<p class="hint">Vale ler a tabela com atenção, porque ela mostra um limite do modelo. Os cenários têm stack distance e
+footprint muito diferentes, mas popularidade quase igual: β move as duas primeiras e quase não move esta. E a
+distribuição não tem cauda de Zipf — ela se concentra em torno da média. Duas referências para calibrar a última
+coluna: se todos os objetos fossem pedidos o mesmo tanto, os 10% mais pedidos levariam 10% das requisições; num trace
+real, com popularidade Zipf-like de expoente entre 0,8 e 1,0, levariam de 60% a 80%. O LRU Stack Model reproduz a
+distribuição de stack distance, não a de popularidade — o que basta para LRU, cuja curva depende só da stack distance,
+mas não para políticas guiadas por frequência.</p>
+
 <h2>Conferência em cada tamanho de cache</h2>
 <div class="scroller">
 <table>
@@ -150,7 +179,8 @@ cabem, está em <code>conferencia.csv</code>.</p>
 <p>Gerado por <code>geracao/pipeline.py</code> — fase <strong>{{fase}}</strong>. Os números deste relatório
 também estão nos CSVs de <code>analise/</code>, todos com o id da fase no nome:
 <code>medidas_{{fase}}.csv</code>, <code>hrc_{{fase}}.csv</code>, <code>sd_cdf_{{fase}}.csv</code>,
-<code>sd_histograma_{{fase}}.csv</code>, <code>footprint_{{fase}}.csv</code> e
+<code>sd_histograma_{{fase}}.csv</code>, <code>footprint_{{fase}}.csv</code>,
+<code>frequencia_{{fase}}.csv</code>, <code>frequencia_hist_{{fase}}.csv</code> e
 <code>conferencia_{{fase}}.csv</code>. Os gráficos estão soltos em <code>analise/*_{{fase}}.svg</code>,
 prontos para entrar em um documento. A configuração completa e o resumo dos resultados estão no
 <code>manifesto.json</code> da fase.</p>

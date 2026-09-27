@@ -162,8 +162,10 @@ análises usam a curva de hit rate.)
 | `.../analise/sd_cdf_*.csv` | Acumulada da SD, teórica e medida. |
 | `.../analise/sd_histograma_*.csv` | Quantos reúsos em cada faixa de SD. A primeira faixa é só o d = 0, que costuma ser a moda; as seguintes dobram (1, 2, 4, 8, …). As frações somam 1. |
 | `.../analise/footprint_*.csv` | Footprint: objetos distintos por janela de N requisições, em média — valor exato, sobre todas as janelas daquele tamanho. A janela vai de 1 requisição até a carga inteira. |
+| `.../analise/frequencia_*.csv` | Quantas requisições recebeu o objeto de cada rank, do mais pedido ao menos pedido, e a fração acumulada das requisições. |
+| `.../analise/frequencia_hist_*.csv` | Quantos objetos receberam 1, 2, 3–4, 5–8… requisições. As frações somam 1. |
 | `.../analise/conferencia_*.csv` | Hit teórico × medido em cada tamanho de cache, e a fração de reúsos que cabem (e que não cabem) nele. |
-| `.../analise/*.svg` | Os quatro gráficos soltos, prontos para entrar em um documento. |
+| `.../analise/*.svg` | Os cinco gráficos soltos, prontos para entrar em um documento. |
 | `.../analise/relatorio_*.html` | Tudo junto, para leitura. |
 
 ## Configuração de uma fase
@@ -209,6 +211,14 @@ python3 pipeline.py --fase f01 --so-analise
 - **Objetos distintos** — quantos objetos diferentes apareceram na carga inteira. Não é um
   parâmetro: emerge do nível de stack distance (quanto maior a SD, mais objetos ficam ativos) e da
   taxa de objetos novos. É também o ponto final da curva de footprint — veja abaixo.
+- **Frequência por objeto** — quantas vezes cada objeto foi pedido. A média tem âncora exata,
+  1/`inf` (com `inf` = 0,05, vinte pedidos por objeto), porque um objeto novo nasce a cada 1/`inf`
+  requisições. O resto é medida, não conferência: a popularidade não é parâmetro do gerador, já que
+  o que se sorteia é a profundidade na pilha e não o objeto. Atenção a um limite do modelo que essa
+  medida expõe: os três cenários têm stack distance e footprint bem diferentes e popularidade quase
+  igual, sem cauda de Zipf — na `f03`, os 10% mais pedidos levam ~32% das requisições, contra 10%
+  se todos fossem iguais e 60–80% num trace real. Serve para LRU, cuja curva depende só da stack
+  distance; não serve para políticas guiadas por frequência.
 - **Footprint** — quantos objetos distintos aparecem numa janela de N requisições, em média sobre
   **todas** as janelas daquele tamanho (valor exato, não amostrado, e portanto sem semente).
   Também emerge da stack distance: a SD de um reúso é, por definição, a contagem de objetos

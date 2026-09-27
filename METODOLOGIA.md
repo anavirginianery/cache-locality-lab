@@ -278,7 +278,7 @@ alta para os caches estudados".
 
 ---
 
-## 7. Footprint: o que emerge junto
+## 7. O que emerge junto: footprint e frequência
 
 O **footprint** de uma janela é o número de objetos distintos que aparecem nela. Aqui ele é medido
 de forma **exata**: não sobre uma amostra de janelas, mas sobre *todas* as janelas daquele tamanho
@@ -332,10 +332,51 @@ janela entre dois pedidos ao mesmo objeto. Reúsos longos significam janelas com
 distintos. As duas grandezas descrevem a mesma localidade por ângulos diferentes — uma olhando
 para janelas de reúso, outra para janelas quaisquer.
 
+### A terceira vista: frequência por objeto
+
+A contagem de requisições por objeto — feita no trace já sem o aquecimento, sem correção de borda —
+é a terceira maneira de olhar para a mesma carga. Na `f03`:
+
+| | SD baixa | SD média | SD alta |
+|---|---|---|---|
+| Requisições por objeto, em média | 19,8 | 18,2 | 17,5 |
+| Objeto mais pedido | 242 | 176 | 130 |
+| Objetos pedidos **uma vez só** | 5,0% | 5,3% | 5,7% |
+| Requisições nos 10% mais pedidos | 32,7% | 31,9% | 31,6% |
+
+A **média** tem referência analítica: um objeto novo nasce a cada 1/P(∞) = 20 requisições, logo
+cada objeto rende 20 pedidos em média — desde que a carga seja grande diante da pilha de
+aquecimento. Os objetos da pilha inicial que são tocados entram na conta sem terem nascido ali e
+puxam a média para baixo: com 1 milhão de requisições o efeito é pequeno (19,8 contra 20), mas na
+`f01`, com 50 mil, a média cai para 16,0 no cenário de SD baixa e para 4,9 no de SD alta, porque
+ali os 10.000 objetos do aquecimento pesam mais que os ~2.500 que nasceram na carga. O resto da tabela é medida, não
+conferência — a popularidade não é parâmetro: o que se sorteia é a profundidade na pilha, nunca o
+objeto.
+
+E o resultado é instrutivo, porque **contraria** o que valia para o footprint. Stack distance e
+footprint andam juntos; a frequência, não. As três cargas têm mediana de SD de 1, 74 e 2.536 e
+footprint de 140, 435 e 819 objetos em 1.000 requisições — mas popularidade praticamente igual. Duas
+referências para ler a última linha: se todos os objetos fossem pedidos o mesmo tanto, os 10% mais
+pedidos levariam 10% das requisições; num trace real, com popularidade Zipf-like de expoente entre
+0,8 e 1,0, levariam de 60% a 80%. As cargas ficam em 32%, isto é, muito mais planas que tráfego
+real e só um pouco mais concentradas que o caso uniforme.
+
+Isso não é defeito de implementação, é a natureza do LRU Stack Model: nele a popularidade de um
+objeto é passageira — ele nasce no topo, é reusado enquanto está raso e some quando afunda. Não
+existe um atributo "objeto popular" que dure a carga inteira, como existe sob o Independent
+Reference Model. O modelo reproduz a distribuição de stack distance, não a de popularidade.
+
+A consequência prática é bem delimitada. Para **LRU**, não muda nada: a curva de hit rate depende
+só da stack distance, e a seção 6 mostra que ela bate com a teoria até a quarta casa. Para
+políticas guiadas por **frequência** (LFU e parentes), muda tudo — sem cauda de popularidade não há
+o que explorar, e uma comparação de políticas feita aqui atribuiria ao LFU um desempenho que ele
+não teria em tráfego real. É mais um motivo para o experimento se restringir a LRU, e é o número
+que responde a "por que não LFU?" sem precisar de argumento.
+
 Três consequências para o desenho experimental:
 
-1. **Não é possível fixar as duas separadamente.** Não existe "stack distance alta com footprint
-   pequeno". Mexer em β move as duas juntas.
+1. **Não é possível fixar stack distance e footprint separadamente.** Não existe "stack distance
+   alta com footprint pequeno". Mexer em β move as duas juntas — e quase não move a frequência.
 2. **`d_max` limita a parte de reúso do footprint, não o footprint.** O acervo não é fechado:
    cada objeto novo entra em definitivo, a uma taxa de P(∞) por requisição, então o footprint
    cresce sem teto — em janelas grandes, aproximadamente P(∞)·w. Na `f03`, uma janela de 100 mil
@@ -404,10 +445,11 @@ Para registro, o que este gerador **não** representa:
 
 - **Estacionariedade.** P(d) é a mesma do início ao fim da carga. Não há ciclo dia/noite, rajadas,
   nem conteúdo que viraliza e esfria.
-- **Popularidade emergente.** Controla-se a stack distance; quantas vezes cada objeto é pedido é
-  consequência. Não é possível fixar as duas coisas. Em particular, a popularidade de um objeto
-  aqui é passageira, diferente do que ocorre sob o Independent Reference Model, em que um objeto
-  popular é popular o tempo todo.
+- **Popularidade emergente e plana.** Controla-se a stack distance; quantas vezes cada objeto é
+  pedido é consequência. Em particular, a popularidade de um objeto aqui é passageira, diferente do
+  que ocorre sob o Independent Reference Model, em que um objeto popular é popular o tempo todo. A
+  medida da seção 7 quantifica isso: os 10% mais pedidos levam 32% das requisições, contra 60% a
+  80% em tráfego real Zipf-like. Basta para LRU, não basta para políticas guiadas por frequência.
 - **Tamanho de objeto.** Todos os objetos são iguais. Métricas em bytes (byte hit rate) não se
   aplicam.
 - **Tempo.** Há ordem, não há relógio. Métricas baseadas em tempo (TTL, idade de despejo em

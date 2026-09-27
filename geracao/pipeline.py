@@ -193,6 +193,9 @@ def escreve_manifesto(pasta, fid, apelido, cfg, res, arquivos, modo="completo"):
             "resultado": {"sd_mediana": r["p50"], "sd_p90": r["p90"], "sd_p99": r["p99"],
                           "footprint_1000req": round(r["fp_1k"], 1) if r["fp_1k"] else None,
                           "objetos_distintos": r["distintos"],
+                          "req_por_objeto_media": round(r["freq"]["media"], 2),
+                          "fracao_objetos_1_req": round(r["freq"]["um_hit"], 4),
+                          "fracao_req_top10pct": round(r["freq"]["top10"], 4),
                           "p_inf_medido": round(r["p_inf_medido"], 4),
                           "erro_max_hrc_curva": round(r["erro_max"], 5),
                           "erro_max_hrc_caches": round(r["erro_caches"], 5),
@@ -334,6 +337,41 @@ def curva_footprint(ev):
     return fp, m
 
 
+def medir_frequencia(ev):
+    """Contagem de requisicoes por objeto -- a terceira vista da mesma localidade.
+
+    Nao e parametro do gerador: no LRU Stack Model o que se sorteia e a PROFUNDIDADE, nao
+    o objeto, entao a popularidade e consequencia da distribuicao de stack distance, do
+    mesmo jeito que o footprint. Por isso entra no relatorio como medida, sem valor teorico
+    ponto a ponto ao lado. A unica ancora exata e a media: um objeto novo nasce a cada
+    1/P(inf) requisicoes, entao cada objeto rende em media 1/P(inf) pedidos.
+
+    A contagem e feita no trace ja sem o prefixo de aquecimento, como todas as outras
+    medidas -- o que aparece aqui e o que a carga pede, sem correcao de borda."""
+    n = len(ev)
+    cont = {}
+    for o in ev:
+        cont[o] = cont.get(o, 0) + 1
+    asc = sorted(cont.values())              # contagens em ordem crescente
+    m = len(asc)
+    acum, soma = [], 0
+    for f in reversed(asc):                  # do objeto mais pedido para o menos pedido
+        soma += f
+        acum.append(soma)
+    topo = lambda frac: acum[max(1, int(round(frac * m))) - 1] / n
+    hist, lim = [], 1
+    while lim <= asc[-1]:
+        prox = lim * 2
+        c = bisect.bisect_left(asc, prox) - bisect.bisect_left(asc, lim)
+        hist.append((lim, min(prox - 1, asc[-1]), c, c / m))
+        lim = prox
+    return {"objetos": m, "media": n / m, "maxima": asc[-1],
+            "um_hit": bisect.bisect_right(asc, 1) / m,
+            "top1": topo(0.01), "top10": topo(0.10),
+            "curva": [(k, asc[m - k], acum[k - 1] / n) for k in grade_log(m, 30)],
+            "hist": hist}
+
+
 def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
     trace = [l.strip() for l in open(carga_path) if l.strip()]
     sds = genwl.stack_distances(trace)[prefixo:]
@@ -385,10 +423,12 @@ def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
     janelas = sorted(set(grade_log(len(ev), 25)) | decadas)
     fp = [(j, fp_de(j), fp_de(j) / j) for j in janelas]
     fp_1k = fp_de(1000)
+    freq = medir_frequencia(ev)
 
     return {
         "nome": cen["nome"], "rotulo": cen["rotulo"], "beta": cen["beta"],
         "fp": fp, "fp_1k": fp_1k,
+        "freq": freq, "freq_curva": freq["curva"],
         "requisicoes": n, "prefixo": prefixo, "reusos": r,
         "p_inf_teorico": p_inf, "p_inf_medido": frios / n,
         "p25": pct(.25), "p50": pct(.50), "p75": pct(.75), "p90": pct(.90), "p99": pct(.99),
@@ -412,10 +452,14 @@ def grava_csvs(cfg, res, analise, fid):
     w("medidas",
       ["cenario", "rotulo", "beta", "dmax", "p_inf_alvo", "requisicoes", "aquecimento", "reusos",
        "p_inf_medido", "sd_p25", "sd_p50", "sd_p75", "sd_p90", "sd_p99", "objetos_distintos",
-       "footprint_1000req", "erro_max_hrc_curva", "erro_max_hrc_caches", "limite", "confere"],
+       "footprint_1000req", "req_por_objeto_media", "req_por_objeto_maxima",
+       "fracao_objetos_1_req", "fracao_req_top1pct", "fracao_req_top10pct",
+       "erro_max_hrc_curva", "erro_max_hrc_caches", "limite", "confere"],
       [[r["nome"], r["rotulo"], r["beta"], cfg["dmax"], cfg["inf"], r["requisicoes"], r["prefixo"],
         r["reusos"], "%.5f" % r["p_inf_medido"], r["p25"], r["p50"], r["p75"], r["p90"], r["p99"],
-        r["distintos"], round(r["fp_1k"], 1) if r["fp_1k"] else "", "%.5f" % r["erro_max"],
+        r["distintos"], round(r["fp_1k"], 1) if r["fp_1k"] else "",
+        "%.2f" % r["freq"]["media"], r["freq"]["maxima"], "%.5f" % r["freq"]["um_hit"],
+        "%.5f" % r["freq"]["top1"], "%.5f" % r["freq"]["top10"], "%.5f" % r["erro_max"],
         "%.5f" % r["erro_caches"], "%.5f" % r["limite"],
         "sim" if r["confere"] else "NAO"] for r in res])
 
@@ -430,6 +474,12 @@ def grava_csvs(cfg, res, analise, fid):
 
     w("footprint", ["cenario", "janela_requisicoes", "objetos_distintos_media", "fracao_da_janela"],
       [[r["nome"], j, "%.1f" % m, "%.4f" % f] for r in res for j, m, f in r["fp"]])
+
+    w("frequencia", ["cenario", "rank", "requisicoes_ao_objeto", "fracao_acumulada_das_requisicoes"],
+      [[r["nome"], k, c, "%.5f" % a] for r in res for k, c, a in r["freq"]["curva"]])
+
+    w("frequencia_hist", ["cenario", "de", "ate", "objetos", "fracao_dos_objetos"],
+      [[r["nome"], a, b, c, "%.5f" % f] for r in res for a, b, c, f in r["freq"]["hist"]])
 
     w("conferencia", ["cenario", "cache_objetos", "hit_teorico", "hit_medido", "erro",
                       "fracao_reusos_que_cabem", "fracao_reusos_que_nao_cabem"],
@@ -484,7 +534,7 @@ def svg_linhas(res, chave, titulo, ylab, xlab, xmax, marca=None, rotulo_marca=""
 def svg_loglog(res, chave, titulo, ylab, xlab, w=640, h=330):
     """Curva com os dois eixos em escala log (footprint x tamanho da janela)."""
     M = {"l": 62, "r": 18, "t": 16, "b": 46}
-    xs = [ponto[0] for ponto in res[0][chave]]
+    xs = [ponto[0] for r in res for ponto in r[chave]]   # cada cenario pode ir mais longe
     x0, x1 = min(xs), max(xs)
     ytopo = 10 ** math.ceil(math.log10(max(ponto[1] for r in res for ponto in r[chave])))
     lx, ly = math.log10(x1 / x0), math.log10(ytopo)
@@ -569,7 +619,7 @@ def n_br(v, casas=0):
 
 
 def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
-    linhas_res, linhas_conf = [], []
+    linhas_res, linhas_conf, linhas_freq = [], [], []
     for i, r in enumerate(res):
         linhas_res.append(
             "<tr><td><span class='pt' style='background:var(--c%d)'></span>%s</td><td class='n'>%s</td>"
@@ -581,6 +631,12 @@ def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
                "ok" if r["confere"] else "ruim",
                ("confere (erro %s)" % n_br(r["erro_max"], 4)) if r["confere"]
                else ("NAO confere (erro %s)" % n_br(r["erro_max"], 4))))
+        linhas_freq.append(
+            "<tr><td><span class='pt' style='background:var(--c%d)'></span>%s</td><td class='n'>%s</td>"
+            "<td class='n'>%s</td><td class='n'>%s</td><td class='n'>%s</td><td class='n'>%s</td></tr>"
+            % (i, r["rotulo"], n_br(r["distintos"]), n_br(r["freq"]["media"], 1),
+               n_br(r["freq"]["maxima"]), n_br(r["freq"]["um_hit"] * 100, 1) + "%",
+               n_br(r["freq"]["top10"] * 100, 1) + "%"))
         for C, t, m, f in r["tabela"]:
             linhas_conf.append(
                 "<tr><td>%s</td><td class='n'>%s</td><td class='n'>%s</td><td class='n'>%s</td>"
@@ -598,7 +654,9 @@ def grava_relatorio(cfg, res, svgs, analise, fid, apelido):
                semente=cfg["semente"],
                tol="%s σ (%s nesta carga)" % (n_br(cfg["tolerancia_sigmas"], 0),
                                               n_br(res[0]["limite"], 4)),
-               linhas_res="\n".join(linhas_res), linhas_conf="\n".join(linhas_conf), **svgs)
+               media_ref=n_br(1 / cfg["inf"], 0) if cfg["inf"] else "-",
+               linhas_res="\n".join(linhas_res), linhas_conf="\n".join(linhas_conf),
+               linhas_freq="\n".join(linhas_freq), **svgs)
     with open(os.path.join(AQUI, "modelo_relatorio.html")) as fh:
         modelo = fh.read()
     for chave, valor in ctx.items():
@@ -671,9 +729,13 @@ def roda_fase(pasta, so_analise, refazer):
                                   cfg["requisicoes"], cfg["dmax"], "d máx"),
             "svg_fp": svg_loglog(res, "fp", "Footprint", "objetos distintos",
                                  "tamanho da janela (requisições)"),
+            "svg_freq": svg_loglog(res, "freq_curva", "Frequência por objeto",
+                                   "requisições ao objeto",
+                                   "objetos, do mais pedido ao menos pedido (rank)"),
             "svg_hist": svg_barras(res)}
     for nome, conteudo in (("hrc", svgs["svg_hrc"]), ("sd_cdf", svgs["svg_cdf"]),
-                           ("footprint", svgs["svg_fp"]), ("sd_histograma", svgs["svg_hist"])):
+                           ("footprint", svgs["svg_fp"]), ("sd_histograma", svgs["svg_hist"]),
+                           ("frequencia", svgs["svg_freq"])):
         solto = (conteudo.replace("var(--rule-strong)", "#B4C3C1").replace("var(--rule)", "#D3DDDB")
                  .replace("var(--muted)", "#5E7174").replace("var(--ink-2)", "#3A4A4C"))
         for i, cor in enumerate(rampa(len(res), CORES)):   # o SVG solto precisa ser autocontido

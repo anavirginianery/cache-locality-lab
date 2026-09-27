@@ -1,4 +1,4 @@
-cenario,rotulo,beta,dmax,p_inf_alvo,requisicoes,aquecimento,reusos,p_inf_medido,sd_p25,sd_p50,sd_p75,sd_p90,sd_p99,objetos_distintos,footprint_1000req,erro_max_hrc_curva,erro_max_hrc_caches,limite,confere
-baixa,SD baixa,1.5,10000,0.05,50000,10000,47578,0.04844,0,1,8,49,1749,3118,137.7,0.00675,0.00523,0.01118,sim
-media,SD media,1.0,10000,0.05,50000,10000,47578,0.04844,5,72,818,3713,9003,7125,431.2,0.00718,0.00571,0.01118,sim
-alta,SD alta,0.5,10000,0.05,50000,10000,47578,0.04844,645,2510,5568,8091,9788,10170,818.3,0.00662,0.00205,0.01118,sim
+cenario,rotulo,beta,dmax,p_inf_alvo,requisicoes,aquecimento,reusos,p_inf_medido,sd_p25,sd_p50,sd_p75,sd_p90,sd_p99,objetos_distintos,footprint_1000req,req_por_objeto_media,req_por_objeto_maxima,fracao_objetos_1_req,fracao_req_top1pct,fracao_req_top10pct,erro_max_hrc_curva,erro_max_hrc_caches,limite,confere
+baixa,SD baixa,1.5,10000,0.05,50000,10000,47578,0.04844,0,1,8,49,1749,3118,137.7,16.04,123,0.06318,0.05300,0.31928,0.00675,0.00523,0.01118,sim
+media,SD media,1.0,10000,0.05,50000,10000,47578,0.04844,5,72,818,3713,9003,7125,431.2,7.02,49,0.11958,0.04422,0.28460,0.00718,0.00571,0.01118,sim
+alta,SD alta,0.5,10000,0.05,50000,10000,47578,0.04844,645,2510,5568,8091,9788,10170,818.3,4.92,26,0.11032,0.03140,0.22510,0.00662,0.00205,0.01118,sim

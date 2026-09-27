@@ -68,7 +68,7 @@ footer{margin-top:48px;border-top:1px solid var(--rule-strong);padding-top:18px;
 <h1>Fase f02 — 500k</h1>
 <p class="descricao">Tamanho do experimento: os mesmos tres cenarios da f01 com 500 mil requisicoes</p>
 <div class="meta">
-  <span>gerado em 27/09/2026 12:01</span>
+  <span>gerado em 27/09/2026 12:33</span>
   <span>500.000 requisições por cenário</span>
   <span>d<sub>max</sub> = 10.000</span>
   <span>objetos novos = 5,0%</span>
@@ -435,6 +435,145 @@ de um reúso é, por definição, a contagem de objetos distintos na janela entr
 longos significam janelas com muitos objetos distintos. As duas curvas descrevem a mesma localidade por ângulos
 diferentes.</p>
 
+<h2>Frequência por objeto</h2>
+<div class="legendas"><span class='leg'><i style='background:var(--c0)'></i>SD baixa (β = 1,5)</span> <span class='leg'><i style='background:var(--c1)'></i>SD media (β = 1,0)</span> <span class='leg'><i style='background:var(--c2)'></i>SD alta (β = 0,5)</span></div>
+<div class="fig"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" role="img" aria-label="Frequência por objeto">
+<style>.gx{stroke:var(--rule);stroke-width:1}.ax{stroke:var(--rule-strong);stroke-width:1}.tk{font:11px ui-monospace,monospace;fill:var(--muted)}.lb{font:12px system-ui,sans-serif;fill:var(--ink-2)}</style>
+<line class="gx" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="tk" x="54.0" y="288.0" text-anchor="end">1</text>
+<line class="gx" x1="62.0" y1="194.7" x2="622.0" y2="194.7"/>
+<text class="tk" x="54.0" y="198.7" text-anchor="end">10</text>
+<line class="gx" x1="62.0" y1="105.3" x2="622.0" y2="105.3"/>
+<text class="tk" x="54.0" y="109.3" text-anchor="end">100</text>
+<line class="gx" x1="62.0" y1="16.0" x2="622.0" y2="16.0"/>
+<text class="tk" x="54.0" y="20.0" text-anchor="end">1.000</text>
+<text class="tk" x="62.0" y="302.0" text-anchor="middle">1</text>
+<text class="tk" x="186.2" y="302.0" text-anchor="middle">10</text>
+<text class="tk" x="310.3" y="302.0" text-anchor="middle">100</text>
+<text class="tk" x="434.5" y="302.0" text-anchor="middle">1.000</text>
+<text class="tk" x="558.7" y="302.0" text-anchor="end">10.000</text>
+<line class="ax" x1="62.0" y1="284.0" x2="622.0" y2="284.0"/>
+<text class="lb" x="320.0" y="322.0" text-anchor="middle">objetos, do mais pedido ao menos pedido (rank)</text>
+<text class="lb" transform="translate(14,165.0) rotate(-90)" text-anchor="middle">requisições ao objeto</text>
+<path d="M62.0,78.8L99.4,81.7L121.2,83.8L136.8,85.2L158.6,87.8L174.1,88.6L196.0,90.1L211.5,92.3L231.1,93.7L250.5,96.7L269.6,98.3L288.7,100.2L307.6,102.3L326.1,104.6L345.2,108.1L363.9,110.7L382.9,114.0L401.8,117.0L420.6,120.9L439.5,124.5L458.3,129.2L477.2,134.6L496.1,139.9L515.0,147.2L533.8,156.1L552.7,167.8L571.6,181.6L590.5,208.5L609.3,284.0" fill="none" stroke="var(--c0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="78.8" r="3" fill="var(--c0)"/>
+<circle cx="99.4" cy="81.7" r="3" fill="var(--c0)"/>
+<circle cx="121.2" cy="83.8" r="3" fill="var(--c0)"/>
+<circle cx="136.8" cy="85.2" r="3" fill="var(--c0)"/>
+<circle cx="158.6" cy="87.8" r="3" fill="var(--c0)"/>
+<circle cx="174.1" cy="88.6" r="3" fill="var(--c0)"/>
+<circle cx="196.0" cy="90.1" r="3" fill="var(--c0)"/>
+<circle cx="211.5" cy="92.3" r="3" fill="var(--c0)"/>
+<circle cx="231.1" cy="93.7" r="3" fill="var(--c0)"/>
+<circle cx="250.5" cy="96.7" r="3" fill="var(--c0)"/>
+<circle cx="269.6" cy="98.3" r="3" fill="var(--c0)"/>
+<circle cx="288.7" cy="100.2" r="3" fill="var(--c0)"/>
+<circle cx="307.6" cy="102.3" r="3" fill="var(--c0)"/>
+<circle cx="326.1" cy="104.6" r="3" fill="var(--c0)"/>
+<circle cx="345.2" cy="108.1" r="3" fill="var(--c0)"/>
+<circle cx="363.9" cy="110.7" r="3" fill="var(--c0)"/>
+<circle cx="382.9" cy="114.0" r="3" fill="var(--c0)"/>
+<circle cx="401.8" cy="117.0" r="3" fill="var(--c0)"/>
+<circle cx="420.6" cy="120.9" r="3" fill="var(--c0)"/>
+<circle cx="439.5" cy="124.5" r="3" fill="var(--c0)"/>
+<circle cx="458.3" cy="129.2" r="3" fill="var(--c0)"/>
+<circle cx="477.2" cy="134.6" r="3" fill="var(--c0)"/>
+<circle cx="496.1" cy="139.9" r="3" fill="var(--c0)"/>
+<circle cx="515.0" cy="147.2" r="3" fill="var(--c0)"/>
+<circle cx="533.8" cy="156.1" r="3" fill="var(--c0)"/>
+<circle cx="552.7" cy="167.8" r="3" fill="var(--c0)"/>
+<circle cx="571.6" cy="181.6" r="3" fill="var(--c0)"/>
+<circle cx="590.5" cy="208.5" r="3" fill="var(--c0)"/>
+<circle cx="609.3" cy="284.0" r="3" fill="var(--c0)"/>
+<path d="M62.0,91.7L99.4,92.3L121.2,95.2L136.8,97.0L158.6,97.9L174.1,98.6L196.0,100.6L214.8,103.1L235.6,104.9L253.7,106.1L273.0,108.6L291.9,110.3L311.4,112.6L330.4,114.5L349.6,116.5L368.7,119.2L387.8,121.5L407.0,124.5L426.2,127.8L445.3,131.5L464.5,135.5L483.7,140.9L502.8,146.1L522.0,153.4L541.2,160.7L560.3,171.9L579.5,187.6L598.7,214.5L617.8,284.0" fill="none" stroke="var(--c1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="91.7" r="3" fill="var(--c1)"/>
+<circle cx="99.4" cy="92.3" r="3" fill="var(--c1)"/>
+<circle cx="121.2" cy="95.2" r="3" fill="var(--c1)"/>
+<circle cx="136.8" cy="97.0" r="3" fill="var(--c1)"/>
+<circle cx="158.6" cy="97.9" r="3" fill="var(--c1)"/>
+<circle cx="174.1" cy="98.6" r="3" fill="var(--c1)"/>
+<circle cx="196.0" cy="100.6" r="3" fill="var(--c1)"/>
+<circle cx="214.8" cy="103.1" r="3" fill="var(--c1)"/>
+<circle cx="235.6" cy="104.9" r="3" fill="var(--c1)"/>
+<circle cx="253.7" cy="106.1" r="3" fill="var(--c1)"/>
+<circle cx="273.0" cy="108.6" r="3" fill="var(--c1)"/>
+<circle cx="291.9" cy="110.3" r="3" fill="var(--c1)"/>
+<circle cx="311.4" cy="112.6" r="3" fill="var(--c1)"/>
+<circle cx="330.4" cy="114.5" r="3" fill="var(--c1)"/>
+<circle cx="349.6" cy="116.5" r="3" fill="var(--c1)"/>
+<circle cx="368.7" cy="119.2" r="3" fill="var(--c1)"/>
+<circle cx="387.8" cy="121.5" r="3" fill="var(--c1)"/>
+<circle cx="407.0" cy="124.5" r="3" fill="var(--c1)"/>
+<circle cx="426.2" cy="127.8" r="3" fill="var(--c1)"/>
+<circle cx="445.3" cy="131.5" r="3" fill="var(--c1)"/>
+<circle cx="464.5" cy="135.5" r="3" fill="var(--c1)"/>
+<circle cx="483.7" cy="140.9" r="3" fill="var(--c1)"/>
+<circle cx="502.8" cy="146.1" r="3" fill="var(--c1)"/>
+<circle cx="522.0" cy="153.4" r="3" fill="var(--c1)"/>
+<circle cx="541.2" cy="160.7" r="3" fill="var(--c1)"/>
+<circle cx="560.3" cy="171.9" r="3" fill="var(--c1)"/>
+<circle cx="579.5" cy="187.6" r="3" fill="var(--c1)"/>
+<circle cx="598.7" cy="214.5" r="3" fill="var(--c1)"/>
+<circle cx="617.8" cy="284.0" r="3" fill="var(--c1)"/>
+<path d="M62.0,109.9L99.4,111.6L121.2,112.1L136.8,112.6L158.6,114.0L180.5,114.5L196.0,115.5L217.9,116.5L235.6,117.0L255.2,118.1L274.0,119.2L293.4,119.7L313.0,121.5L332.2,122.6L351.6,123.9L371.0,125.8L390.2,127.1L409.6,129.2L428.9,132.2L448.2,134.6L467.5,138.1L486.8,142.9L506.1,148.3L525.4,154.7L544.8,162.4L564.1,174.1L583.4,187.6L602.7,214.5L622.0,284.0" fill="none" stroke="var(--c2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="62.0" cy="109.9" r="3" fill="var(--c2)"/>
+<circle cx="99.4" cy="111.6" r="3" fill="var(--c2)"/>
+<circle cx="121.2" cy="112.1" r="3" fill="var(--c2)"/>
+<circle cx="136.8" cy="112.6" r="3" fill="var(--c2)"/>
+<circle cx="158.6" cy="114.0" r="3" fill="var(--c2)"/>
+<circle cx="180.5" cy="114.5" r="3" fill="var(--c2)"/>
+<circle cx="196.0" cy="115.5" r="3" fill="var(--c2)"/>
+<circle cx="217.9" cy="116.5" r="3" fill="var(--c2)"/>
+<circle cx="235.6" cy="117.0" r="3" fill="var(--c2)"/>
+<circle cx="255.2" cy="118.1" r="3" fill="var(--c2)"/>
+<circle cx="274.0" cy="119.2" r="3" fill="var(--c2)"/>
+<circle cx="293.4" cy="119.7" r="3" fill="var(--c2)"/>
+<circle cx="313.0" cy="121.5" r="3" fill="var(--c2)"/>
+<circle cx="332.2" cy="122.6" r="3" fill="var(--c2)"/>
+<circle cx="351.6" cy="123.9" r="3" fill="var(--c2)"/>
+<circle cx="371.0" cy="125.8" r="3" fill="var(--c2)"/>
+<circle cx="390.2" cy="127.1" r="3" fill="var(--c2)"/>
+<circle cx="409.6" cy="129.2" r="3" fill="var(--c2)"/>
+<circle cx="428.9" cy="132.2" r="3" fill="var(--c2)"/>
+<circle cx="448.2" cy="134.6" r="3" fill="var(--c2)"/>
+<circle cx="467.5" cy="138.1" r="3" fill="var(--c2)"/>
+<circle cx="486.8" cy="142.9" r="3" fill="var(--c2)"/>
+<circle cx="506.1" cy="148.3" r="3" fill="var(--c2)"/>
+<circle cx="525.4" cy="154.7" r="3" fill="var(--c2)"/>
+<circle cx="544.8" cy="162.4" r="3" fill="var(--c2)"/>
+<circle cx="564.1" cy="174.1" r="3" fill="var(--c2)"/>
+<circle cx="583.4" cy="187.6" r="3" fill="var(--c2)"/>
+<circle cx="602.7" cy="214.5" r="3" fill="var(--c2)"/>
+<circle cx="622.0" cy="284.0" r="3" fill="var(--c2)"/>
+</svg></div>
+<div class="scroller">
+<table>
+  <thead><tr><th>Cenário</th><th class="n">Objetos distintos</th><th class="n">Requisições por objeto (média)</th>
+  <th class="n">Objeto mais pedido</th><th class="n">Objetos com 1 pedido só</th>
+  <th class="n">Requisições nos 10% mais pedidos</th></tr></thead>
+  <tbody>
+<tr><td><span class='pt' style='background:var(--c0)'></span>SD baixa</td><td class='n'>25.596</td><td class='n'>19,5</td><td class='n'>198</td><td class='n'>5,0%</td><td class='n'>32,5%</td></tr>
+<tr><td><span class='pt' style='background:var(--c1)'></span>SD media</td><td class='n'>29.959</td><td class='n'>16,7</td><td class='n'>142</td><td class='n'>5,5%</td><td class='n'>31,1%</td></tr>
+<tr><td><span class='pt' style='background:var(--c2)'></span>SD alta</td><td class='n'>32.371</td><td class='n'>15,4</td><td class='n'>89</td><td class='n'>6,2%</td><td class='n'>29,9%</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="hint">Quantas vezes cada objeto foi pedido, do mais pedido ao menos pedido — a contagem é feita no trace já sem
+o aquecimento, sem correção de borda (objetos que nascem no fim da carga têm menos tempo de serem pedidos de novo).
+A <strong>média</strong> tem uma referência analítica: um objeto novo nasce a cada 1/P(∞) = 20 requisições,
+então é esse o número de pedidos por objeto <em>quando a carga é grande diante da pilha de aquecimento</em>. Os objetos
+da pilha inicial que são tocados entram na conta sem terem nascido na carga e puxam a média para baixo — quanto menor a
+carga, mais. O resto da distribuição é <strong>medida, não
+conferência</strong>: a popularidade não é um parâmetro do gerador — o que se sorteia é a <em>profundidade</em> na
+pilha, nunca o objeto.</p>
+<p class="hint">Vale ler a tabela com atenção, porque ela mostra um limite do modelo. Os cenários têm stack distance e
+footprint muito diferentes, mas popularidade quase igual: β move as duas primeiras e quase não move esta. E a
+distribuição não tem cauda de Zipf — ela se concentra em torno da média. Duas referências para calibrar a última
+coluna: se todos os objetos fossem pedidos o mesmo tanto, os 10% mais pedidos levariam 10% das requisições; num trace
+real, com popularidade Zipf-like de expoente entre 0,8 e 1,0, levariam de 60% a 80%. O LRU Stack Model reproduz a
+distribuição de stack distance, não a de popularidade — o que basta para LRU, cuja curva depende só da stack distance,
+mas não para políticas guiadas por frequência.</p>
+
 <h2>Conferência em cada tamanho de cache</h2>
 <div class="scroller">
 <table>
@@ -465,7 +604,8 @@ cabem, está em <code>conferencia.csv</code>.</p>
 <p>Gerado por <code>geracao/pipeline.py</code> — fase <strong>f02</strong>. Os números deste relatório
 também estão nos CSVs de <code>analise/</code>, todos com o id da fase no nome:
 <code>medidas_f02.csv</code>, <code>hrc_f02.csv</code>, <code>sd_cdf_f02.csv</code>,
-<code>sd_histograma_f02.csv</code>, <code>footprint_f02.csv</code> e
+<code>sd_histograma_f02.csv</code>, <code>footprint_f02.csv</code>,
+<code>frequencia_f02.csv</code>, <code>frequencia_hist_f02.csv</code> e
 <code>conferencia_f02.csv</code>. Os gráficos estão soltos em <code>analise/*_f02.svg</code>,
 prontos para entrar em um documento. A configuração completa e o resumo dos resultados estão no
 <code>manifesto.json</code> da fase.</p>

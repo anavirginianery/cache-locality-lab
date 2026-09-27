@@ -284,6 +284,10 @@ parecido entre os níveis, ou se não guardar relação com 1/R.
 - **Footprint é consequência do nível.** Não dá para variar um sem o outro: a stack distance de um
   reúso é, por definição, a contagem de objetos distintos na janela entre dois pedidos. Efeitos
   atribuídos ao nível de SD são igualmente atribuíveis ao footprint.
+- **Popularidade plana.** A contagem de requisições por objeto é quase a mesma nos três níveis e
+  não tem cauda de Zipf: na `f03`, os 10% mais pedidos levam cerca de 32% das requisições, contra
+  60% a 80% em tráfego real. Para LRU isso não afeta nada — a curva depende só da stack distance —,
+  mas fecha a porta para comparar políticas guiadas por frequência com estas cargas.
 - **Popularidade emergente e passageira.** Desfavorece políticas guiadas por frequência por
   construção. É a ressalva da H3.
 - **Cargas estacionárias.** Sem ciclo dia/noite, sem rajadas, sem conteúdo que viraliza e esfria.
