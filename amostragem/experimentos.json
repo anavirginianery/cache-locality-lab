@@ -1,0 +1,7 @@
+{
+  "descricao": "Amostragem temporal (sistematica e por janela) das cargas de uma fase da geracao",
+  "origem": "f03",
+  "aquecimento": "descartar",
+  "scripts": "../cache-sampling/sampling",
+  "metodos": ["sistematica", "janela-1k", "janela-10k"]
+}

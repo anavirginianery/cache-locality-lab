@@ -6,3 +6,8 @@ amostragem/fases/*/cargas/*.txt
 __pycache__/
 *.pyc
 .DS_Store
+
+# amostragem: entrada convertida e amostras sao reprodutiveis a partir das cargas
+amostragem/fases/*/entrada/*.csv
+amostragem/fases/*/amostras/*.csv
+amostragem/fases/*/.tmp/
