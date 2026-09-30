@@ -30,7 +30,7 @@ Uso:
 
 O beta entra no nome como inteiro de tres digitos, multiplicado por 100: beta 1,5 -> b150.
 """
-import argparse, bisect, contextlib, csv, hashlib, io, json, math, os, re, shutil, subprocess, sys
+import argparse, contextlib, csv, hashlib, io, json, math, os, re, shutil, subprocess, sys
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -38,11 +38,13 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(AQUI), "lib"))   # genwl.py e mkps.py ficam em lib/
 import genwl
 import mkps
+import medidas
+from medidas import grade_log, teoria
 
 RAIZ = os.path.dirname(AQUI)
 FASES = os.path.join(AQUI, "fases")
 MODELO = os.path.join(AQUI, "cenarios.json")
-CODIGO = ("lib/genwl.py", "lib/mkps.py", "geracao/pipeline.py")
+CODIGO = ("lib/genwl.py", "lib/mkps.py", "lib/medidas.py", "geracao/pipeline.py")
 COMUNS = ("dmax", "inf", "requisicoes", "semente", "caches", "tolerancia_sigmas")
 GERACAO = ("dmax", "inf", "requisicoes", "semente")   # o que muda as cargas; o resto so muda a analise
 CORES = ["#63BDB5", "#2E9B95", "#08595C"]          # rampa ordinal: baixa -> alta
@@ -270,173 +272,32 @@ def etapa_carga(cfg, cen, sd_path, caminho):
 
 
 # --------------------------------------------------------------- etapa 3
-def grade_log(ate, n=44):
-    """Pontos espacados por igual em escala log, de 1 ate 'ate'."""
-    return sorted({max(1, int(round(10 ** (math.log10(ate) * i / (n - 1))))) for i in range(n)})
-
-
-def teoria(pmf, p_inf):
-    """hit(C) = (1 - P(inf)) * P(d < C)   e   cdf(x) = P(d < x | reuso).
-
-    Em palavras: acerta quem e reuso (nao e objeto novo) e cuja stack distance cabe no cache."""
-    n = len(pmf)
-    acum = [0.0] * (n + 1)
-    for d in range(n):
-        acum[d + 1] = acum[d] + pmf[d]
-    cdf = lambda x: acum[min(x, n)]
-    hit = lambda C: (1 - p_inf) * cdf(C)
-    return hit, cdf
-
-
-def curva_footprint(ev):
-    """Footprint exato: fp(w) = objetos distintos numa janela de w requisicoes, em media
-    sobre TODAS as janelas de tamanho w do trace (nao sobre uma amostra delas).
-
-    A conta e feita pelo avesso, como em Xiang et al. (ASPLOS 2013): uma janela deixa de
-    ver um objeto exatamente quando cabe inteira dentro de um intervalo em que ele nao
-    aparece. Um intervalo de L posicoes acomoda L - w + 1 janelas de tamanho w, entao
-
-        fp(w) = m - (soma de max(0, L - w + 1) sobre todos os intervalos) / (n - w + 1)
-
-    com m = objetos distintos da carga inteira. Os intervalos de cada objeto sao o trecho
-    antes da estreia dele, os buracos entre acessos consecutivos e o trecho depois do
-    ultimo acesso. Com o histograma desses L e duas somas de sufixo, cada fp(w) sai em
-    tempo logaritmico, para qualquer w de 1 ate n.
-
-    Duas consequencias uteis: fp(1) = 1 e fp(n) = m. O extremo direito da curva e o numero
-    de objetos distintos da carga -- o footprint tem um valor unico so quando a janela e a
-    carga inteira. E, por nao amostrar nada, a medida nao depende de semente.
-
-    Devolve (fp, m)."""
-    n = len(ev)
-    ultimo, lacunas = {}, {}
-    for p, o in enumerate(ev):
-        L = p - ultimo.get(o, -1) - 1
-        if L:
-            lacunas[L] = lacunas.get(L, 0) + 1
-        ultimo[o] = p
-    for p in ultimo.values():
-        L = n - 1 - p
-        if L:
-            lacunas[L] = lacunas.get(L, 0) + 1
-    m = len(ultimo)
-    tam = sorted(lacunas)
-    quantas = [0] * (len(tam) + 1)     # quantos intervalos com L >= tam[k]
-    soma_L = [0] * (len(tam) + 1)      # e a soma dos L deles
-    for k in range(len(tam) - 1, -1, -1):
-        quantas[k] = quantas[k + 1] + lacunas[tam[k]]
-        soma_L[k] = soma_L[k + 1] + lacunas[tam[k]] * tam[k]
-
-    def fp(w):
-        if not 1 <= w <= n:
-            raise ValueError("janela fora do trace: %r" % w)
-        k = bisect.bisect_left(tam, w)
-        cegas = soma_L[k] - (w - 1) * quantas[k]   # janelas que nao veem um dado objeto
-        return m - cegas / (n - w + 1)
-
-    return fp, m
-
-
-def medir_frequencia(ev):
-    """Contagem de requisicoes por objeto -- a terceira vista da mesma localidade.
-
-    Nao e parametro do gerador: no LRU Stack Model o que se sorteia e a PROFUNDIDADE, nao
-    o objeto, entao a popularidade e consequencia da distribuicao de stack distance, do
-    mesmo jeito que o footprint. Por isso entra no relatorio como medida, sem valor teorico
-    ponto a ponto ao lado. A unica ancora exata e a media: um objeto novo nasce a cada
-    1/P(inf) requisicoes, entao cada objeto rende em media 1/P(inf) pedidos.
-
-    A contagem e feita no trace ja sem o prefixo de aquecimento, como todas as outras
-    medidas -- o que aparece aqui e o que a carga pede, sem correcao de borda."""
-    n = len(ev)
-    cont = {}
-    for o in ev:
-        cont[o] = cont.get(o, 0) + 1
-    asc = sorted(cont.values())              # contagens em ordem crescente
-    m = len(asc)
-    acum, soma = [], 0
-    for f in reversed(asc):                  # do objeto mais pedido para o menos pedido
-        soma += f
-        acum.append(soma)
-    topo = lambda frac: acum[max(1, int(round(frac * m))) - 1] / n
-    hist, lim = [], 1
-    while lim <= asc[-1]:
-        prox = lim * 2
-        c = bisect.bisect_left(asc, prox) - bisect.bisect_left(asc, lim)
-        hist.append((lim, min(prox - 1, asc[-1]), c, c / m))
-        lim = prox
-    return {"objetos": m, "media": n / m, "maxima": asc[-1],
-            "um_hit": bisect.bisect_right(asc, 1) / m,
-            "top1": topo(0.01), "top10": topo(0.10),
-            "curva": [(k, asc[m - k], acum[k - 1] / n) for k in grade_log(m, 30)],
-            "hist": hist}
-
-
 def etapa_conferencia(cfg, cen, pmf, p_inf, carga_path, prefixo):
     trace = [l.strip() for l in open(carga_path) if l.strip()]
-    sds = genwl.stack_distances(trace)[prefixo:]
-    n = len(sds)
-    fin = sorted(d for d in sds if d >= 0)
-    r = len(fin)
-    if r == 0:
+    try:
+        m = medidas.medir(trace, prefixo, cfg["dmax"])
+    except ValueError:
         raise SystemExit("cenario %s: trace sem reusos" % cen["nome"])
-    frios = n - r
+    n = m["requisicoes"]
     t_hit, t_cdf = teoria(pmf, p_inf)
-
-    def m_hit(C):                                   # hit medido: reusos com d < C
-        return bisect.bisect_left(fin, C) / n
-
-    def m_cdf(x):                                   # fracao dos reusos com d < x
-        return bisect.bisect_left(fin, x) / r
-
-    pct = lambda q: fin[min(r - 1, int(q * (r - 1)))]
     # a grade vai ate o tamanho da carga: assim da para ver a curva chegar ao teto 1 - P(inf)
     # e ficar plana, em vez de cortar em d_max sem mostrar o que acontece depois. d_max entra
     # na marra porque e o joelho da curva -- nenhum reuso passa dele.
     grade = sorted(set(grade_log(cfg["requisicoes"])) | {cfg["dmax"]})
-    linhas_hrc = [(C, t_hit(C), m_hit(C)) for C in grade]
-    linhas_cdf = [(x, t_cdf(x), m_cdf(x)) for x in grade]
-    tabela = [(C, t_hit(C), m_hit(C), m_cdf(C)) for C in cfg["caches"]]
+    linhas_hrc = [(C, t_hit(C), m["hit"](C)) for C in grade]
+    linhas_cdf = [(x, t_cdf(x), m["cdf"](x)) for x in grade]
+    tabela = [(C, t_hit(C), m["hit"](C), m["cdf"](C)) for C in cfg["caches"]]
     # o erro e medido na CURVA INTEIRA, nao so nos caches escolhidos: um defeito no
     # gerador pode passar longe deles. E o limite acompanha o tamanho da carga --
     # 0,5/raiz(n) e o desvio de uma proporcao, entao a checagem aperta quando n cresce.
-    erro = max(abs(t - m) for _, t, m in linhas_hrc)
-    erro_caches = max(abs(t - m) for _, t, m, _ in tabela)
+    erro = max(abs(t - x) for _, t, x in linhas_hrc)
+    erro_caches = max(abs(t - x) for _, t, x, _ in tabela)
     limite = cfg["tolerancia_sigmas"] * 0.5 / math.sqrt(n)
 
-    # histograma de SD em faixas de uma oitava (x2). A primeira faixa e so o d = 0,
-    # que e a moda quando a localidade e forte e nao pode ficar de fora da soma.
-    zeros = bisect.bisect_left(fin, 1)
-    hist = [(0, 0, zeros, zeros / r)]
-    lim = 1
-    while lim <= cfg["dmax"]:
-        prox = lim * 2
-        c = bisect.bisect_left(fin, prox) - bisect.bisect_left(fin, lim)
-        hist.append((lim, min(prox, cfg["dmax"]) - 1, c, c / r))
-        lim = prox
-
-    ev = trace[prefixo:]
-    fp_de, distintos = curva_footprint(ev)
-    # grade log de janelas, com as decadas redondas garantidas para dar pontos de referencia
-    # legiveis, e a carga inteira no extremo direito: fp(n) e o numero de objetos distintos.
-    decadas = {10 ** k for k in range(len(str(len(ev))))}     # 1, 10, 100, ... <= len(ev)
-    janelas = sorted(set(grade_log(len(ev), 25)) | decadas)
-    fp = [(j, fp_de(j), fp_de(j) / j) for j in janelas]
-    fp_1k = fp_de(1000)
-    freq = medir_frequencia(ev)
-
-    return {
-        "nome": cen["nome"], "rotulo": cen["rotulo"], "beta": cen["beta"],
-        "fp": fp, "fp_1k": fp_1k,
-        "freq": freq, "freq_curva": freq["curva"],
-        "requisicoes": n, "prefixo": prefixo, "reusos": r,
-        "p_inf_teorico": p_inf, "p_inf_medido": frios / n,
-        "p25": pct(.25), "p50": pct(.50), "p75": pct(.75), "p90": pct(.90), "p99": pct(.99),
-        "distintos": distintos,
-        "hrc": linhas_hrc, "cdf": linhas_cdf, "tabela": tabela, "hist": hist,
-        "erro_max": erro, "erro_caches": erro_caches, "limite": limite,
-        "confere": erro <= limite,
-    }
+    return dict(m, nome=cen["nome"], rotulo=cen["rotulo"], beta=cen["beta"],
+                freq_curva=m["freq"]["curva"], p_inf_teorico=p_inf,
+                hrc=linhas_hrc, cdf=linhas_cdf, tabela=tabela,
+                erro_max=erro, erro_caches=erro_caches, limite=limite, confere=erro <= limite)
 
 
 # --------------------------------------------------------------- saidas
