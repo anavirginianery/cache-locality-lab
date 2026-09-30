@@ -26,7 +26,7 @@ variáveis, valores escolhidos e o que se espera de cada parte.
 |---|---|---|
 | **Geração** — cargas sintéticas com stack distance controlada | [`geracao/`](geracao/) | pronta |
 | **Simulação** — políticas de despejo sobre as cargas geradas | [`simulacao/`](simulacao/) | a fazer |
-| **Amostragem** — SHARDS e simulação em miniatura | [`amostragem/`](amostragem/) | a fazer |
+| **Amostragem** — sistemática e por janela (scripts do cache-sampling) | [`amostragem/`](amostragem/) | em andamento |
 
 Cada parte segue o mesmo padrão: o trabalho é organizado em **fases** — rodadas de experimentação
 com parâmetros próprios —, cada fase tem seu `cenarios.json`, e um `pipeline.py` roda de ponta a
@@ -67,7 +67,8 @@ na `f03` (1 milhão), 0,0008 contra 0,0025.
 ├── METODOLOGIA.md        documento vivo: fundamentação, decisões e resultados
 ├── lib/
 │   ├── genwl.py          gerador de carga (LRU Stack Model) e medidas de stack distance
-│   └── mkps.py           construtor da distribuição de stack distance
+│   ├── mkps.py           construtor da distribuição de stack distance
+│   └── medidas.py        o instrumento de medida (SD, hit LRU, footprint, frequência), usado pela geração e pela amostragem
 ├── geracao/              parte 1 — ver geracao/README.md
 │   ├── cenarios.json     modelo de configuração, copiado para cada fase nova
 │   ├── pipeline.py

@@ -6,10 +6,10 @@ já construída e testada. Os números citados vêm das execuções reais regist
 `geracao/fases/f02-500k/analise/` (500 mil).*
 
 **Seções prontas:** 1 a 8.
-**Seções previstas:** amostragem de cache (SHARDS, simulação em miniatura); políticas de despejo
+**Seções previstas:** amostragem de cache (sistemática e por janela); políticas de despejo
 além de LRU.
 
-O desenho do estudo — variáveis, valores e hipóteses — está em [`EXPERIMENTO.md`](EXPERIMENTO.md).
+O desenho do estudo — variáveis, cenários e valores — está em [`EXPERIMENTO.md`](EXPERIMENTO.md).
 Este documento trata do instrumento; aquele, do que se faz com ele.
 
 ---
@@ -152,9 +152,12 @@ vezes menos provável com β = 1,5, dez vezes menos provável com β = 1,0 e tr�
 provável com β = 0,5.
 
 A escolha da lei de potência tem duas justificativas. A primeira é empírica: distribuições de
-localidade em cargas reais têm cauda pesada, e a lei de potência é a forma tradicionalmente
-usada para descrevê-las. A segunda é prática: **um único parâmetro governa o nível de stack
-distance**, o que mantém o desenho experimental simples de descrever e de defender.
+localidade em cargas reais têm cauda pesada. Sobre a forma exata a literatura se divide — Breslau
+et al. (1999) encontram um decaimento compatível com lei de potência; Almeida et al. (1996) e o
+gerador SURGE (Barford e Crovella, 1998) usam lognormal —, e a lei de potência é uma das duas
+candidatas usuais. A segunda é prática: **um único parâmetro governa o nível de stack
+distance**, o que mantém o desenho experimental simples de descrever e de defender. A discussão
+completa, com os três regimes de β e as referências, está em [`EXPERIMENTO.md`](EXPERIMENTO.md).
 
 Além de β, dois parâmetros completam a distribuição:
 
@@ -481,6 +484,12 @@ admissão, ou para métricas de tempo.
 - E. G. Coffman, P. J. Denning. *Operating Systems Theory.* Prentice-Hall, 1973.
 - R. Turner, B. Strecker. *Use of the LRU stack depth distribution for simulation of paging
   behavior.* Communications of the ACM, 20(11), 1977.
+- V. Almeida, A. Bestavros, M. Crovella, A. de Oliveira. *Characterizing reference locality in the
+  WWW.* PDIS, 1996.
+- P. Barford, M. Crovella. *Generating representative Web workloads for network and server
+  performance evaluation.* ACM SIGMETRICS, 1998.
+- L. Breslau, P. Cao, L. Fan, G. Phillips, S. Shenker. *Web caching and Zipf-like distributions:
+  evidence and implications.* IEEE INFOCOM, 1999.
 - S. Jiang, X. Zhang. *LIRS: An efficient low inter-reference recency set replacement policy to
   improve buffer cache performance.* ACM SIGMETRICS, 2002.
 - X. Xiang, B. Bao, C. Ding, Y. Gao. *Linear-time modeling of program working set in shared cache.*
