@@ -1,0 +1,310 @@
+{
+  "fase": "f04",
+  "apelido": "onze-betas",
+  "descricao": "Onze niveis de stack distance (beta de 3,0 a 0,0) com 1 milhao de requisicoes",
+  "gerado_em": "2026-10-07T10:03:53",
+  "modo": "completo",
+  "codigo": {
+    "commit": "05051b3",
+    "limpo": false,
+    "git_disponivel": true,
+    "hash_arquivos": "29c732f9e954",
+    "arquivos": [
+      "lib/genwl.py",
+      "lib/mkps.py",
+      "lib/medidas.py",
+      "geracao/pipeline.py"
+    ]
+  },
+  "comum": {
+    "dmax": 10000,
+    "inf": 0.05,
+    "requisicoes": 1000000,
+    "semente": 7,
+    "caches": [
+      1,
+      10,
+      100,
+      1000,
+      10000
+    ],
+    "tolerancia_sigmas": 5
+  },
+  "cenarios": [
+    {
+      "nome": "sd01",
+      "rotulo": "β = 3,0",
+      "sufixo": "sd01-b300",
+      "beta": 3.0,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd01-b300.txt",
+        "carga": "cargas/carga_f04_sd01-b300.txt"
+      },
+      "resultado": {
+        "sd_mediana": 0,
+        "sd_p90": 1,
+        "sd_p99": 5,
+        "footprint_1000req": 53.7,
+        "objetos_distintos": 49518,
+        "req_por_objeto_media": 20.19,
+        "fracao_objetos_1_req": 0.0496,
+        "fracao_req_top10pct": 0.3259,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00057,
+        "erro_max_hrc_caches": 0.00049,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd02",
+      "rotulo": "β = 2,5",
+      "sufixo": "sd02-b250",
+      "beta": 2.5,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd02-b250.txt",
+        "carga": "cargas/carga_f04_sd02-b250.txt"
+      },
+      "resultado": {
+        "sd_mediana": 0,
+        "sd_p90": 2,
+        "sd_p99": 13,
+        "footprint_1000req": 57.8,
+        "objetos_distintos": 49525,
+        "req_por_objeto_media": 20.19,
+        "fracao_objetos_1_req": 0.0502,
+        "fracao_req_top10pct": 0.3212,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00058,
+        "erro_max_hrc_caches": 0.00052,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd03",
+      "rotulo": "β = 2,0",
+      "sufixo": "sd03-b200",
+      "beta": 2.0,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd03-b200.txt",
+        "carga": "cargas/carga_f04_sd03-b200.txt"
+      },
+      "resultado": {
+        "sd_mediana": 0,
+        "sd_p90": 5,
+        "sd_p99": 60,
+        "footprint_1000req": 72.6,
+        "objetos_distintos": 49576,
+        "req_por_objeto_media": 20.17,
+        "fracao_objetos_1_req": 0.0482,
+        "fracao_req_top10pct": 0.3241,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00058,
+        "erro_max_hrc_caches": 0.00053,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd04",
+      "rotulo": "β = 1,75",
+      "sufixo": "sd04-b175",
+      "beta": 1.75,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd04-b175.txt",
+        "carga": "cargas/carga_f04_sd04-b175.txt"
+      },
+      "resultado": {
+        "sd_mediana": 0,
+        "sd_p90": 12,
+        "sd_p99": 256,
+        "footprint_1000req": 93.1,
+        "objetos_distintos": 49752,
+        "req_por_objeto_media": 20.1,
+        "fracao_objetos_1_req": 0.0486,
+        "fracao_req_top10pct": 0.3251,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00058,
+        "erro_max_hrc_caches": 0.00049,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd05",
+      "rotulo": "β = 1,5",
+      "sufixo": "sd05-b150",
+      "beta": 1.5,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd05-b150.txt",
+        "carga": "cargas/carga_f04_sd05-b150.txt"
+      },
+      "resultado": {
+        "sd_mediana": 1,
+        "sd_p90": 51,
+        "sd_p99": 1916,
+        "footprint_1000req": 139.6,
+        "objetos_distintos": 50489,
+        "req_por_objeto_media": 19.81,
+        "fracao_objetos_1_req": 0.0504,
+        "fracao_req_top10pct": 0.3269,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00058,
+        "erro_max_hrc_caches": 0.00048,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd06",
+      "rotulo": "β = 1,25",
+      "sufixo": "sd06-b125",
+      "beta": 1.25,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd06-b125.txt",
+        "carga": "cargas/carga_f04_sd06-b125.txt"
+      },
+      "resultado": {
+        "sd_mediana": 6,
+        "sd_p90": 571,
+        "sd_p99": 6733,
+        "footprint_1000req": 244.0,
+        "objetos_distintos": 52412,
+        "req_por_objeto_media": 19.08,
+        "fracao_objetos_1_req": 0.0525,
+        "fracao_req_top10pct": 0.324,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00071,
+        "erro_max_hrc_caches": 0.00063,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd07",
+      "rotulo": "β = 1,0",
+      "sufixo": "sd07-b100",
+      "beta": 1.0,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd07-b100.txt",
+        "carga": "cargas/carga_f04_sd07-b100.txt"
+      },
+      "resultado": {
+        "sd_mediana": 74,
+        "sd_p90": 3769,
+        "sd_p99": 9075,
+        "footprint_1000req": 435.3,
+        "objetos_distintos": 54852,
+        "req_por_objeto_media": 18.23,
+        "fracao_objetos_1_req": 0.0531,
+        "fracao_req_top10pct": 0.3194,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00074,
+        "erro_max_hrc_caches": 0.00074,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd08",
+      "rotulo": "β = 0,75",
+      "sufixo": "sd08-b075",
+      "beta": 0.75,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd08-b075.txt",
+        "carga": "cargas/carga_f04_sd08-b075.txt"
+      },
+      "resultado": {
+        "sd_mediana": 869,
+        "sd_p90": 6824,
+        "sd_p99": 9642,
+        "footprint_1000req": 657.8,
+        "objetos_distintos": 56459,
+        "req_por_objeto_media": 17.71,
+        "fracao_objetos_1_req": 0.0555,
+        "fracao_req_top10pct": 0.3198,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00074,
+        "erro_max_hrc_caches": 0.00069,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd09",
+      "rotulo": "β = 0,5",
+      "sufixo": "sd09-b050",
+      "beta": 0.5,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd09-b050.txt",
+        "carga": "cargas/carga_f04_sd09-b050.txt"
+      },
+      "resultado": {
+        "sd_mediana": 2536,
+        "sd_p90": 8119,
+        "sd_p99": 9804,
+        "footprint_1000req": 819.0,
+        "objetos_distintos": 57264,
+        "req_por_objeto_media": 17.46,
+        "fracao_objetos_1_req": 0.0567,
+        "fracao_req_top10pct": 0.3162,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00075,
+        "erro_max_hrc_caches": 0.00069,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd10",
+      "rotulo": "β = 0,25",
+      "sufixo": "sd10-b025",
+      "beta": 0.25,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd10-b025.txt",
+        "carga": "cargas/carga_f04_sd10-b025.txt"
+      },
+      "resultado": {
+        "sd_mediana": 3971,
+        "sd_p90": 8694,
+        "sd_p99": 9868,
+        "footprint_1000req": 908.4,
+        "objetos_distintos": 57680,
+        "req_por_objeto_media": 17.34,
+        "fracao_objetos_1_req": 0.0567,
+        "fracao_req_top10pct": 0.3171,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00073,
+        "erro_max_hrc_caches": 0.00068,
+        "limite": 0.0025,
+        "confere": true
+      }
+    },
+    {
+      "nome": "sd11",
+      "rotulo": "β = 0,0",
+      "sufixo": "sd11-b000",
+      "beta": 0.0,
+      "arquivos": {
+        "dist": "dist/sd_f04_sd11-b000.txt",
+        "carga": "cargas/carga_f04_sd11-b000.txt"
+      },
+      "resultado": {
+        "sd_mediana": 5000,
+        "sd_p90": 9003,
+        "sd_p99": 9900,
+        "footprint_1000req": 953.9,
+        "objetos_distintos": 57929,
+        "req_por_objeto_media": 17.26,
+        "fracao_objetos_1_req": 0.0572,
+        "fracao_req_top10pct": 0.317,
+        "p_inf_medido": 0.0495,
+        "erro_max_hrc_curva": 0.00071,
+        "erro_max_hrc_caches": 0.00048,
+        "limite": 0.0025,
+        "confere": true
+      }
+    }
+  ]
+}
