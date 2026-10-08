@@ -2,7 +2,7 @@
   "fase": "a01",
   "apelido": "temporal-f03",
   "descricao": "Amostragem temporal (sistematica e por janela) das cargas de uma fase da geracao",
-  "gerado_em": "2026-09-30T10:59:40",
+  "gerado_em": "2026-10-07T19:07:09",
   "origem": "f03",
   "aquecimento": "descartar",
   "dmax_origem": 10000,
@@ -13,13 +13,13 @@
   ],
   "modo": "so-analise",
   "codigo": {
-    "commit": "640c208",
+    "commit": "05051b3",
     "limpo": false,
     "git_disponivel": true,
     "codigo_sha": {
-      "amostragem/pipeline.py": "e7c56c19d6cb",
-      "amostragem/graficos.py": "6c3245a50927",
-      "lib/medidas.py": "dbfea33de4d4",
+      "amostragem/pipeline.py": "56be050d496c",
+      "amostragem/graficos.py": "15c6e7226aad",
+      "lib/medidas.py": "2a90559e3d01",
       "lib/genwl.py": "055f67bdfd21"
     },
     "scripts": "../cache-sampling/sampling",

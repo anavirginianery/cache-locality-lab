@@ -1,0 +1,11 @@
+{
+  "descricao": "Amostragem temporal (sistematica e por janela) das onze cargas da fase f04",
+  "origem": "f04",
+  "aquecimento": "descartar",
+  "scripts": "../cache-sampling/sampling",
+  "metodos": [
+    "sistematica",
+    "janela-1k",
+    "janela-10k"
+  ]
+}
