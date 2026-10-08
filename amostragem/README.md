@@ -108,6 +108,25 @@ amostrada (laranja, tracejada). Os eixos são os mesmos em todas as facetas de u
 para comparar tanto entre técnicas quanto entre níveis de SD. No gráfico de hit, cada faceta traz
 o erro máximo da amostra. Saem no fim do pipeline, ou sozinhos com `python3 graficos.py --fase a01`.
 
+Dois gráficos resumem a fase inteira: `erro_beta_<fase>.svg` (erro médio e máximo da curva de hit
+contra o β da carga, um painel por família de técnica e uma linha por taxa) e `sd_mapa_<fase>.svg`
+(mapa de calor da distribuição da stack distance das cargas completas, uma linha por β e uma
+coluna por faixa de distância). Com muitas cargas — onze na fase `a02` — são eles que mostram o
+padrão; os gráficos em facetas ficam largos e servem para o detalhe de cada caso.
+
+Quatro gráficos comparam só a stack distance, carga completa × amostra, a partir dos percentis 1 a
+99 dos reúsos (`sd_quantis_<fase>.csv`; as primeiras aparições ficam de fora):
+
+- `sd_qq_<fase>.svg` — Q-Q em facetas (técnica × carga): para cada percentil, x = distância da
+  carga completa e y = distância da amostra; na diagonal, as duas são iguais.
+- `sd_razao_<fase>.svg` — razão por percentil em facetas: x = percentil, y = distância da amostra ÷
+  a da carga completa; a linha 1 é a referência. Mostra o erro como fator e em que parte da
+  distribuição ele está.
+- `sd_p50_<fase>.svg` e `sd_p90_<fase>.svg` — um percentil só (mediana ou p90): uma faceta por
+  técnica (grade 3 × 3) e um ponto por carga, nas cores das cargas dos gráficos da geração.
+
+Os eixos de distância usam log(d + 1), para caber a distância 0; os rótulos mostram a distância real.
+
 A carga completa sem o aquecimento começa com o cache vazio, então a SD dela difere um pouco da
 medida na geração (mediana 72 contra 74 na SD média). É a mesma referência que o cache-sampling usa
 (o fulltrace simulado do zero); a teoria continua ao lado para quem quiser o gabarito exato.

@@ -294,6 +294,9 @@ def grava_analise(analise, aid, medidos, dmax):
                     "fracao_da_janela"],
       [[suf, rot, j, "%.1f" % x, "%.4f" % f] for suf, rot, info, m, *_ in tudo for j, x, f in m["fp"]])
 
+    w("sd_quantis", ["cenario", "amostra", "percentil", "sd"],
+      [[suf, rot, q + 1, d] for suf, rot, info, m, *_ in tudo for q, d in enumerate(m["quantis"])])
+
     w("frequencia", ["cenario", "amostra", "rank", "requisicoes_ao_objeto",
                      "fracao_acumulada_das_requisicoes"],
       [[suf, rot, k, c, "%.5f" % a] for suf, rot, info, m, *_ in tudo for k, c, a in m["freq"]["curva"]])

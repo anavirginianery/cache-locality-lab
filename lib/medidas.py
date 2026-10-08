@@ -159,6 +159,7 @@ def medir(trace, prefixo=0, d_lim=None):
         "requisicoes": n, "prefixo": prefixo, "reusos": r, "p_inf_medido": (n - r) / n,
         "p25": pct(.25), "p50": pct(.50), "p75": pct(.75), "p90": pct(.90), "p99": pct(.99),
         "sd_max": fin[-1],
+        "quantis": [pct(q / 100) for q in range(1, 100)],   # percentis 1 a 99 dos reusos
         "hit": lambda C: bisect.bisect_left(fin, C) / n,
         "cdf": lambda x: bisect.bisect_left(fin, x) / r,
         "hist": hist,
